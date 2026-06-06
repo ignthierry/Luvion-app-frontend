@@ -16,10 +16,13 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Luvion - AI-Driven Scale Up Platform untuk UMKM",
-  description: "Luvion membantu UMKM melakukan scale up bisnis melalui integrasi sistem digital, rekomendasi modul AI, dan skema paket modular yang transparan.",
-  keywords: ["SaaS", "UMKM", "Scale Up", "AI Integration", "Digital Platform"],
+  title: "Luvion - AI-Driven Scale Up Platform",
+  description: "Luvion helps businesses scale up through digital system integration, AI module recommendations, and transparent modular pricing.",
+  keywords: ["SaaS", "Business", "Scale Up", "AI Integration", "Digital Platform"],
   authors: [{ name: "Thierry (Founder)" }],
+  icons: {
+    icon: "/logo2.png",
+  },
 };
 
 export default function RootLayout({
@@ -28,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className="h-full">
+    <html lang="en" className="h-full">
       <body
         className={`${plusJakartaSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
       >

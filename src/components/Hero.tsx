@@ -20,20 +20,20 @@ export default function Hero({ onRecommendTier }: HeroProps) {
   // Recommended prompt templates for UMKM
   const templates = [
     {
-      label: 'Finansial & Kasir',
-      prompt: 'Tolong buatkan Dashboard Finansial untuk memantau profitabilitas dan sistem kasir toko kelontong saya.',
+      label: 'Financial & Cashier',
+      prompt: 'Please create a Financial Dashboard to monitor profitability and a cashier system for my grocery store.',
     },
     {
       label: 'CRM & WhatsApp',
-      prompt: 'Saya butuh sistem CRM UMKM untuk melacak data pelanggan dan automasi follow-up chat WhatsApp.',
+      prompt: 'I need a CRM system to track customer data and automate WhatsApp follow-up chats.',
     },
     {
-      label: 'Multi-Gudang & Kurir',
-      prompt: 'Saya ingin sistem manajemen stok multi-gudang dan pelacakan kurir pengiriman barang toko retail saya.',
+      label: 'Multi-Warehouse & Courier',
+      prompt: 'I want a multi-warehouse stock management system and courier tracking for my retail store.',
     },
     {
-      label: 'Jastip Pro',
-      prompt: 'Saya butuh sistem jastip pro untuk rekap pesanan, hitung ongkir otomatis, dan kelola pembayaran.',
+      label: 'Order Management',
+      prompt: 'I need an order management system to recap orders, calculate shipping automatically, and manage payments.',
     },
   ];
 
@@ -99,7 +99,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         className="inline-flex items-center gap-2 glass-panel rounded-full px-4 py-2 mb-8 hover:scale-[1.02] transition-transform"
       >
         <span className="bg-secondary-container text-on-secondary-container text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-          Baru
+          New
         </span>
         <span className="text-sm font-semibold text-on-surface flex items-center gap-1">
           Luvion AI Engine v1.0 <Sparkles className="h-3.5 w-3.5 text-primary" />
@@ -113,7 +113,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         transition={{ duration: 0.6, delay: 0.1 }}
         className="font-sans font-extrabold text-4xl md:text-6xl lg:text-7xl leading-[1.1] tracking-tighter text-on-surface max-w-5xl mb-6"
       >
-        Scale Up Bisnis Anda <br />
+        Scale Up Your Business <br />
         <span className="vibrant-text-gradient">
           Build With Luvion
         </span>
@@ -126,7 +126,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         transition={{ duration: 0.6, delay: 0.2 }}
         className="text-base md:text-lg text-on-surface-variant max-w-3xl mb-12 font-medium"
       >
-        Luvion membantu Anda merancang sistem digital seperti Dashboard, Website, & ekosistem modul bisnis. Ceritakan masalah bisnis Anda di bawah, AI kami akan menganalisis kebutuhan Anda secara real-time!
+        Luvion helps you design digital systems like Dashboards, Websites, & business module ecosystems. Describe your business problem below, our AI will analyze your needs in real-time!
       </motion.p>
 
       {/* Prompt Area */}
@@ -142,7 +142,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
             onChange={handleInputChange}
             maxLength={500}
             className="w-full bg-transparent border-none resize-none text-base md:text-lg text-on-surface placeholder:text-outline/70 focus:outline-none focus:ring-0 min-h-[90px] hide-scrollbar"
-            placeholder="Tuliskan masalah bisnis Anda di sini... (contoh: 'Saya punya toko baju retail dan ingin memantau stok dari 3 cabang yang berbeda')"
+            placeholder="Describe your business problem here... (e.g., 'I run a retail clothing store and want to track inventory across 3 branches')"
           />
           <div className="flex items-center justify-between pt-4 border-t border-white/40 dark:border-white/10">
             <div className="flex items-center gap-3">
@@ -185,7 +185,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         transition={{ duration: 0.6, delay: 0.4 }}
         className="flex flex-wrap items-center justify-center gap-3 max-w-4xl"
       >
-        <span className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mr-1">Rekomendasi Cepat:</span>
+        <span className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mr-1">Quick Recommendations:</span>
         {templates.map((tmpl, idx) => (
           <button
             key={idx}
@@ -216,7 +216,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                   </div>
                   <div>
                     <span className="block text-xs font-bold text-on-surface-variant/60 uppercase tracking-wider">Luvion AI Copilot</span>
-                    <span className="text-xs font-bold text-primary">Workspace Interaktif</span>
+                    <span className="text-xs font-bold text-primary">Interactive Workspace</span>
                   </div>
                 </div>
 
@@ -233,7 +233,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                             <span className="text-xs font-bold text-tertiary">U</span>
                           </div>
                           <div className="flex-1 flex flex-col items-end">
-                            <span className="text-[10px] font-bold text-on-surface-variant/50 uppercase mb-1">Anda</span>
+                            <span className="text-[10px] font-bold text-on-surface-variant/50 uppercase mb-1">You</span>
                             <div className="bg-primary/10 border border-primary/20 text-on-surface rounded-2xl rounded-tr-none p-3 max-w-[85%] text-left font-semibold">
                               {text}
                             </div>
@@ -261,7 +261,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse [animation-delay:0.2s]" />
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse [animation-delay:0.4s]" />
-                      <span>AI sedang berpikir...</span>
+                      <span>AI is thinking...</span>
                     </div>
                   )}
                 </div>
@@ -291,10 +291,10 @@ export default function Hero({ onRecommendTier }: HeroProps) {
 
                   {/* Modules indicators */}
                   <div className="space-y-3 flex-1 text-left">
-                    <span className="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Modul Terintegrasi:</span>
+                    <span className="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Integrated Modules:</span>
                     <div className="p-2.5 rounded-xl bg-white/80 dark:bg-white/5 border border-white/50 dark:border-white/5 flex items-center justify-between shadow-sm">
                       <span className="text-xs font-semibold text-on-surface">Finance Ledger v1.0</span>
-                      <span className="text-[10px] font-bold text-[#556500] bg-secondary-container/50 px-1.5 py-0.5 rounded">AKTIF</span>
+                      <span className="text-[10px] font-bold text-[#556500] bg-secondary-container/50 px-1.5 py-0.5 rounded">ACTIVE</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-white/40 dark:bg-white/2 border border-white/50 dark:border-white/5 flex items-center justify-between">
                       <span className="text-xs font-semibold text-on-surface-variant/75">WhatsApp Automator</span>

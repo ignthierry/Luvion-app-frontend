@@ -48,12 +48,12 @@ export default function Pricing({ recommendedTier }: PricingProps) {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Paket Langganan</h2>
+          <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Subscription Plans</h2>
           <p className="font-sans font-extrabold text-3xl md:text-5xl text-on-surface leading-tight tracking-tight">
-            Skema Harga Modular & Transparan
+            Modular & Transparent Pricing
           </p>
           <p className="text-on-surface-variant font-medium text-base mt-4">
-            Pilih paket yang paling pas dengan skala finansial dan operasional UMKM Anda.
+            Choose the plan that best fits your business financial and operational scale.
           </p>
         </div>
 
@@ -61,12 +61,12 @@ export default function Pricing({ recommendedTier }: PricingProps) {
           <div className="w-full flex justify-center py-20">
             <div className="flex items-center gap-2 text-on-surface-variant/60">
               <div className="w-2.5 h-2.5 rounded-full bg-primary animate-ping" />
-              <span className="text-sm font-semibold">Memuat paket harga...</span>
+              <span className="text-sm font-semibold">Loading pricing plans...</span>
             </div>
           </div>
         ) : error ? (
           <div className="w-full flex justify-center py-20">
-            <span className="text-sm text-error font-semibold">Gagal memuat paket harga. Silakan coba lagi.</span>
+            <span className="text-sm text-error font-semibold">Failed to load pricing plans. Please try again.</span>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-5xl mx-auto">
@@ -90,12 +90,12 @@ export default function Pricing({ recommendedTier }: PricingProps) {
                   <div className="absolute top-4 right-4 flex flex-col gap-2">
                     {isRecommended && (
                       <div className="bg-primary text-white text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-sm animate-pulse">
-                        <Sparkles className="h-3 w-3" /> Rekomendasi AI
+                        <Sparkles className="h-3 w-3" /> AI Recommended
                       </div>
                     )}
                     {tier.popular && !isRecommended && (
                       <div className="bg-white/60 dark:bg-white/10 border border-white/80 dark:border-white/10 text-on-surface text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                        Terpopuler
+                        Most Popular
                       </div>
                     )}
                   </div>
@@ -135,7 +135,7 @@ export default function Pricing({ recommendedTier }: PricingProps) {
                           : 'glass-panel text-foreground shadow-sm hover:scale-[1.01]'
                       }`}
                     >
-                      {tier.id === 'Enterprise' ? 'Hubungi Sales' : 'Mulai Sekarang'}
+                      {tier.id === 'Enterprise' ? 'Contact Sales' : 'Get Started'}
                     </button>
                   </div>
                 </div>

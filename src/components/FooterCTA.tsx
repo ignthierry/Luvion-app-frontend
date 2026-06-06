@@ -36,13 +36,13 @@ export default function FooterCTA() {
         />
 
         <h2 className="font-sans font-extrabold text-3xl md:text-5xl leading-tight mb-10 text-center relative z-10 max-w-3xl text-on-surface">
-          Jadi, sistem digital apa yang ingin Anda bangun?
+          So, what digital system do you want to build?
         </h2>
         <a
           className="inline-flex items-center gap-3 electric-gradient font-semibold px-8 py-3.5 rounded-full hover:scale-105 transition-all shadow-sm group relative z-10 text-base"
           href="#pricing"
         >
-          Mulai Sekarang
+          Get Started
           <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
         </a>
       </section>
@@ -51,10 +51,7 @@ export default function FooterCTA() {
       <div className="bg-transparent w-full py-8 text-on-surface-variant font-medium relative z-20">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-border/15 pt-8">
           <div className="font-sans font-black text-headline-md flex items-center gap-2 text-on-surface">
-            <svg className="h-6 w-6 text-on-surface" fill="none" height="24" viewBox="0 0 32 32" width="24" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="16" cy="16" r="15" stroke="currentColor" strokeWidth="2.2"></circle>
-              <path d="M11 10V22M21 10V22M11 16H21" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"></path>
-            </svg>
+            <img src="/logo2.png" alt="Luvion Logo" className="h-6 w-auto object-contain" />
             <span className="text-sm font-extrabold uppercase tracking-widest">LUVION AI</span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm">

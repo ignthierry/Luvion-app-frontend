@@ -10,9 +10,9 @@ export default function ValueProp() {
       <div className="max-w-7xl mx-auto space-y-32">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Keuntungan Utama</h2>
+          <h2 className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Key Advantages</h2>
           <p className="font-sans font-extrabold text-3xl md:text-5xl text-on-surface leading-tight tracking-tight">
-            Digitalisasi Bisnis Tanpa Hambatan Teknis
+            Business Digitalization Without Technical Barriers
           </p>
         </div>
 
@@ -21,17 +21,17 @@ export default function ValueProp() {
           <div className="flex-1 flex flex-col justify-center space-y-6 text-left">
             <span className="text-xs font-bold text-on-surface-variant/60 tracking-widest uppercase">01 / 02</span>
             <h3 className="font-sans font-extrabold text-2xl md:text-4xl text-on-surface leading-tight">
-              Tuliskan Ide Sistem Anda, Luvion Merealisasikannya
+              Describe Your System Idea, Luvion Builds It
             </h3>
             <p className="text-base text-on-surface-variant leading-relaxed font-medium">
-              Cukup ceritakan model bisnis atau alur kerja yang Anda inginkan dengan bahasa sehari-hari. Luvion AI Engine akan menerjemahkan deskripsi tersebut ke dalam modul operasional digital yang siap pakai, mulai dari kasir hingga dashboard manajemen stok.
+              Simply describe your desired business model or workflow in everyday language. Luvion AI Engine will translate that description into ready-to-use digital operational modules, from cashiers to stock management dashboards.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <div className="flex items-center gap-2 text-sm font-bold text-primary">
-                <Sparkles className="h-4 w-4" /> Kustomisasi instan via prompt
+                <Sparkles className="h-4 w-4" /> Instant customization via prompt
               </div>
               <div className="flex items-center gap-2 text-sm font-bold text-on-surface-variant">
-                <BarChart2 className="h-4 w-4" /> Visualisasi real-time
+                <BarChart2 className="h-4 w-4" /> Real-time visualization
               </div>
             </div>
           </div>
@@ -51,14 +51,14 @@ export default function ValueProp() {
                 <div className="h-14 glass-panel flex items-center justify-between px-4">
                   <div className="flex items-center gap-3">
                     <div className="w-7 h-7 rounded bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">K</div>
-                    <span className="text-xs font-bold">Kasir Digital Aktif</span>
+                    <span className="text-xs font-bold">Active Digital Cashier</span>
                   </div>
                   <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded">ONLINE</span>
                 </div>
                 <div className="h-14 glass-panel flex items-center justify-between px-4">
                   <div className="flex items-center gap-3">
                     <div className="w-7 h-7 rounded bg-tertiary/20 flex items-center justify-center text-tertiary text-xs font-bold">M</div>
-                    <span className="text-xs font-bold">Modul Lacak Kurir</span>
+                    <span className="text-xs font-bold">Courier Tracking Module</span>
                   </div>
                   <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded">SYNCING</span>
                 </div>
@@ -72,14 +72,14 @@ export default function ValueProp() {
           <div className="flex-1 flex flex-col justify-center space-y-6 text-left">
             <span className="text-xs font-bold text-on-surface-variant/60 tracking-widest uppercase">02 / 02</span>
             <h3 className="font-sans font-extrabold text-2xl md:text-4xl text-on-surface leading-tight">
-              Infrastruktur Backend Otomatis & Aman
+              Automated & Secure Backend Infrastructure
             </h3>
             <p className="text-base text-on-surface-variant leading-relaxed font-medium">
-              Anda tidak perlu memikirkan hosting, setup server, database migration, ataupun instalasi SSL. Luvion menuliskan kode server, melakukan propagasi CDN edge runtime, serta mengenkripsi seluruh transaksi Anda secara otomatis dalam hitungan detik.
+              You don't need to think about hosting, server setup, database migration, or SSL installation. Luvion writes server code, performs edge runtime CDN propagation, and encrypts all your transactions automatically in seconds.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <div className="flex items-center gap-2 text-sm font-bold text-emerald-600">
-                <Lock className="h-4 w-4" /> SSL & Enkripsi Aktif
+                <Lock className="h-4 w-4" /> Active SSL & Encryption
               </div>
               <div className="flex items-center gap-2 text-sm font-bold text-[#326578]">
                 <Server className="h-4 w-4" /> Edge Database Migration

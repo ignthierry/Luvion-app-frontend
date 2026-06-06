@@ -14,28 +14,28 @@ export default function FAQ() {
 
   const faqs: FAQItem[] = [
     {
-      question: 'Apa itu Luvion?',
-      answer: 'Luvion adalah platform SaaS AI-driven yang mempermudah UMKM membangun ekosistem digital (kasir, stok, kurir, jastip) secara instan melalui input deskripsi bahasa sehari-hari tanpa perlu mengerti bahasa coding.',
+      question: 'What is Luvion?',
+      answer: 'Luvion is an AI-driven SaaS platform that makes it easy for businesses to instantly build digital ecosystems (cashier, stock, courier, pre-orders) through everyday language descriptions without needing to understand coding.',
     },
     {
-      question: 'Bagaimana cara kerja Luvion AI?',
-      answer: 'Cukup ketikkan alur kerja atau masalah operasional bisnis Anda di kolom AI pada Hero section. AI Copilot kami akan menganalisis kebutuhan Anda, menyusun rekomendasi modul sistem, dan menyiapkannya untuk dideploy dalam waktu kurang dari 5 menit.',
+      question: 'How does Luvion AI work?',
+      answer: 'Simply type your workflow or business operational problem in the AI field in the Hero section. Our AI Copilot will analyze your needs, compile system module recommendations, and prepare them for deployment in less than 5 minutes.',
     },
     {
-      question: 'Apakah data bisnis saya aman di Luvion?',
-      answer: 'Keamanan data Anda adalah prioritas kami. Seluruh komunikasi dienkripsi melalui protokol SSL/TLS, data sensitif dilindungi, dan infrastruktur database kami didukung oleh cloud server yang aman dan andal.',
+      question: 'Is my business data safe with Luvion?',
+      answer: 'Your data security is our priority. All communications are encrypted via SSL/TLS protocols, sensitive data is protected, and our database infrastructure is backed by secure and reliable cloud servers.',
     },
     {
-      question: 'Apakah ada biaya tersembunyi?',
-      answer: 'Tidak ada biaya tersembunyi. Skema harga kami sangat transparan: Paket Starter gratis selamanya untuk 3 proyek dasar, Paket Pro seharga $20/bulan flat untuk proyek tak terbatas, dan Paket Enterprise disesuaikan dengan SLA korporasi Anda.',
+      question: 'Are there any hidden fees?',
+      answer: 'There are no hidden fees. Our pricing is highly transparent: The Starter Plan is free forever for 3 basic projects, the Pro Plan is a flat $20/month for unlimited projects, and the Enterprise Plan is tailored to your corporate SLA.',
     },
     {
-      question: 'Apakah saya bisa menggunakan domain sendiri?',
-      answer: 'Ya, pada Paket Paid Pro, Anda dapat menghubungkan domain kustom sendiri (.com, .id, .co.id, dll.) secara penuh, lengkap dengan konfigurasi sertifikat SSL otomatis dari Luvion.',
+      question: 'Can I use my own domain?',
+      answer: 'Yes, on the Paid Pro Plan, you can fully connect your own custom domain (.com, .net, etc.), complete with automatic SSL certificate configuration from Luvion.',
     },
     {
-      question: 'Bagaimana jika saya butuh bantuan teknis?',
-      answer: 'Pengguna Paket Starter mendapatkan akses ke forum diskusi komunitas. Sementara pengguna Paket Pro dan Enterprise memiliki akses prioritas dukungan teknis 24/7 langsung dari tim engineer kami.',
+      question: 'What if I need technical assistance?',
+      answer: 'Starter Plan users get access to the community discussion forum. Meanwhile, Pro and Enterprise Plan users have priority 24/7 technical support directly from our engineering team.',
     },
   ];
 
@@ -48,9 +48,9 @@ export default function FAQ() {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16">
         {/* Left Column */}
         <div className="lg:w-1/3 text-left">
-          <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">Tanya Jawab</h2>
+          <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">FAQ</h2>
           <h3 className="font-sans font-extrabold text-3xl md:text-5xl text-on-surface leading-[1.1] sticky top-32">
-            Pertanyaan yang sering diajukan
+            Frequently Asked Questions
           </h3>
         </div>
 
