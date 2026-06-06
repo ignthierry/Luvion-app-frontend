@@ -1,0 +1,271 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-on-background: var(--on-background);
+
+  --color-surface: var(--surface);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-variant: var(--surface-variant);
+
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-inverse-surface: var(--inverse-surface);
+  --color-inverse-on-surface: var(--inverse-on-surface);
+
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-inverse-primary: var(--inverse-primary);
+
+  --color-secondary: var(--secondary);
+  --color-on-secondary: var(--on-secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
+
+  --color-tertiary: var(--tertiary);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+
+  --color-error: var(--error);
+  --color-on-error: var(--on-error);
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  --spacing-unit: 8px;
+  --spacing-container-padding: 64px;
+  --spacing-gutter: 24px;
+  --spacing-section-gap: 120px;
+  --spacing-card-internal: 32px;
+
+  --animate-gradient-shift: gradient-shift 15s ease infinite;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #1a1c1c;
+  --on-background: #1a1c1c;
+
+  --surface: #ffffff;
+  --surface-dim: #dadada;
+  --surface-bright: #ffffff;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f3f3f4;
+  --surface-container: #eeeeee;
+  --surface-container-high: #e8e8e8;
+  --surface-container-highest: #e2e2e2;
+  --surface-variant: #e2e2e2;
+
+  --on-surface: #1a1c1c;
+  --on-surface-variant: #414755;
+  --inverse-surface: #2f3131;
+  --inverse-on-surface: #f0f1f1;
+
+  --outline: #717786;
+  --outline-variant: #c1c6d7;
+
+  --primary: #0058bc;
+  --on-primary: #ffffff;
+  --primary-container: #0070eb;
+  --on-primary-container: #fefcff;
+  --inverse-primary: #adc6ff;
+
+  --secondary: #b42907;
+  --on-secondary: #ffffff;
+  --secondary-container: #fe5d39;
+  --on-secondary-container: #5b0d00;
+
+  --tertiary: #8d22c0;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #a943dc;
+  --on-tertiary-container: #fffbff;
+
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+
+  --border: #e2e2e2;
+  --input: #e2e2e2;
+  --ring: #0058bc;
+}
+
+.dark {
+  --background: #0d0d0d;
+  --foreground: #ffffff;
+  --on-background: #ffffff;
+
+  --surface: #0d0d0d;
+  --surface-dim: #1a1a1a;
+  --surface-bright: #262626;
+  --surface-container-lowest: #000000;
+  --surface-container-low: #121212;
+  --surface-container: #1e1e1e;
+  --surface-container-high: #2b2b2b;
+  --surface-container-highest: #383838;
+  --surface-variant: #404040;
+
+  --on-surface: #ffffff;
+  --on-surface-variant: #a3a3a3;
+  --inverse-surface: #e5e5e5;
+  --inverse-on-surface: #171717;
+
+  --outline: #525252;
+  --outline-variant: #737373;
+
+  --primary: #3b82f6;
+  --on-primary: #ffffff;
+  --primary-container: #1d4ed8;
+  --on-primary-container: #eff6ff;
+
+  --secondary: #ef4444;
+  --on-secondary: #ffffff;
+  --secondary-container: #b91c1c;
+  --on-secondary-container: #fef2f2;
+
+  --tertiary: #a855f7;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #7e22ce;
+  --on-tertiary-container: #faf5ff;
+
+  --error: #f87171;
+  --on-error: #450a0a;
+
+  --border: #2b2b2b;
+  --input: #2b2b2b;
+  --ring: #3b82f6;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Glassmorphism Styles */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 226, 226, 0.5); /* using high contrast light gray */
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.03); /* very light airy shadow */
+}
+
+.dark .glass-panel {
+  background: rgba(26, 28, 28, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+}
+
+/* Sunset & Electric Gradients */
+.sunset-gradient {
+  background: linear-gradient(135deg, #fe5d39 0%, #b42907 100%);
+  color: #ffffff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sunset-gradient:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -6px rgba(180, 41, 7, 0.4);
+  filter: brightness(1.05);
+}
+
+.electric-gradient {
+  background: linear-gradient(135deg, #0070eb 0%, #0058bc 100%);
+  color: #ffffff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.electric-gradient:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -6px rgba(0, 88, 188, 0.4);
+  filter: brightness(1.05);
+}
+
+.vibrant-text-gradient {
+  background: linear-gradient(135deg, #0070eb 0%, #a943dc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Dotted Grid Background - Lighter for pure white */
+.dotted-grid {
+  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+}
+
+.dark .dotted-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+/* Custom Scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom Cursor styling */
+#custom-cursor {
+  width: 16px;
+  height: 16px;
+  background-color: #0058bc; /* Primary color */
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s ease-out;
+  transform: translate(-50%, -50%);
+}
+
+.dark #custom-cursor {
+  background-color: #3b82f6;
+}
+
+@layer base {
+  * {
+    @apply border-border/40 outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground selection:bg-primary-container selection:text-on-primary-container font-sans antialiased overflow-x-hidden;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-bold text-foreground;
+  }
+  h1 {
+    @apply tracking-tighter;
+  }
+}
