@@ -62,20 +62,20 @@ export default function Hero({ onRecommendTier }: HeroProps) {
   // Recommended prompt templates for UMKM
   const templates = [
     {
-      label: 'Financial & Cashier',
-      prompt: 'Please create a Financial Dashboard to monitor profitability and a cashier system for my grocery store.',
+      label: 'Keuangan & Kasir',
+      prompt: 'Tolong buatkan Dashboard Keuangan untuk memantau profitabilitas dan sistem kasir untuk toko kelontong saya.',
     },
     {
       label: 'CRM & WhatsApp',
-      prompt: 'I need a CRM system to track customer data and automate WhatsApp follow-up chats.',
+      prompt: 'Saya butuh sistem CRM untuk melacak data pelanggan dan mengotomatiskan chat follow-up WhatsApp.',
     },
     {
-      label: 'Multi-Warehouse & Courier',
-      prompt: 'I want a multi-warehouse stock management system and courier tracking for my retail store.',
+      label: 'Multi-Gudang & Kurir',
+      prompt: 'Saya ingin sistem manajemen stok multi-gudang dan pelacakan kurir untuk toko ritel saya.',
     },
     {
-      label: 'Order Management',
-      prompt: 'I need an order management system to recap orders, calculate shipping automatically, and manage payments.',
+      label: 'Manajemen Pesanan',
+      prompt: 'Saya memerlukan sistem manajemen pesanan untuk merekap pesanan, menghitung ongkos kirim secara otomatis, dan mengelola pembayaran.',
     },
   ];
 
@@ -151,7 +151,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         className="inline-flex items-center gap-2 glass-panel rounded-full px-4 py-2 mb-8 hover:scale-[1.02] transition-transform"
       >
         <span className="bg-secondary-container text-on-secondary-container text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-          New
+          Baru
         </span>
         <span className="text-sm font-semibold text-on-surface flex items-center gap-1">
           Luvion AI Engine v1.0 <Sparkles className="h-3.5 w-3.5 text-primary" />
@@ -165,9 +165,9 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         transition={{ duration: 0.6, delay: 0.1 }}
         className="font-sans font-extrabold text-4xl md:text-6xl lg:text-7xl leading-[1.1] tracking-tighter text-on-surface max-w-5xl mb-6"
       >
-        Scale Up Your Business <br />
+        Kembangkan Bisnis Anda <br />
         <span className="vibrant-text-gradient">
-          Build With Luvion
+          Bangun Bersama Luvion
         </span>
       </motion.h1>
 
@@ -178,7 +178,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         transition={{ duration: 0.6, delay: 0.2 }}
         className="text-base md:text-lg text-on-surface-variant max-w-3xl mb-12 font-medium"
       >
-        Luvion helps you design digital systems like Dashboards, Websites, & business module ecosystems. Describe your business problem below, our AI will analyze your needs in real-time!
+        Luvion membantu Anda merancang sistem digital seperti Dashboard, Website, & ekosistem modul bisnis. Jelaskan masalah bisnis Anda di bawah ini, AI kami akan menganalisis kebutuhan Anda secara real-time!
       </motion.p>
 
       {/* Initial Prompt Area - shown only before first message */}
@@ -196,7 +196,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
               onKeyDown={handleKeyDown}
               maxLength={500}
               className="w-full bg-transparent border-none resize-none text-base md:text-lg text-on-surface placeholder:text-outline/70 focus:outline-none focus:ring-0 min-h-[90px] hide-scrollbar"
-              placeholder="Describe your business problem here... (e.g., 'I run a retail clothing store and want to track inventory across 3 branches')"
+              placeholder="Jelaskan masalah operasional bisnis Anda di sini... (contoh: 'Saya menjalankan toko pakaian ritel dan ingin melacak stok di 3 cabang')"
             />
             <div className="flex items-center justify-between pt-4 border-t border-white/40 dark:border-white/10">
               <div className="flex items-center gap-3">
@@ -240,7 +240,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         transition={{ duration: 0.6, delay: 0.4 }}
         className="flex flex-wrap items-center justify-center gap-3 max-w-4xl"
       >
-        <span className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mr-1">Quick Recommendations:</span>
+        <span className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mr-1">Rekomendasi Cepat:</span>
         {templates.map((tmpl, idx) => (
           <button
             key={idx}
@@ -270,7 +270,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                     <Sparkles className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-primary">Interactive Workspace</span>
+                    <span className="text-xs font-bold text-primary">Ruang Kerja Interaktif</span>
                   </div>
                 </div>
               </div>
@@ -289,7 +289,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                             <span className="text-xs font-bold text-tertiary">U</span>
                           </div>
                           <div className="flex-1 flex flex-col items-end">
-                            <span className="text-[10px] font-bold text-on-surface-variant/50 uppercase mb-1">You</span>
+                            <span className="text-[10px] font-bold text-on-surface-variant/50 uppercase mb-1">Anda</span>
                             <div className="bg-primary/10 border border-primary/20 text-on-surface rounded-2xl rounded-tr-none p-3 max-w-[85%] text-left font-semibold">
                               {text}
                             </div>
@@ -317,10 +317,9 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse [animation-delay:0.2s]" />
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse [animation-delay:0.4s]" />
-                      <span>AI is thinking...</span>
+                      <span>AI sedang berpikir...</span>
                     </div>
                   )}
-                  <div ref={chatEndRef} />
                 </div>
               </div>
 
@@ -334,7 +333,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                     maxLength={500}
                     rows={1}
                     className="flex-1 bg-white/40 dark:bg-white/5 border border-white/60 dark:border-white/10 rounded-2xl px-4 py-3 resize-none text-sm md:text-base text-on-surface placeholder:text-outline/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all hide-scrollbar"
-                    placeholder="Type your message... (Enter to send, Shift+Enter for new line)"
+                    placeholder="Ketik pesan Anda... (Enter untuk mengirim, Shift+Enter untuk baris baru)"
                     style={{ maxHeight: '120px', minHeight: '44px' }}
                     onInput={(e) => {
                       const target = e.target as HTMLTextAreaElement;

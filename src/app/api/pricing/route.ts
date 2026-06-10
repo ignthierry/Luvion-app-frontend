@@ -6,14 +6,16 @@ export async function GET() {
       id: 'Starter',
       name: 'Starter',
       subtitle: 'UMKM Pemula',
-      price: '$0',
-      priceSuffix: '/selamanya',
-      description: 'Cocok untuk memulai digitalisasi bisnis kecil Anda secara mandiri.',
+      price: 'Rp 0',
+      priceSuffix: '/bulan pertama',
+      description: 'Gratis 1 bulan pertama, selanjutnya Rp 50.000/bulan. Fokus pada tampilan yang menarik dan order lebih cepat.',
       features: [
-        'Maksimal 3 Proyek Aktif',
-        'Basic LLM & Komponen Standar',
-        'Dukungan Komunitas (Forum)',
-        'Subdomain Luvion (luvion.site/nama-toko)'
+        'Selanjutnya Rp 50.000 / bulan',
+        'Mobile-First Design (Responsif di HP)',
+        'Tombol WhatsApp Terintegrasi',
+        'Katalog Produk / Layanan Menarik',
+        'Profil Usaha Lengkap & Google Maps',
+        'Form Pemesanan Pemesanan Modern'
       ],
       popular: false,
       highlightColor: 'from-blue-500/10 to-transparent'
@@ -22,14 +24,17 @@ export async function GET() {
       id: 'Pro',
       name: 'Paid Pro',
       subtitle: 'UMKM Scale-Up',
-      price: '$20',
-      priceSuffix: '/bulan',
-      description: 'Ideal untuk bisnis berkembang yang butuh fitur automasi & custom domain.',
+      price: 'Rp 0',
+      priceSuffix: '/bulan pertama',
+      description: 'Gratis 1 bulan pertama, selanjutnya Rp 100.000/bulan.',
       features: [
-        'Unlimited Proyek Aktif',
-        'Advanced AI Automation & Integrasi',
-        'Priority Support (24/7 Response)',
-        'Kustom Domain Sendiri (.com/.id)'
+        'Selanjutnya Rp 100.000 / bulan',
+        'Opsi Bayar Tahunan: Diskon 25%',
+        'Seluruh Fitur Versi Starter',
+        'Aplikasi Manajemen Pendukung Bisnis',
+        'Kustom Domain Sendiri (.com/.id)',
+        'Dukungan & Support Prioritas',
+        'Pendampingan & Digital Marketing'
       ],
       popular: true,
       highlightColor: 'from-[#ff8a65]/20 to-[#9f4122]/10'
@@ -38,14 +43,15 @@ export async function GET() {
       id: 'Enterprise',
       name: 'Enterprise',
       subtitle: 'Korporat / Khusus',
-      price: 'Custom',
+      price: 'Kustom',
       priceSuffix: '',
       description: 'Solusi terbaik untuk integrasi skala enterprise, kustom AI, dan keandalan penuh.',
       features: [
+        'Seluruh Keunggulan Pro & Starter',
+        'Kustomisasi & Automasi Penuh',
+        'Integrasi Model AI Bisnis Mandiri',
         'Dedicated Environment',
-        'Kustomisasi Model AI Bisnis Mandiri',
-        'Dedicated Account Manager & SLA',
-        'Multi-domain & White-label internal'
+        'Dedicated Account Manager & SLA'
       ],
       popular: false,
       highlightColor: 'from-purple-500/15 to-transparent'

@@ -40,16 +40,16 @@ export default function ModulesEcosystem() {
         return (
           <div className="flex-1 flex flex-col justify-between p-4 glass-panel rounded-2xl shadow-sm mt-4">
             <div className="flex items-center justify-between text-xs font-bold">
-              <span>Streaming Dashboard</span>
+              <span>Dashboard Transaksi</span>
               <span className="text-emerald-500 font-mono">+12.5%</span>
             </div>
             <div className="grid grid-cols-2 gap-2 mt-4">
               <div className="h-16 bg-blue-500/10 rounded flex flex-col justify-end p-2 border border-blue-500/10">
-                <span className="text-[10px] font-bold text-on-surface-variant/70">Profit</span>
+                <span className="text-[10px] font-bold text-on-surface-variant/70">Keuntungan</span>
                 <span className="text-sm font-extrabold text-blue-600">$4.2K</span>
               </div>
               <div className="h-16 bg-purple-500/10 rounded flex flex-col justify-end p-2 border border-purple-500/10">
-                <span className="text-[10px] font-bold text-on-surface-variant/70">Sales</span>
+                <span className="text-[10px] font-bold text-on-surface-variant/70">Penjualan</span>
                 <span className="text-sm font-extrabold text-purple-600">$8.9K</span>
               </div>
             </div>
@@ -59,17 +59,17 @@ export default function ModulesEcosystem() {
         return (
           <div className="flex-1 flex flex-col justify-between p-4 glass-panel rounded-2xl shadow-sm mt-4">
             <div className="flex items-center justify-between text-xs font-bold border-b border-border/10 pb-2 mb-2">
-              <span>Order Summary</span>
+              <span>Ringkasan Pesanan</span>
               <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-600">PRE-ORDER</span>
             </div>
             <div className="space-y-2 text-[10px] font-bold text-left">
               <div className="flex justify-between items-center opacity-85">
-                <span>#1002 - Uniqlo Shirt</span>
-                <span className="text-emerald-600 font-mono">Paid</span>
+                <span>#1002 - Kemeja Uniqlo</span>
+                <span className="text-emerald-600 font-mono">Lunas</span>
               </div>
               <div className="flex justify-between items-center opacity-85">
-                <span>#1003 - Nike Shoes</span>
-                <span className="text-amber-600 font-mono">Shipped</span>
+                <span>#1003 - Sepatu Nike</span>
+                <span className="text-amber-600 font-mono">Dikirim</span>
               </div>
             </div>
           </div>
@@ -78,8 +78,8 @@ export default function ModulesEcosystem() {
         return (
           <div className="flex-1 flex flex-col justify-between p-4 glass-panel rounded-2xl shadow-sm mt-4">
             <div className="flex items-center justify-between text-xs font-bold mb-2">
-              <span>Route Optimization</span>
-              <span className="text-[10px] font-semibold text-rose-500 font-mono">3 stops</span>
+              <span>Optimasi Rute</span>
+              <span className="text-[10px] font-semibold text-rose-500 font-mono">3 perhentian</span>
             </div>
             <div className="flex items-center justify-between gap-1.5 mt-2">
               <div className="w-8 h-8 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-[10px] font-bold">JKT</div>
@@ -94,10 +94,10 @@ export default function ModulesEcosystem() {
         return (
           <div className="flex-1 flex flex-col justify-between p-4 glass-panel rounded-2xl shadow-sm mt-4">
             <div className="grid grid-cols-2 gap-2">
-              <div className="aspect-video bg-[#FFD166]/10 rounded flex items-center justify-center text-[10px] font-bold border border-[#FFD166]/20">Active Users</div>
-              <div className="aspect-video bg-[#FFD166]/10 rounded flex items-center justify-center text-[10px] font-bold border border-[#FFD166]/20">Payments</div>
-              <div className="aspect-video bg-[#FFD166]/10 rounded flex items-center justify-center text-[10px] font-bold border border-[#FFD166]/20">Schedules</div>
-              <div className="aspect-video bg-[#FFD166]/10 rounded flex items-center justify-center text-[10px] font-bold border border-[#FFD166]/20">Broadcast</div>
+              <div className="aspect-video bg-[#FFD166]/10 rounded flex items-center justify-center text-[10px] font-bold border border-[#FFD166]/20">Pengguna Aktif</div>
+              <div className="aspect-video bg-[#FFD166]/10 rounded flex items-center justify-center text-[10px] font-bold border border-[#FFD166]/20">Pembayaran</div>
+              <div className="aspect-video bg-[#FFD166]/10 rounded flex items-center justify-center text-[10px] font-bold border border-[#FFD166]/20">Jadwal</div>
+              <div className="aspect-video bg-[#FFD166]/10 rounded flex items-center justify-center text-[10px] font-bold border border-[#FFD166]/20">Siaran WA</div>
             </div>
           </div>
         );
@@ -112,13 +112,13 @@ export default function ModulesEcosystem() {
       
       <div className="max-w-7xl mx-auto px-6 mb-16 relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div className="max-w-xl text-left">
-          <h2 className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Module Ecosystem</h2>
+          <h2 className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Ekosistem Modul</h2>
           <p className="font-sans font-extrabold text-3xl md:text-5xl text-on-surface leading-tight tracking-tight">
-            Seamless Integration for All Business Needs
+            Integrasi Mulus untuk Semua Kebutuhan Bisnis
           </p>
         </div>
         <p className="text-on-surface-variant font-medium text-base max-w-sm text-left">
-          Ready-to-use modules that automatically connect into your business digital system ecosystem.
+          Modul-modul siap pakai yang terhubung otomatis ke dalam ekosistem sistem digital bisnis Anda.
         </p>
       </div>
 
@@ -126,12 +126,12 @@ export default function ModulesEcosystem() {
         <div className="w-full flex justify-center py-20">
           <div className="flex items-center gap-2 text-on-surface-variant/60">
             <div className="w-2.5 h-2.5 rounded-full bg-primary animate-ping" />
-            <span className="text-sm font-semibold">Loading module ecosystem...</span>
+            <span className="text-sm font-semibold">Memuat ekosistem modul...</span>
           </div>
         </div>
       ) : error ? (
         <div className="w-full flex justify-center py-20">
-          <span className="text-sm text-error font-semibold">Failed to load modules. Please try again.</span>
+          <span className="text-sm text-error font-semibold">Gagal memuat modul. Silakan coba lagi.</span>
         </div>
       ) : (
         <div className="w-full flex gap-8 overflow-x-auto px-6 md:px-12 pb-12 snap-x snap-mandatory hide-scrollbar justify-start lg:justify-center relative z-10">

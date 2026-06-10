@@ -36,13 +36,13 @@ export default function FooterCTA() {
         />
 
         <h2 className="font-sans font-extrabold text-3xl md:text-5xl leading-tight mb-10 text-center relative z-10 max-w-3xl text-on-surface">
-          So, what digital system do you want to build?
+          Jadi, sistem digital apa yang ingin Anda bangun?
         </h2>
         <a
           className="inline-flex items-center gap-3 electric-gradient font-semibold px-8 py-3.5 rounded-full hover:scale-105 transition-all shadow-sm group relative z-10 text-base"
           href="#pricing"
         >
-          Get Started
+          Mulai Sekarang
           <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
         </a>
       </section>
@@ -55,14 +55,14 @@ export default function FooterCTA() {
             <span className="text-sm font-extrabold uppercase tracking-widest">LUVION AI</span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
-            <a className="hover:text-primary transition-colors" href="#">Privacy Policy</a>
-            <a className="hover:text-primary transition-colors" href="#">Terms of Service</a>
-            <a className="hover:text-primary transition-colors" href="#">Security</a>
+            <a className="hover:text-primary transition-colors" href="#">Kebijakan Privasi</a>
+            <a className="hover:text-primary transition-colors" href="#">Ketentuan Layanan</a>
+            <a className="hover:text-primary transition-colors" href="#">Keamanan</a>
             <a className="hover:text-primary transition-colors" href="#">Status</a>
-            <a className="hover:text-primary transition-colors" href="#">Contact</a>
+            <a className="hover:text-primary transition-colors" href="#">Kontak</a>
           </div>
           <div className="text-xs text-on-surface-variant/80">
-            © 2026 Luvion Web Platform. Built for the future of UMKM scale up.
+            © 2026 Platform Web Luvion. Dibangun untuk masa depan pertumbuhan UMKM.
           </div>
         </div>
       </div>

@@ -14,28 +14,28 @@ export default function FAQ() {
 
   const faqs: FAQItem[] = [
     {
-      question: 'What is Luvion?',
-      answer: 'Luvion is an AI-driven SaaS platform that makes it easy for businesses to instantly build digital ecosystems (cashier, stock, courier, pre-orders) through everyday language descriptions without needing to understand coding.',
+      question: 'Apa itu Luvion?',
+      answer: 'Luvion adalah platform SaaS berbasis AI yang memudahkan bisnis untuk membangun ekosistem digital secara instan (kasir, stok, kurir, pre-order) melalui deskripsi bahasa sehari-hari tanpa perlu memahami coding.',
     },
     {
-      question: 'How does Luvion AI work?',
-      answer: 'Simply type your workflow or business operational problem in the AI field in the Hero section. Our AI Copilot will analyze your needs, compile system module recommendations, and prepare them for deployment in less than 5 minutes.',
+      question: 'Bagaimana cara kerja Luvion AI?',
+      answer: 'Cukup ketik alur kerja atau masalah operasional bisnis Anda pada kolom AI di bagian Hero. AI kami akan menganalisis kebutuhan Anda, menyusun rekomendasi modul sistem, dan menyiapkannya untuk diluncurkan dalam waktu kurang dari 5 menit.',
     },
     {
-      question: 'Is my business data safe with Luvion?',
-      answer: 'Your data security is our priority. All communications are encrypted via SSL/TLS protocols, sensitive data is protected, and our database infrastructure is backed by secure and reliable cloud servers.',
+      question: 'Apakah data bisnis saya aman dengan Luvion?',
+      answer: 'Keamanan data Anda adalah prioritas kami. Semua komunikasi dienkripsi melalui protokol SSL/TLS, data sensitif dilindungi, dan infrastruktur database kami didukung oleh server cloud yang aman dan andal.',
     },
     {
-      question: 'Are there any hidden fees?',
-      answer: 'There are no hidden fees. Our pricing is highly transparent: The Starter Plan is free forever for 3 basic projects, the Pro Plan is a flat $20/month for unlimited projects, and the Enterprise Plan is tailored to your corporate SLA.',
+      question: 'Apakah ada biaya tersembunyi?',
+      answer: 'Tidak ada biaya tersembunyi. Harga kami sangat transparan: Paket Starter gratis selamanya untuk 3 proyek dasar, Paket Pro flat senilai $20/bulan untuk proyek tanpa batas, dan Paket Enterprise disesuaikan dengan SLA perusahaan Anda.',
     },
     {
-      question: 'Can I use my own domain?',
-      answer: 'Yes, on the Paid Pro Plan, you can fully connect your own custom domain (.com, .net, etc.), complete with automatic SSL certificate configuration from Luvion.',
+      question: 'Apakah saya bisa menggunakan domain sendiri?',
+      answer: 'Ya, pada Paket Paid Pro, Anda dapat sepenuhnya menghubungkan domain kustom Anda sendiri (.com, .net, dll.), lengkap dengan konfigurasi sertifikat SSL otomatis dari Luvion.',
     },
     {
-      question: 'What if I need technical assistance?',
-      answer: 'Starter Plan users get access to the community discussion forum. Meanwhile, Pro and Enterprise Plan users have priority 24/7 technical support directly from our engineering team.',
+      question: 'Bagaimana jika saya membutuhkan bantuan teknis?',
+      answer: 'Pengguna Paket Starter mendapatkan akses ke forum diskusi komunitas. Sementara itu, pengguna Paket Pro dan Enterprise memiliki dukungan teknis prioritas 24/7 langsung dari tim engineering kami.',
     },
   ];
 
@@ -50,7 +50,7 @@ export default function FAQ() {
         <div className="lg:w-1/3 text-left">
           <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">FAQ</h2>
           <h3 className="font-sans font-extrabold text-3xl md:text-5xl text-on-surface leading-[1.1] sticky top-32">
-            Frequently Asked Questions
+            Pertanyaan yang Sering Diajukan
           </h3>
         </div>
 

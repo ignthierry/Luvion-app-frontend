@@ -11,10 +11,10 @@ export default function Navbar() {
         <span className="text-foreground font-extrabold tracking-tight uppercase">Luvion</span>
       </a>
       <div className="hidden md:flex items-center gap-8">
-        <a className="text-primary font-bold hover:opacity-80 transition-opacity text-sm" href="#features">Product</a>
-        <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm" href="#features">Use Cases</a>
-        <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm" href="#modules">Resources</a>
-        <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm" href="#pricing">Pricing</a>
+        <a className="text-primary font-bold hover:opacity-80 transition-opacity text-sm" href="#features">Produk</a>
+        <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm" href="#features">Solusi</a>
+        <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm" href="#modules">Sumber Daya</a>
+        <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm" href="#pricing">Harga</a>
         <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm" href="#pricing">Enterprise</a>
       </div>
       <div className="flex items-center gap-4">
@@ -22,7 +22,7 @@ export default function Navbar() {
           <Globe className="h-4 w-4" />
         </button>
         <a className="electric-gradient font-semibold px-5 py-2 rounded-full text-sm hover:scale-[1.03] active:scale-[0.97]" href="#pricing">
-          Start Building
+          Mulai Bangun
         </a>
       </div>
     </nav>
