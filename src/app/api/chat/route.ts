@@ -1,15 +1,60 @@
 import { NextResponse } from 'next/server';
+import { createUIMessageStreamResponse } from 'ai';
 
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
-    const lastMessage = messages[messages.length - 1]?.content || '';
+    const lastMsgObj = messages[messages.length - 1];
+    
+    let lastMessage = '';
+    if (lastMsgObj) {
+      if (typeof lastMsgObj.content === 'string' && lastMsgObj.content.trim() !== '') {
+        lastMessage = lastMsgObj.content;
+      } else if (lastMsgObj.parts && Array.isArray(lastMsgObj.parts)) {
+        lastMessage = lastMsgObj.parts
+          .filter((part: any) => part.type === 'text')
+          .map((part: any) => part.text)
+          .join('');
+      } else if (lastMsgObj.text) { 
+        lastMessage = lastMsgObj.text;
+      }
+    }
 
-    // Analyze input for scale keywords to determine best tier recommendation
+    // Send the message to n8n webhook
+    const n8nWebhookUrl = 'https://n8n.luvion.my.id/webhook/97d6eb68-bb95-4396-a0a6-42668e2d9d2a/chat';
+    
+    let textResponse = '';
+    try {
+      const n8nResponse = await fetch(n8nWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chatInput: lastMessage,
+          messages: messages,
+          sessionId: 'luvion-chat-session'
+        }),
+      });
+
+      if (!n8nResponse.ok) {
+        throw new Error(`n8n webhook error: ${n8nResponse.status} ${n8nResponse.statusText}`);
+      }
+
+      // Try to parse JSON or fallback to text
+      const contentType = n8nResponse.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const json = await n8nResponse.json();
+        textResponse = json.output || json.text || json.response || json.message || JSON.stringify(json);
+      } else {
+        textResponse = await n8nResponse.text();
+      }
+    } catch (n8nErr: any) {
+      console.error('Error fetching from n8n:', n8nErr);
+      textResponse = "Maaf, saat ini AI Luvion sedang mengalami gangguan dalam terhubung ke server n8n kami. Silakan coba beberapa saat lagi.";
+    }
+
     let recommendedTier = 'Starter';
-    let recommendedModules = ['Finance Ledger'];
-    let explanation = '';
-
     const lowerInput = lastMessage.toLowerCase();
 
     if (
@@ -23,8 +68,6 @@ export async function POST(req: Request) {
       lowerInput.includes('kurir')
     ) {
       recommendedTier = 'Pro';
-      recommendedModules = ['Finance Ledger', 'Pospro/Jastip Pro', 'Gym Pro'];
-      explanation = 'Rekomendasi Paket: **Paid Pro ($20/bln)**.\nSistem mendeteksi kebutuhan pengelolaan inventaris multi-gudang/kurir dan skala transaksi tinggi, yang membutuhkan kustom domain sendiri serta Advanced AI Automation untuk sinkronisasi ekosistem.';
     } else if (
       lowerInput.includes('enterprise') ||
       lowerInput.includes('corporate') ||
@@ -34,52 +77,31 @@ export async function POST(req: Request) {
       lowerInput.includes('korporat')
     ) {
       recommendedTier = 'Enterprise';
-      recommendedModules = ['Finance Ledger', 'Pospro/Jastip Pro', 'Travel Planner', 'Gym Pro'];
-      explanation = 'Rekomendasi Paket: **Enterprise (Custom SLA)**.\nKebutuhan integrasi model AI kustom untuk bisnis mandiri, multi-domain, dedicated environment, serta dukungan Dedicated Account Manager cocok untuk solusi khusus tim Enterprise Luvion.';
     } else {
       recommendedTier = 'Starter';
-      recommendedModules = ['Finance Ledger'];
-      explanation = 'Rekomendasi Paket: **Starter ($0/Free)**.\nSistem merekomendasikan paket Starter untuk memulai digitalisasi bisnis Anda dengan maksimal 3 proyek aktif, basic LLM integration, dan subdomain Luvion.';
     }
 
-    const textResponse = `Halo! Terima kasih telah menjelaskan kebutuhan bisnis Anda. 
+    // Append hidden tag to trigger highlight
+    const finalResponse = textResponse + `\n\n__HIGHLIGHT_TIER__${recommendedTier}__`;
 
-Analisis AI Luvion untuk bisnis Anda:
-- **Kebutuhan Sistem**: "${lastMessage}"
-- **Modul Rekomendasi**: ${recommendedModules.map(m => `\`${m}\``).join(', ')}
-- **Estimasi Waktu Deployment**: ~5 menit (Instan via Luvion Engine)
-
-${explanation}
-
-Anda dapat melihat detail dari paket ini di bawah pada bagian pricing. Kami telah memberikan highlight khusus pada paket yang kami rekomendasikan untuk Anda.`;
-
+    // Stream chunks back using plain text streaming for maximum compatibility
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
-        // Stream text chunks following the Vercel AI SDK Data Stream protocol:
-        // Format: 0:"text_chunk"\n
-        const words = textResponse.split(/(\s+)/);
+        const words = finalResponse.split(/(\s+)/);
         for (const word of words) {
           if (word) {
-            const dataStreamChunk = `0:${JSON.stringify(word)}\n`;
-            controller.enqueue(encoder.encode(dataStreamChunk));
-            await new Promise((resolve) => setTimeout(resolve, 15)); // simulate network delay
+            controller.enqueue(encoder.encode(word));
+            await new Promise((resolve) => setTimeout(resolve, 20)); // typing delay
           }
         }
-        
-        // Append hidden tag to trigger highlight
-        const finalTag = `\n\n__HIGHLIGHT_TIER__${recommendedTier}__`;
-        const tagChunk = `0:${JSON.stringify(finalTag)}\n`;
-        controller.enqueue(encoder.encode(tagChunk));
-        
         controller.close();
-      },
+      }
     });
 
     return new Response(stream, {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'X-Vercel-AI-Data-Stream': 'v1',
         'Transfer-Encoding': 'chunked',
       },
     });

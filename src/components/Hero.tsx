@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useChat } from '@ai-sdk/react';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp, Plus, ToggleLeft, ToggleRight, Sparkles, Code, Calendar, ChevronRight } from 'lucide-react';
 
@@ -13,9 +13,51 @@ export default function Hero({ onRecommendTier }: HeroProps) {
   const [planEnabled, setPlanEnabled] = useState(true);
   const [input, setInput] = useState('');
   
-  // Vercel AI SDK v4 useChat defaults to '/api/chat' endpoint
-  const { messages, sendMessage, status } = useChat();
+  const [messages, setMessages] = useState<any[]>([]);
+  const [status, setStatus] = useState('ready');
   const isLoading = status === 'submitted' || status === 'streaming';
+
+  const sendMessage = async ({ text }: { text: string }) => {
+    const newMessages = [...messages, { role: 'user', content: text }];
+    setMessages(newMessages);
+    setStatus('submitted');
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+
+      setStatus('streaming');
+      
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = '';
+      
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          assistantContent += chunk;
+          
+          setMessages(prev => {
+            const copy = [...prev];
+            copy[copy.length - 1].content = assistantContent;
+            return copy;
+          });
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Maaf, terjadi kesalahan jaringan.' }]);
+    } finally {
+      setStatus('ready');
+    }
+  };
 
   // Recommended prompt templates for UMKM
   const templates = [
@@ -72,7 +114,6 @@ export default function Hero({ onRecommendTier }: HeroProps) {
   const cleanMessageContent = (content: string) => {
     return content.replace(/__HIGHLIGHT_TIER__(Starter|Pro|Enterprise)__/, '');
   };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
   };
@@ -84,6 +125,17 @@ export default function Hero({ onRecommendTier }: HeroProps) {
     sendMessage({ text: input });
     setInput('');
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!input.trim() || isLoading) return;
+      sendMessage({ text: input });
+      setInput('');
+    }
+  };
+
+
 
   return (
     <section className="relative pt-40 pb-24 px-6 min-h-[95vh] flex flex-col items-center justify-center text-center overflow-hidden bg-background">
@@ -129,54 +181,57 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         Luvion helps you design digital systems like Dashboards, Websites, & business module ecosystems. Describe your business problem below, our AI will analyze your needs in real-time!
       </motion.p>
 
-      {/* Prompt Area */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="w-full max-w-3xl glass-panel rounded-[2rem] p-6 mb-8 hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] transition-all"
-      >
-        <form onSubmit={handleSubmitForm} className="flex flex-col gap-4">
-          <textarea
-            value={input}
-            onChange={handleInputChange}
-            maxLength={500}
-            className="w-full bg-transparent border-none resize-none text-base md:text-lg text-on-surface placeholder:text-outline/70 focus:outline-none focus:ring-0 min-h-[90px] hide-scrollbar"
-            placeholder="Describe your business problem here... (e.g., 'I run a retail clothing store and want to track inventory across 3 branches')"
-          />
-          <div className="flex items-center justify-between pt-4 border-t border-white/40 dark:border-white/10">
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                className="p-2.5 rounded-full hover:bg-white/50 dark:hover:bg-white/10 transition-colors text-on-surface-variant flex items-center justify-center border border-transparent hover:border-white/20"
-              >
-                <Plus className="h-5 w-5" />
-              </button>
-              <div
-                onClick={() => setPlanEnabled(!planEnabled)}
-                className="flex items-center gap-2 bg-white/60 dark:bg-white/10 border border-white/80 dark:border-white/10 rounded-full px-4 py-1.5 cursor-pointer shadow-sm hover:bg-white/80 transition-colors"
-              >
-                <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">AI Planner</span>
-                {planEnabled ? (
-                  <ToggleRight className="h-6 w-6 text-primary" />
-                ) : (
-                  <ToggleLeft className="h-6 w-6 text-on-surface-variant/40" />
-                )}
+      {/* Initial Prompt Area - shown only before first message */}
+      {messages.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="w-full max-w-3xl glass-panel rounded-[2rem] p-6 mb-8 hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] transition-all"
+        >
+          <form onSubmit={handleSubmitForm} className="flex flex-col gap-4">
+            <textarea
+              value={input}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              maxLength={500}
+              className="w-full bg-transparent border-none resize-none text-base md:text-lg text-on-surface placeholder:text-outline/70 focus:outline-none focus:ring-0 min-h-[90px] hide-scrollbar"
+              placeholder="Describe your business problem here... (e.g., 'I run a retail clothing store and want to track inventory across 3 branches')"
+            />
+            <div className="flex items-center justify-between pt-4 border-t border-white/40 dark:border-white/10">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  className="p-2.5 rounded-full hover:bg-white/50 dark:hover:bg-white/10 transition-colors text-on-surface-variant flex items-center justify-center border border-transparent hover:border-white/20"
+                >
+                  <Plus className="h-5 w-5" />
+                </button>
+                <div
+                  onClick={() => setPlanEnabled(!planEnabled)}
+                  className="flex items-center gap-2 bg-white/60 dark:bg-white/10 border border-white/80 dark:border-white/10 rounded-full px-4 py-1.5 cursor-pointer shadow-sm hover:bg-white/80 transition-colors"
+                >
+                  <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">AI Planner</span>
+                  {planEnabled ? (
+                    <ToggleRight className="h-6 w-6 text-primary" />
+                  ) : (
+                    <ToggleLeft className="h-6 w-6 text-on-surface-variant/40" />
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-on-surface-variant/60 font-semibold">{input.length}/500</span>
+                <button
+                  type="submit"
+                  disabled={isLoading || !input.trim()}
+                  className="electric-gradient rounded-full w-12 h-12 flex items-center justify-center shadow-sm hover:scale-[1.05] disabled:scale-95 disabled:opacity-50 transition-all cursor-pointer"
+                >
+                  <ArrowUp className="h-5 w-5" />
+                </button>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-on-surface-variant/60 font-semibold">{input.length}/500</span>
-              <button
-                type="submit"
-                disabled={isLoading || !input.trim()}
-                className="electric-gradient rounded-full w-12 h-12 flex items-center justify-center shadow-sm hover:scale-[1.05] disabled:scale-95 disabled:opacity-50 transition-all cursor-pointer"
-              >
-                <ArrowUp className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        </form>
-      </motion.div>
+          </form>
+        </motion.div>
+      )}
 
       {/* Quick Suggestions */}
       <motion.div
@@ -207,23 +262,24 @@ export default function Hero({ onRecommendTier }: HeroProps) {
             transition={{ type: 'spring', stiffness: 100, damping: 20 }}
             className="w-full max-w-4xl mt-16"
           >
-            <div className="relative rounded-[2rem] glass-panel overflow-hidden min-h-[400px] flex flex-col md:flex-row">
-              {/* Left Column: Chat response text */}
-              <div className="p-8 flex-1 flex flex-col justify-start text-left border-b md:border-b-0 md:border-r border-white/40 dark:border-white/10 max-h-[500px] overflow-y-auto hide-scrollbar">
-                <div className="flex items-center gap-3 mb-6">
+            <div className="relative rounded-[2rem] glass-panel overflow-hidden min-h-[400px] flex flex-col">
+              {/* Chat header */}
+              <div className="px-8 pt-6 pb-4 border-b border-white/20 dark:border-white/5">
+                <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/15 border border-primary/20 flex items-center justify-center">
                     <Sparkles className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <span className="block text-xs font-bold text-on-surface-variant/60 uppercase tracking-wider">Luvion AI Copilot</span>
                     <span className="text-xs font-bold text-primary">Interactive Workspace</span>
                   </div>
                 </div>
+              </div>
 
+              {/* Chat messages */}
+              <div className="p-8 flex-1 flex flex-col justify-start text-left max-h-[500px] overflow-y-auto hide-scrollbar">
                 <div className="space-y-6 font-sans text-sm md:text-base leading-relaxed flex-1">
                   {messages.map((m, idx) => {
-                    const text = getMessageText(m);
-                    if (!text) return null;
+                    const text = getMessageText(m) || m.content || JSON.stringify(m);
                     const isUser = m.role === 'user';
 
                     if (isUser) {
@@ -247,9 +303,9 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                             <Sparkles className="h-4 w-4 text-primary" />
                           </div>
                           <div className="flex-1 flex flex-col items-start">
-                            <span className="text-[10px] font-bold text-primary uppercase mb-1">Luvion AI Copilot</span>
+                            <span className="text-[10px] font-bold text-primary uppercase mb-1">Luvion AI</span>
                             <div className="bg-white/50 dark:bg-white/5 border border-white/60 dark:border-white/10 text-on-surface rounded-2xl rounded-tl-none p-4 max-w-[85%] text-left font-medium">
-                              {cleanMessageContent(text)}
+                              {cleanMessageContent(text || m.content || JSON.stringify(m))}
                             </div>
                           </div>
                         </div>
@@ -264,53 +320,36 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                       <span>AI is thinking...</span>
                     </div>
                   )}
+                  <div ref={chatEndRef} />
                 </div>
               </div>
 
-              {/* Right Column: AI Canvas / App Visual Preview */}
-              <div className="flex-1 bg-white/15 dark:bg-white/2 dotted-grid relative overflow-hidden flex items-center justify-center p-8 min-h-[300px]">
-                {/* Visual Canvas Elements */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-tertiary/5" />
-                <div className="relative z-10 w-full max-w-xs glass-panel rounded-[1.5rem] p-6 overflow-hidden flex flex-col">
-                  {/* Mock dashboard headers */}
-                  <div className="flex items-center justify-between pb-4 border-b border-border/10 mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 text-primary">
-                        <Code className="h-4.5 w-4.5" />
-                      </div>
-                      <div>
-                        <span className="block text-xs font-extrabold text-on-surface leading-none">Luvion App</span>
-                        <span className="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest">Workspace</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[9px] font-bold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                      READY
-                    </div>
-                  </div>
-
-                  {/* Modules indicators */}
-                  <div className="space-y-3 flex-1 text-left">
-                    <span className="text-[10px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Integrated Modules:</span>
-                    <div className="p-2.5 rounded-xl bg-white/80 dark:bg-white/5 border border-white/50 dark:border-white/5 flex items-center justify-between shadow-sm">
-                      <span className="text-xs font-semibold text-on-surface">Finance Ledger v1.0</span>
-                      <span className="text-[10px] font-bold text-[#556500] bg-secondary-container/50 px-1.5 py-0.5 rounded">ACTIVE</span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-white/40 dark:bg-white/2 border border-white/50 dark:border-white/5 flex items-center justify-between">
-                      <span className="text-xs font-semibold text-on-surface-variant/75">WhatsApp Automator</span>
-                      <span className="text-[10px] font-bold text-[#326578] bg-tertiary-container/30 px-1.5 py-0.5 rounded">READY</span>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 pt-4 border-t border-border/10 flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-on-surface-variant/60 flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5" /> Deployment time: ~5m
-                    </span>
-                    <a href="#pricing" className="text-[10px] font-extrabold text-primary flex items-center gap-0.5 hover:underline uppercase tracking-wider">
-                      Setup <ChevronRight className="h-3 w-3" />
-                    </a>
-                  </div>
-                </div>
+              {/* Chat input at bottom of workspace */}
+              <div className="px-6 py-4 border-t border-white/20 dark:border-white/5">
+                <form onSubmit={handleSubmitForm} className="flex items-end gap-3">
+                  <textarea
+                    value={input}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    maxLength={500}
+                    rows={1}
+                    className="flex-1 bg-white/40 dark:bg-white/5 border border-white/60 dark:border-white/10 rounded-2xl px-4 py-3 resize-none text-sm md:text-base text-on-surface placeholder:text-outline/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all hide-scrollbar"
+                    placeholder="Type your message... (Enter to send, Shift+Enter for new line)"
+                    style={{ maxHeight: '120px', minHeight: '44px' }}
+                    onInput={(e) => {
+                      const target = e.target as HTMLTextAreaElement;
+                      target.style.height = '44px';
+                      target.style.height = Math.min(target.scrollHeight, 120) + 'px';
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={isLoading || !input.trim()}
+                    className="electric-gradient rounded-full w-11 h-11 flex items-center justify-center shadow-sm hover:scale-[1.05] disabled:scale-95 disabled:opacity-50 transition-all cursor-pointer shrink-0"
+                  >
+                    <ArrowUp className="h-5 w-5" />
+                  </button>
+                </form>
               </div>
             </div>
           </motion.div>
