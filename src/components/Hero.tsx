@@ -138,10 +138,25 @@ export default function Hero({ onRecommendTier }: HeroProps) {
 
 
   return (
-    <section className="relative pt-40 pb-24 px-6 min-h-[95vh] flex flex-col items-center justify-center text-center overflow-hidden">
+    <section 
+      className="relative pt-40 pb-24 px-6 min-h-[95vh] flex flex-col items-center justify-center text-center overflow-hidden group/hero"
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      }}
+    >
       {/* Background gradients */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-tertiary/5 to-transparent -z-10" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-primary/10 to-tertiary/10 rounded-full blur-[120px] -z-15" />
+      
+      {/* Interactive glow following the mouse */}
+      <div
+        className="absolute inset-0 -z-10 pointer-events-none opacity-0 group-hover/hero:opacity-100 transition-opacity duration-500"
+        style={{
+          background: `radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 88, 188, 0.35), rgba(141, 34, 192, 0.25), transparent 90%)`,
+        }}
+      />
 
       {/* Feature Badge */}
       <motion.div
