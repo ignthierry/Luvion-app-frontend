@@ -9,16 +9,28 @@ export default function ValueProp() {
     <section id="features" className="py-24 px-6 bg-surface-container-low/30 relative border-t border-b border-border/15">
       <div className="max-w-7xl mx-auto space-y-32">
         {/* Header */}
-        <div className="text-center max-w-2xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-2xl mx-auto"
+        >
           <h2 className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Keunggulan Utama</h2>
           <p className="font-sans font-extrabold text-3xl md:text-5xl text-on-surface leading-tight tracking-tight">
             Digitalisasi Bisnis Tanpa Hambatan Teknis
           </p>
-        </div>
+        </motion.div>
 
         {/* Feature 1 */}
         <div className="flex flex-col md:flex-row items-center gap-16 min-h-[500px]">
-          <div className="flex-1 flex flex-col justify-center space-y-6 text-left">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex-1 flex flex-col justify-center space-y-6 text-left"
+          >
             <span className="text-xs font-bold text-on-surface-variant/60 tracking-widest uppercase">01 / 02</span>
             <h3 className="font-sans font-extrabold text-2xl md:text-4xl text-on-surface leading-tight">
               Jelaskan Ide Sistem Anda, Luvion yang Membangun
@@ -34,9 +46,15 @@ export default function ValueProp() {
                 <BarChart2 className="h-4 w-4" /> Visualisasi waktu nyata
               </div>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="flex-1 w-full relative overflow-hidden flex items-center justify-center rounded-[2rem] min-h-[400px] dotted-grid">
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex-1 w-full relative overflow-hidden flex items-center justify-center rounded-[2rem] min-h-[400px] dotted-grid"
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-surface-bright/50 to-tertiary/5 -z-10" />
             <div className="w-[85%] glass-panel p-6 space-y-6">
               <div className="flex items-center justify-between border-b border-border/10 pb-4">
@@ -64,12 +82,18 @@ export default function ValueProp() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Feature 2 */}
         <div className="flex flex-col md:flex-row-reverse items-center gap-16 min-h-[500px]">
-          <div className="flex-1 flex flex-col justify-center space-y-6 text-left">
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex-1 flex flex-col justify-center space-y-6 text-left"
+          >
             <span className="text-xs font-bold text-on-surface-variant/60 tracking-widest uppercase">02 / 02</span>
             <h3 className="font-sans font-extrabold text-2xl md:text-4xl text-on-surface leading-tight">
               Infrastruktur Backend Otomatis & Aman
@@ -85,9 +109,15 @@ export default function ValueProp() {
                 <Server className="h-4 w-4" /> Migrasi Database Edge
               </div>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="flex-1 w-full relative overflow-hidden flex items-center justify-center rounded-[2rem] min-h-[400px] dotted-grid">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex-1 w-full relative overflow-hidden flex items-center justify-center rounded-[2rem] min-h-[400px] dotted-grid"
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-tertiary/5 via-surface-bright/50 to-primary/5 -z-10" />
             <div className="w-[85%] glass-panel p-6 space-y-5">
               <div className="flex items-center justify-between border-b border-border/10 pb-4">
@@ -123,7 +153,7 @@ export default function ValueProp() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

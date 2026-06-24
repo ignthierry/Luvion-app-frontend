@@ -3,6 +3,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Wallet, Package, MapPin, Activity, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface ModuleItem {
   id: string;
@@ -107,19 +108,31 @@ export default function ModulesEcosystem() {
   };
 
   return (
-    <section id="modules" className="py-24 bg-surface relative overflow-hidden">
+    <section id="modules" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 dotted-grid opacity-30" />
       
       <div className="max-w-7xl mx-auto px-6 mb-16 relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div className="max-w-xl text-left">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="max-w-xl text-left"
+        >
           <h2 className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Ekosistem Modul</h2>
           <p className="font-sans font-extrabold text-3xl md:text-5xl text-on-surface leading-tight tracking-tight">
             Integrasi Mulus untuk Semua Kebutuhan Bisnis
           </p>
-        </div>
-        <p className="text-on-surface-variant font-medium text-base max-w-sm text-left">
+        </motion.div>
+        <motion.p 
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-on-surface-variant font-medium text-base max-w-sm text-left"
+        >
           Modul-modul siap pakai yang terhubung otomatis ke dalam ekosistem sistem digital bisnis Anda.
-        </p>
+        </motion.p>
       </div>
 
       {isLoading ? (
@@ -135,11 +148,15 @@ export default function ModulesEcosystem() {
         </div>
       ) : (
         <div className="w-full flex gap-8 overflow-x-auto px-6 md:px-12 pb-12 snap-x snap-mandatory hide-scrollbar justify-start lg:justify-center relative z-10">
-          {modules?.map((mod) => {
+          {modules?.map((mod, index) => {
             const IconComponent = iconMap[mod.icon] || Wallet;
             return (
-              <div
+              <motion.div
                 key={mod.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="snap-center shrink-0 w-[320px] md:w-[350px] min-h-[420px] glass-panel rounded-[2rem] p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-300 group relative overflow-hidden"
               >
                 <div className={`absolute inset-0 opacity-30 ${mod.bgGrad} -z-10`} />
@@ -161,7 +178,7 @@ export default function ModulesEcosystem() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent -z-10" />
                   {renderDemoContent(mod.demoType)}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

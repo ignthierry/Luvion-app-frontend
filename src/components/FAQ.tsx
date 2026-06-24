@@ -44,23 +44,33 @@ export default function FAQ() {
   };
 
   return (
-    <section id="faq" className="py-24 px-6 bg-surface relative">
+    <section id="faq" className="py-24 px-6 relative">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16">
         {/* Left Column */}
-        <div className="lg:w-1/3 text-left">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="lg:w-1/3 text-left"
+        >
           <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">FAQ</h2>
           <h3 className="font-sans font-extrabold text-3xl md:text-5xl text-on-surface leading-[1.1] sticky top-32">
             Pertanyaan yang Sering Diajukan
           </h3>
-        </div>
+        </motion.div>
 
         {/* Right Column: Accordion */}
         <div className="lg:w-2/3 flex flex-col gap-4">
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
-              <div
+              <motion.div
                 key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
                 className="border-b border-border/20 py-4 transition-all"
               >
                 <button
@@ -90,7 +100,7 @@ export default function FAQ() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             );
           })}
         </div>

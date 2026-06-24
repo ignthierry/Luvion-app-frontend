@@ -5,7 +5,7 @@ export async function GET() {
     {
       id: 'Starter',
       name: 'Starter',
-      subtitle: 'UMKM Pemula',
+      subtitle: 'Starter',
       price: 'Rp 0',
       priceSuffix: '/bulan pertama',
       description: 'Gratis 1 bulan pertama, selanjutnya Rp 50.000/bulan. Fokus pada tampilan yang menarik dan order lebih cepat.',
@@ -23,12 +23,13 @@ export async function GET() {
     {
       id: 'Pro',
       name: 'Paid Pro',
-      subtitle: 'UMKM Scale-Up',
-      price: 'Rp 0',
-      priceSuffix: '/bulan pertama',
-      description: 'Gratis 1 bulan pertama, selanjutnya Rp 100.000/bulan.',
+      subtitle: 'Scale-Up',
+      originalPrice: 'Rp 150.000',
+      price: 'Rp 50.000',
+      priceSuffix: '/bulan',
+      description: 'Harga promo untuk 3 bulan pertama, selanjutnya Rp 150.000/bulan.',
       features: [
-        'Selanjutnya Rp 100.000 / bulan',
+        'Selanjutnya Rp 150.000 / bulan',
         'Opsi Bayar Tahunan: Diskon 25%',
         'Seluruh Fitur Versi Starter',
         'Aplikasi Manajemen Pendukung Bisnis',

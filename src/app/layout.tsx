@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import CustomCursor from "@/components/CustomCursor";
+import ParticleBackground from "@/components/ui/ParticleBackground";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
         className={`${plusJakartaSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
       >
         <Providers>
+          <ParticleBackground />
           {children}
           <CustomCursor />
         </Providers>
