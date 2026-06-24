@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Wallet, Package, MapPin, Activity, ArrowRight } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ModuleItem {
@@ -11,16 +11,16 @@ interface ModuleItem {
   description: string;
   icon: string;
   color: string;
-  bgGrad: string;
-  demoType: string;
-  demoTitle: string;
+  bg_grad: string;
+  demo_type: string;
+  demo_title: string;
+  demo_link?: string | null;
 }
 
-const iconMap: Record<string, React.ComponentType<any>> = {
-  Wallet,
-  Package,
-  MapPin,
-  Activity,
+// Helper to render icon safely
+const IconRenderer = ({ name, className }: { name: string, className?: string }) => {
+  const IconComponent = (LucideIcons as any)[name] || LucideIcons.Box;
+  return <IconComponent className={className} />;
 };
 
 async function fetchModules(): Promise<ModuleItem[]> {
@@ -149,7 +149,6 @@ export default function ModulesEcosystem() {
       ) : (
         <div className="w-full flex gap-8 overflow-x-auto px-6 md:px-12 pb-12 snap-x snap-mandatory hide-scrollbar justify-start lg:justify-center relative z-10">
           {modules?.map((mod, index) => {
-            const IconComponent = iconMap[mod.icon] || Wallet;
             return (
               <motion.div
                 key={mod.id}
@@ -159,11 +158,11 @@ export default function ModulesEcosystem() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="snap-center shrink-0 w-[320px] md:w-[350px] min-h-[420px] glass-panel rounded-[2rem] p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-300 group relative overflow-hidden"
               >
-                <div className={`absolute inset-0 opacity-30 ${mod.bgGrad} -z-10`} />
+                <div className={`absolute inset-0 opacity-30 ${mod.bg_grad} -z-10`} />
                 {/* Header */}
                 <div className="text-left flex flex-col gap-4">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border ${mod.color}`}>
-                    <IconComponent className="h-6 w-6" />
+                    <IconRenderer name={mod.icon} className="h-6 w-6" />
                   </div>
                   <div>
                     <h3 className="font-sans font-extrabold text-xl text-on-surface">{mod.name}</h3>
@@ -174,10 +173,25 @@ export default function ModulesEcosystem() {
                 </div>
 
                 {/* Simulated workspace preview */}
-                <div className={`w-full aspect-[4/3] rounded-2xl overflow-hidden p-4 ${mod.bgGrad} flex flex-col justify-end relative border border-border/10 mt-6`}>
+                <div className={`w-full aspect-[4/3] rounded-2xl overflow-hidden p-4 ${mod.bg_grad} flex flex-col justify-end relative border border-border/10 mt-6`}>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent -z-10" />
-                  {renderDemoContent(mod.demoType)}
+                  {renderDemoContent(mod.demo_type)}
                 </div>
+
+                {/* Demo Link Button */}
+                {mod.demo_link && (
+                  <div className="mt-6">
+                    <a
+                      href={mod.demo_link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group w-full py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 glass-panel text-on-surface border border-primary/30 hover:border-primary hover:bg-primary/5 shadow-sm"
+                    >
+                      Coba Demo Project
+                      <LucideIcons.ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </a>
+                  </div>
+                )}
               </motion.div>
             );
           })}
