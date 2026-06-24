@@ -31,6 +31,7 @@ export async function POST(req: Request) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          action: 'sendMessage',
           chatInput: lastMessage,
           messages: messages,
           sessionId: 'luvion-chat-session'
@@ -51,7 +52,7 @@ export async function POST(req: Request) {
       }
     } catch (n8nErr: any) {
       console.error('Error fetching from n8n:', n8nErr);
-      textResponse = "Maaf, saat ini AI Luvion sedang mengalami gangguan dalam terhubung ke server n8n kami. Silakan coba beberapa saat lagi.";
+      textResponse = "Maaf, saat ini AI Luvion sedang mengalami gangguan dalam terhubung ke server AI kami. Silakan coba beberapa saat lagi.";
     }
 
     let recommendedTier = 'Starter';

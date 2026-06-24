@@ -152,9 +152,9 @@ export default function Hero({ onRecommendTier }: HeroProps) {
       
       {/* Interactive glow following the mouse */}
       <div
-        className="absolute inset-0 -z-10 pointer-events-none opacity-0 group-hover/hero:opacity-100 transition-opacity duration-500"
+        className="absolute inset-0 -z-10 pointer-events-none opacity-10 group-hover/hero:opacity-100 transition-opacity duration-500"
         style={{
-          background: `radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 88, 188, 0.35), rgba(141, 34, 192, 0.25), transparent 90%)`,
+          background: `radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 88, 188, 0.15), rgba(141, 34, 192, 0.15), transparent 90%)`,
         }}
       />
 
