@@ -68,22 +68,41 @@ export default function FooterCTA() {
       </section>
 
       {/* Footer Links Section */}
-      <div className="bg-transparent w-full py-8 text-on-surface-variant font-medium relative z-20">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-border/15 pt-8">
-          <div className="font-sans font-black text-headline-md flex items-center gap-2 text-on-surface">
-            <img src="/logo2.png" alt="Luvion Logo" className="h-6 w-auto object-contain" />
-            <span className="text-sm font-extrabold uppercase tracking-widest">LUVION AI</span>
+      <div className="bg-transparent w-full py-12 text-on-surface-variant font-medium relative z-20">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-border/15 pt-10">
+          
+          {/* Logo and Contact Info */}
+          <div className="flex flex-col gap-4 items-center md:items-start text-center md:text-left">
+            <div className="font-sans font-black text-headline-md flex items-center gap-2 text-on-surface justify-center md:justify-start">
+              <img src="/logo2.png" alt="Luvion Logo" className="h-6 w-auto object-contain" />
+              <span className="text-sm font-extrabold uppercase tracking-widest">LUVION</span>
+            </div>
+            <div className="text-sm text-on-surface-variant/80 flex flex-col gap-1 mt-2">
+              <span className="font-bold text-on-surface mb-1">Developer Contact:</span>
+              <span>I Gusti Ngurah Thierry Agusta</span>
+              <span>Perum. Shojiland Blok EJ.02 Candi Sidoarjo</span>
+              <span>Telp/WA: 081357748559</span>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
-            <a className="hover:text-primary transition-colors" href="#">Kebijakan Privasi</a>
-            <a className="hover:text-primary transition-colors" href="#">Ketentuan Layanan</a>
-            <a className="hover:text-primary transition-colors" href="#">Keamanan</a>
-            <a className="hover:text-primary transition-colors" href="#">Status</a>
-            <a className="hover:text-primary transition-colors" href="https://wa.me/628197965599" target="_blank" rel="noreferrer">Kontak (WA)</a>
+
+          {/* Links */}
+          <div className="flex flex-col items-center md:items-start gap-4 text-sm">
+            <span className="font-bold text-on-surface mb-1">Tautan</span>
+            <div className="flex flex-col gap-3 items-center md:items-start">
+              <a className="hover:text-primary transition-colors" href="#">Kebijakan Privasi</a>
+              <a className="hover:text-primary transition-colors" href="#">Ketentuan Layanan</a>
+              <a className="hover:text-primary transition-colors" href="#">Keamanan</a>
+              <a className="hover:text-primary transition-colors" href="#">Status</a>
+              <a className="hover:text-primary transition-colors" href="https://wa.me/628197965599" target="_blank" rel="noreferrer">Kontak (WA)</a>
+            </div>
           </div>
-          <div className="text-xs text-on-surface-variant/80">
-            © 2026 Platform Web Luvion. Dibangun untuk masa depan pertumbuhan UMKM.
+
+          {/* Copyright */}
+          <div className="flex flex-col justify-end text-xs text-on-surface-variant/80 items-center md:items-end text-center md:text-right mt-6 md:mt-0">
+            <span>© 2026 Platform Web Luvion.</span>
+            <span>Dibangun untuk masa depan pertumbuhan UMKM.</span>
           </div>
+          
         </div>
       </div>
     </footer>

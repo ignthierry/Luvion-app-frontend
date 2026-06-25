@@ -18,7 +18,7 @@ export default function ParticleBackground() {
     const mouse = {
       x: null as number | null,
       y: null as number | null,
-      radius: 120,
+      radius: 220,
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -44,13 +44,13 @@ export default function ParticleBackground() {
       constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
-        this.size = Math.random() * 2 + 1;
-        this.vx = (Math.random() - 0.5) * 0.7;
-        this.vy = (Math.random() - 0.5) * 0.7;
+        this.size = Math.random() * 3 + 2;
+        this.vx = (Math.random() - 0.4) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
       }
 
       draw() {
-        ctx!.fillStyle = 'rgba(0, 88, 188, 0.5)';
+        ctx!.fillStyle = 'rgba(0, 88, 188, 0.8)';
         ctx!.beginPath();
         ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx!.closePath();
@@ -85,7 +85,7 @@ export default function ParticleBackground() {
 
     const initParticles = () => {
       particles = [];
-      let numberOfParticles = Math.min((canvas.width * canvas.height) / 12000, 150); // Limit max particles for performance
+      let numberOfParticles = Math.min((canvas.width * canvas.height) / 8000, 150); // Limit max particles for performance
       for (let i = 0; i < numberOfParticles; i++) {
         let x = Math.random() * canvas.width;
         let y = Math.random() * canvas.height;
@@ -102,9 +102,9 @@ export default function ParticleBackground() {
                 let dy = particles[a].y - particles[b].y;
                 let distance = dx * dx + dy * dy;
                 
-                if (distance < 12000) {
-                    opacityValue = 1 - (distance / 12000);
-                    ctx!.strokeStyle = `rgba(0, 88, 188, ${opacityValue * 0.2})`;
+                if (distance < 20000) {
+                    opacityValue = 1 - (distance / 20000);
+                    ctx!.strokeStyle = `rgba(0, 88, 188, ${opacityValue * 0.4})`;
                     ctx!.lineWidth = 1;
                     ctx!.beginPath();
                     ctx!.moveTo(particles[a].x, particles[a].y);
@@ -118,8 +118,8 @@ export default function ParticleBackground() {
                 let mx = particles[a].x - mouse.x;
                 let my = particles[a].y - mouse.y;
                 let mDistance = mx * mx + my * my;
-                if (mDistance < 25000) {
-                    ctx!.strokeStyle = `rgba(0, 88, 188, ${(1 - mDistance/25000) * 0.3})`;
+                if (mDistance < 35000) {
+                    ctx!.strokeStyle = `rgba(0, 88, 188, ${(1 - mDistance/35000) * 0.5})`;
                     ctx!.beginPath();
                     ctx!.moveTo(particles[a].x, particles[a].y);
                     ctx!.lineTo(mouse.x, mouse.y);
@@ -140,8 +140,14 @@ export default function ParticleBackground() {
     };
 
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const parent = canvas.parentElement;
+      if (parent) {
+        canvas.width = parent.clientWidth;
+        canvas.height = parent.clientHeight;
+      } else {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
       initParticles();
     };
 
@@ -160,7 +166,7 @@ export default function ParticleBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none -z-40 opacity-70"
+      className="absolute inset-0 w-full h-full pointer-events-none -z-40 opacity-50"
     />
   );
 }
