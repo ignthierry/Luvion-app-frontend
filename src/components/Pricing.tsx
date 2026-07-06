@@ -25,7 +25,13 @@ interface PricingProps {
 async function fetchPricing(): Promise<PricingTier[]> {
   const res = await fetch('/api/pricing');
   if (!res.ok) throw new Error('Network response was not ok');
-  return res.json();
+  const data = await res.json();
+  return data.map((tier: any) => ({
+    ...tier,
+    originalPrice: tier.original_price,
+    priceSuffix: tier.price_suffix,
+    highlightColor: tier.highlight_color
+  }));
 }
 
 export default function Pricing({ recommendedTier }: PricingProps) {
@@ -97,14 +103,14 @@ export default function Pricing({ recommendedTier }: PricingProps) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.15 }}
-                  className={`relative p-8 rounded-[2rem] transition-all duration-500 flex flex-col justify-between overflow-hidden glass-panel ${
+                  className={`relative p-8 rounded-[2rem] transition-all duration-500 flex flex-col justify-between overflow-hidden glass-panel hover:-translate-y-2 hover:scale-[1.05] hover:shadow-[0_30px_60px_-15px_rgba(0,88,188,0.2)] hover:z-20 ${
                     displayHighlight
                       ? 'border-primary ring-2 ring-primary/20 scale-[1.03] shadow-[0_24px_48px_-12px_rgba(0,88,188,0.1)] z-10'
-                      : 'opacity-90'
+                      : 'opacity-90 hover:opacity-100'
                   }`}
                 >
                   {/* Subtle Background Gradient */}
-                  <div className={`absolute inset-0 bg-gradient-to-b ${displayHighlight ? 'from-primary/10 via-transparent to-primary/5 dark:from-primary/20 dark:via-transparent dark:to-primary/10' : tier.highlightColor} -z-10`} />
+                  <div className={`absolute inset-0 bg-gradient-to-tr ${displayHighlight ? 'from-primary/10 via-purple-500/10 to-primary/5 dark:from-primary/20 dark:via-purple-500/10 dark:to-primary/10' : tier.highlightColor} -z-10 bg-[length:200%_200%] hover:animate-gradient transition-all duration-500`} />
 
                   {/* Badges */}
                   <div className="absolute top-4 right-4 flex flex-col gap-2">
@@ -142,6 +148,13 @@ export default function Pricing({ recommendedTier }: PricingProps) {
                         </span>
                         <span className="text-xs font-bold text-on-surface-variant/80 whitespace-nowrap">{tier.priceSuffix}</span>
                       </div>
+                      {tier.price !== 'Kustom' && (
+                        <div className="mt-2 inline-flex">
+                          <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                            ✨ Gratis 1 Bulan Pertama
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Features checklist */}
