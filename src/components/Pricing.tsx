@@ -78,7 +78,15 @@ export default function Pricing({ recommendedTier }: PricingProps) {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-5xl mx-auto">
-            {tiers?.map((tier, index) => {
+            {tiers?.slice().sort((a, b) => {
+              const getScore = (name: string) => {
+                const n = name.toLowerCase();
+                if (n.includes('starter')) return 1;
+                if (n.includes('pro')) return 2;
+                return 3;
+              };
+              return getScore(a.name) - getScore(b.name);
+            }).map((tier, index) => {
               const isRecommended = recommendedTier?.toLowerCase() === tier.id.toLowerCase();
               const displayHighlight = isRecommended || (tier.popular && !recommendedTier);
 
@@ -96,7 +104,7 @@ export default function Pricing({ recommendedTier }: PricingProps) {
                   }`}
                 >
                   {/* Subtle Background Gradient */}
-                  <div className={`absolute inset-0 bg-gradient-to-b ${tier.highlightColor} -z-10`} />
+                  <div className={`absolute inset-0 bg-gradient-to-b ${displayHighlight ? 'from-primary/10 via-transparent to-primary/5 dark:from-primary/20 dark:via-transparent dark:to-primary/10' : tier.highlightColor} -z-10`} />
 
                   {/* Badges */}
                   <div className="absolute top-4 right-4 flex flex-col gap-2">

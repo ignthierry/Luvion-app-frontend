@@ -102,6 +102,29 @@ export default function ModulesEcosystem() {
             </div>
           </div>
         );
+      case 'wms':
+        return (
+          <div className="flex-1 flex flex-col justify-between p-4 glass-panel rounded-2xl shadow-sm mt-4">
+            <div className="flex items-center justify-between text-xs font-bold border-b border-border/10 pb-2 mb-2">
+              <span>Status Inventaris</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600">STOK AMAN</span>
+            </div>
+            <div className="space-y-2 text-[10px] font-bold text-left mt-2">
+              <div className="flex justify-between items-center opacity-85">
+                <div className="flex items-center gap-1.5"><LucideIcons.Box className="w-3.5 h-3.5 text-blue-500" /> Rak A-12</div>
+                <span className="text-on-surface-variant">140 Unit</span>
+              </div>
+              <div className="flex justify-between items-center opacity-85">
+                <div className="flex items-center gap-1.5"><LucideIcons.PackageOpen className="w-3.5 h-3.5 text-amber-500" /> Rak B-04</div>
+                <span className="text-amber-500">12 Unit (Low)</span>
+              </div>
+              <div className="flex justify-between items-center opacity-85">
+                <div className="flex items-center gap-1.5"><LucideIcons.Truck className="w-3.5 h-3.5 text-emerald-500" /> Outbound</div>
+                <span className="text-emerald-500">Proses...</span>
+              </div>
+            </div>
+          </div>
+        );
       default:
         return null;
     }
@@ -182,7 +205,7 @@ export default function ModulesEcosystem() {
                 {mod.demo_link && (
                   <div className="mt-6">
                     <a
-                      href={mod.demo_link}
+                      href={mod.demo_link?.startsWith('http') ? mod.demo_link : `https://${mod.demo_link}`}
                       target="_blank"
                       rel="noreferrer"
                       className="group w-full py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 glass-panel text-on-surface border border-primary/30 hover:border-primary hover:bg-primary/5 shadow-sm"

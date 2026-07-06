@@ -312,6 +312,7 @@ export default function ModulesCMS() {
                     <option value="list">List / Daftar</option>
                     <option value="grid">Grid / Kartu</option>
                     <option value="travel">Travel Card</option>
+                    <option value="wms">WMS / Inventaris</option>
                   </select>
                 </div>
                 <div className="space-y-1 col-span-2">
