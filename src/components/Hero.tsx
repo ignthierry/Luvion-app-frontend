@@ -188,12 +188,6 @@ export default function Hero({ onRecommendTier }: HeroProps) {
             />
             <div className="flex items-center justify-between pt-4 border-t border-white/40 dark:border-white/10">
               <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  className="p-2.5 rounded-full hover:bg-white/50 dark:hover:bg-white/10 transition-colors text-on-surface-variant flex items-center justify-center border border-transparent hover:border-white/20"
-                >
-                  <Plus className="h-5 w-5" />
-                </button>
                 <div
                   onClick={() => setPlanEnabled(!planEnabled)}
                   className="flex items-center gap-2 bg-white/60 dark:bg-white/10 border border-white/80 dark:border-white/10 rounded-full px-4 py-1.5 cursor-pointer shadow-sm hover:bg-white/80 transition-colors"
