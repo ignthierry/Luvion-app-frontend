@@ -3,6 +3,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export default function FooterCTA() {
 
@@ -89,10 +90,10 @@ export default function FooterCTA() {
           <div className="flex flex-col items-center md:items-start gap-4 text-sm">
             <span className="font-bold text-on-surface mb-1">Tautan</span>
             <div className="flex flex-col gap-3 items-center md:items-start">
-              <a className="hover:text-primary transition-colors" href="#">Kebijakan Privasi</a>
-              <a className="hover:text-primary transition-colors" href="#">Ketentuan Layanan</a>
-              <a className="hover:text-primary transition-colors" href="#">Keamanan</a>
-              <a className="hover:text-primary transition-colors" href="#">Status</a>
+              <Link href="/privacy" className="hover:text-primary transition-colors">Kebijakan Privasi</Link>
+              <Link href="/terms" className="hover:text-primary transition-colors">Ketentuan Layanan</Link>
+              {/* <a className="hover:text-primary transition-colors" href="#">Keamanan</a>
+              <a className="hover:text-primary transition-colors" href="#">Status</a> */}
               <a className="hover:text-primary transition-colors" href="https://wa.me/628197965599" target="_blank" rel="noreferrer">Kontak (WA)</a>
             </div>
           </div>
@@ -100,7 +101,7 @@ export default function FooterCTA() {
           {/* Copyright */}
           <div className="flex flex-col justify-end text-xs text-on-surface-variant/80 items-center md:items-end text-center md:text-right mt-6 md:mt-0">
             <span>© 2026 Platform Web Luvion.</span>
-            <span>Dibangun untuk masa depan pertumbuhan UMKM.</span>
+            <span>Dibangun untuk masa depan pertumbuhan digital Indonesia.</span>
           </div>
           
         </div>
