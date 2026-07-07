@@ -22,7 +22,7 @@ async function fetchFaqs(): Promise<FAQItem[]> {
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { language, t } = useLanguage();
+  const { lang, t } = useLanguage();
   const { data: faqs = [], isLoading, error } = useQuery<FAQItem[]>({
     queryKey: ['faqs'],
     queryFn: fetchFaqs,
@@ -45,7 +45,7 @@ export default function FAQ() {
         >
           <h2 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">FAQ</h2>
           <h3 className="font-sans font-extrabold text-3xl md:text-5xl text-on-surface leading-[1.1] sticky top-32">
-            {language === 'en' ? 'Frequently Asked Questions' : 'Pertanyaan yang Sering Diajukan'}
+            {lang === 'EN' ? 'Frequently Asked Questions' : 'Pertanyaan yang Sering Diajukan'}
           </h3>
         </motion.div>
 
@@ -54,17 +54,17 @@ export default function FAQ() {
           {isLoading ? (
             <div className="flex items-center gap-2 text-on-surface-variant/60 py-10">
               <div className="w-2.5 h-2.5 rounded-full bg-primary animate-ping" />
-              <span className="text-sm font-semibold">{language === 'en' ? 'Loading FAQs...' : 'Memuat FAQ...'}</span>
+              <span className="text-sm font-semibold">{lang === 'EN' ? 'Loading FAQs...' : 'Memuat FAQ...'}</span>
             </div>
           ) : error ? (
             <div className="text-sm text-error font-semibold py-10">
-              {language === 'en' ? 'Failed to load FAQs.' : 'Gagal memuat FAQ.'}
+              {lang === 'EN' ? 'Failed to load FAQs.' : 'Gagal memuat FAQ.'}
             </div>
           ) : (
             faqs.map((faq, idx) => {
               const isOpen = openIndex === idx;
-              const question = language === 'en' ? faq.question_en : faq.question_id;
-              const answer = language === 'en' ? faq.answer_en : faq.answer_id;
+              const question = lang === 'EN' ? faq.question_en : faq.question_id;
+              const answer = lang === 'EN' ? faq.answer_en : faq.answer_id;
               
               return (
                 <motion.div
