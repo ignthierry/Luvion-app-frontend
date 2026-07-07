@@ -74,7 +74,7 @@ export default function FooterCTA() {
           {/* Logo and Contact Info */}
           <div className="flex flex-col gap-4 items-center md:items-start text-center md:text-left">
             <div className="font-sans font-black text-headline-md flex items-center gap-2 text-on-surface justify-center md:justify-start">
-              <img src="/logo2.png" alt="Luvion Logo" className="h-6 w-auto object-contain" />
+              <img src="/favicon-96x96.png" alt="Luvion Logo" className="h-6 w-auto object-contain" />
               <span className="text-sm font-extrabold uppercase tracking-widest">LUVION</span>
             </div>
             <div className="text-sm text-on-surface-variant/80 flex flex-col gap-1 mt-2">

@@ -89,7 +89,7 @@ export default function DashboardLayout({
         <div className="h-full flex flex-col">
           <div className="h-16 flex items-center px-6 border-b border-border/40">
             <Link href="/dashboard" className="flex items-center gap-3">
-              <img src="/logo2.png" alt="Luvion Logo" className="h-8 w-auto object-contain" />
+              <img src="/favicon-96x96.png" alt="Luvion Logo" className="h-8 w-auto object-contain" />
               <span className="font-extrabold text-xl tracking-tight uppercase text-foreground">Luvion</span>
             </Link>
             <button 

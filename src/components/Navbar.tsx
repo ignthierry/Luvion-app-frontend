@@ -31,7 +31,7 @@ export default function Navbar() {
   return (
     <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl glass-panel rounded-full z-50 flex justify-between items-center py-3 px-6">
       <a className="font-sans font-extrabold tracking-tighter text-primary flex items-center gap-2 text-xl" href="#">
-        <img src="/logo2.png" alt="Luvion Logo" className="h-8 w-auto object-contain" />
+        <img src="/favicon-96x96.png" alt="Luvion Logo" className="h-8 w-auto object-contain" />
         <span className="text-foreground font-extrabold tracking-tight uppercase">Luvion</span>
       </a>
       <div className="hidden md:flex items-center gap-8">

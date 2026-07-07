@@ -66,7 +66,7 @@ export default function LoginPage() {
         <div className="glass-panel rounded-3xl p-8 shadow-2xl relative z-10 w-full max-w-md mx-auto">
           <div className="text-center mb-8 flex flex-col items-center">
             <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <img src="/logo2.png" alt="Luvion Logo" className="h-10 w-auto object-contain" />
+              <img src="/favicon-96x96.png" alt="Luvion Logo" className="h-10 w-auto object-contain" />
               <span className="text-foreground font-extrabold tracking-tight uppercase text-2xl">Luvion</span>
             </Link>
             <h1 className="text-3xl font-extrabold text-foreground mb-2 tracking-tight">Selamat Datang</h1>
