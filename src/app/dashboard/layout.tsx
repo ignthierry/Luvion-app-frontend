@@ -12,7 +12,9 @@ import {
   Menu,
   X,
   CreditCard,
-  Box
+  Box,
+  HelpCircle,
+  ShoppingCart
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -51,18 +53,20 @@ export default function DashboardLayout({
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
     { name: "Users", href: "/dashboard/users", icon: Users },
     { name: "Modules", href: "/dashboard/modules", icon: Box },
     { name: "Pricing", href: "/dashboard/pricing", icon: CreditCard },
+    { name: "FAQ", href: "/dashboard/faq", icon: HelpCircle },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
   if (isCheckingAuth) {
-    return <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">Loading...</div>;
+    return <div className="min-h-screen bg-background flex items-center justify-center text-foreground">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex text-zinc-100">
+    <div className="min-h-screen bg-background flex text-foreground overflow-hidden">
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {isSidebarOpen && (
@@ -78,17 +82,15 @@ export default function DashboardLayout({
 
       {/* Sidebar */}
       <motion.aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-zinc-900/80 backdrop-blur-xl border-r border-white/10 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:block ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 glass-panel border-r border-border/40 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:block ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="h-full flex flex-col">
-          <div className="h-16 flex items-center px-6 border-b border-white/10">
+          <div className="h-16 flex items-center px-6 border-b border-border/40">
             <Link href="/dashboard" className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <span className="text-white font-bold text-sm tracking-tighter">L.</span>
-              </div>
-              <span className="font-bold text-lg tracking-tight">Luvion Admin</span>
+              <img src="/logo2.png" alt="Luvion Logo" className="h-8 w-auto object-contain" />
+              <span className="font-extrabold text-xl tracking-tight uppercase text-foreground">Luvion</span>
             </Link>
             <button 
               className="ml-auto lg:hidden text-zinc-400 hover:text-white"
@@ -105,23 +107,23 @@ export default function DashboardLayout({
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all font-semibold ${
                     isActive 
-                      ? "bg-blue-500/10 text-blue-400 font-medium" 
-                      : "text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
+                      ? "bg-primary/10 text-primary" 
+                      : "text-on-surface-variant hover:bg-surface/50 hover:text-foreground"
                   }`}
                 >
-                  <item.icon className={`w-5 h-5 ${isActive ? "text-blue-400" : "text-zinc-500"}`} />
+                  <item.icon className={`w-5 h-5 ${isActive ? "text-primary" : "text-on-surface-variant/70"}`} />
                   {item.name}
                 </Link>
               );
             })}
           </div>
 
-          <div className="p-4 border-t border-white/10">
+          <div className="p-4 border-t border-border/40">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-xl transition-colors"
+              className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-semibold text-error hover:bg-error/10 rounded-xl transition-colors"
             >
               <LogOut className="w-5 h-5" />
               Keluar
@@ -131,12 +133,13 @@ export default function DashboardLayout({
       </motion.aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative z-0">
         {/* Background Decorative */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full mix-blend-screen filter blur-[128px] pointer-events-none -z-10"></div>
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full mix-blend-screen filter blur-[128px] pointer-events-none -z-10"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full mix-blend-screen filter blur-[128px] pointer-events-none -z-10"></div>
         
         {/* Topbar */}
-        <header className="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-white/10 bg-zinc-950/50 backdrop-blur-md sticky top-0 z-30">
+        <header className="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-border/40 glass-panel sticky top-0 z-30 rounded-none border-t-0 border-l-0 border-r-0">
           <button
             className="p-2 -ml-2 mr-2 text-zinc-400 hover:text-white lg:hidden"
             onClick={() => setIsSidebarOpen(true)}
@@ -147,11 +150,11 @@ export default function DashboardLayout({
           <div className="flex-1 flex justify-end">
             <div className="flex items-center gap-4">
               <div className="hidden sm:block text-right">
-                <p className="text-sm font-medium text-white">Admin Luvion</p>
-                <p className="text-xs text-zinc-400">admin@luvion.ai</p>
+                <p className="text-sm font-bold text-foreground">Admin Luvion</p>
+                <p className="text-xs text-on-surface-variant">admin@luvion.ai</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-zinc-700 to-zinc-600 border border-white/10 flex items-center justify-center">
-                <span className="text-sm font-bold">AL</span>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-purple-500 flex items-center justify-center shadow-lg shadow-primary/20">
+                <span className="text-sm font-bold text-white">AL</span>
               </div>
             </div>
           </div>

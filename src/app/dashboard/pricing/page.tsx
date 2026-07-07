@@ -129,64 +129,64 @@ export default function PricingCMS() {
   };
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-full"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>;
+    return <div className="flex justify-center items-center h-full"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   }
 
   return (
     <div className="space-y-6 relative">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Kelola Pricing</h1>
-          <p className="text-zinc-400 text-sm mt-1">Ubah harga, fitur, dan detail paket langganan Luvion.</p>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Kelola Pricing</h1>
+          <p className="text-on-surface-variant text-sm mt-1">Ubah harga, fitur, dan detail paket langganan Luvion.</p>
         </div>
         <button
           onClick={() => openModal()}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+          className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg transition-colors text-sm font-bold shadow-lg shadow-primary/20"
         >
           <Plus className="w-4 h-4" /> Tambah Paket
         </button>
       </div>
 
-      <div className="bg-zinc-900/50 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden">
-        <table className="w-full text-left text-sm text-zinc-300">
-          <thead className="bg-zinc-800/50 text-zinc-400 border-b border-white/5">
+      <div className="bg-surface border border-border/40 rounded-2xl overflow-hidden shadow-xl">
+        <table className="w-full text-left text-sm text-on-surface-variant">
+          <thead className="bg-black/5 text-on-surface-variant/80 border-b border-border/40 font-bold uppercase text-xs">
             <tr>
-              <th className="px-6 py-4 font-medium">Paket</th>
-              <th className="px-6 py-4 font-medium">Harga</th>
-              <th className="px-6 py-4 font-medium">Deskripsi</th>
-              <th className="px-6 py-4 font-medium">Populer</th>
-              <th className="px-6 py-4 font-medium text-right">Aksi</th>
+              <th className="px-6 py-4">Paket</th>
+              <th className="px-6 py-4">Harga</th>
+              <th className="px-6 py-4">Deskripsi</th>
+              <th className="px-6 py-4">Populer</th>
+              <th className="px-6 py-4 text-right">Aksi</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-border/20">
             {tiers.map((tier) => (
-              <tr key={tier.id} className="hover:bg-white/[0.02] transition-colors">
+              <tr key={tier.id} className="hover:bg-black/5 transition-colors">
                 <td className="px-6 py-4">
-                  <p className="font-semibold text-white">{tier.name}</p>
-                  <p className="text-xs text-zinc-500">{tier.subtitle}</p>
+                  <p className="font-bold text-foreground">{tier.name}</p>
+                  <p className="text-xs text-on-surface-variant/70">{tier.subtitle}</p>
                 </td>
                 <td className="px-6 py-4">
-                  <p className="font-medium text-white">{tier.price}</p>
-                  <p className="text-xs text-zinc-500">{tier.price_suffix}</p>
+                  <p className="font-bold text-foreground">{tier.price}</p>
+                  <p className="text-xs text-on-surface-variant/70">{tier.price_suffix}</p>
                 </td>
                 <td className="px-6 py-4 max-w-xs truncate">{tier.description}</td>
                 <td className="px-6 py-4">
                   {tier.popular ? (
-                    <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs">Ya</span>
+                    <span className="bg-primary/20 text-primary px-2 py-1 rounded text-xs font-bold border border-primary/20">Ya</span>
                   ) : (
-                    <span className="bg-zinc-800 text-zinc-400 px-2 py-1 rounded text-xs">Tidak</span>
+                    <span className="bg-black/10 text-on-surface-variant px-2 py-1 rounded text-xs font-semibold">Tidak</span>
                   )}
                 </td>
                 <td className="px-6 py-4 text-right">
                   <button
                     onClick={() => openModal(tier)}
-                    className="text-blue-400 hover:text-blue-300 p-2 transition-colors"
+                    className="text-primary hover:text-primary/80 p-2 transition-colors rounded-lg hover:bg-primary/10"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(tier.id)}
-                    className="text-red-400 hover:text-red-300 p-2 transition-colors ml-2"
+                    className="text-error hover:text-error/80 p-2 transition-colors ml-2 rounded-lg hover:bg-error/10"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -198,47 +198,47 @@ export default function PricingCMS() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h2 className="text-xl font-bold text-white">{editingTier ? "Edit Paket Harga" : "Tambah Paket Harga"}</h2>
-              <button onClick={closeModal} className="text-zinc-400 hover:text-white"><X className="w-5 h-5" /></button>
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-surface border border-border/40 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-border/40">
+              <h2 className="text-xl font-extrabold text-foreground">{editingTier ? "Edit Paket Harga" : "Tambah Paket Harga"}</h2>
+              <button onClick={closeModal} className="text-on-surface-variant hover:text-foreground"><X className="w-5 h-5" /></button>
             </div>
             
             <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-400">ID Paket</label>
+                  <label className="text-xs font-bold text-on-surface-variant">ID Paket</label>
                   <input
                     type="text"
                     required
                     disabled={!!editingTier}
                     value={formData.id}
                     onChange={(e) => setFormData({...formData, id: e.target.value})}
-                    className="w-full bg-black/20 border border-white/10 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                    className="w-full bg-background border border-border/40 rounded-lg p-2.5 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 outline-none"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-400">Nama Paket</label>
+                  <label className="text-xs font-bold text-on-surface-variant">Nama Paket</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full bg-black/20 border border-white/10 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full bg-background border border-border/40 rounded-lg p-2.5 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-400">Subtitle</label>
+                  <label className="text-xs font-bold text-on-surface-variant">Subtitle</label>
                   <input
                     type="text"
                     required
                     value={formData.subtitle}
                     onChange={(e) => setFormData({...formData, subtitle: e.target.value})}
-                    className="w-full bg-black/20 border border-white/10 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full bg-background border border-border/40 rounded-lg p-2.5 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   />
                 </div>
                 <div className="space-y-1 flex items-center pt-6">
@@ -247,93 +247,93 @@ export default function PricingCMS() {
                       type="checkbox"
                       checked={formData.popular}
                       onChange={(e) => setFormData({...formData, popular: e.target.checked})}
-                      className="w-4 h-4 rounded border-white/10 text-blue-500 focus:ring-blue-500/50 bg-black/20"
+                      className="w-4 h-4 rounded border-border/40 text-primary focus:ring-primary/50 bg-background"
                     />
-                    <span className="text-sm text-zinc-300">Tandai Paling Populer</span>
+                    <span className="text-sm text-foreground font-medium">Tandai Paling Populer</span>
                   </label>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-400">Harga</label>
+                  <label className="text-xs font-bold text-on-surface-variant">Harga</label>
                   <input
                     type="text"
                     required
                     value={formData.price}
                     onChange={(e) => setFormData({...formData, price: e.target.value})}
-                    className="w-full bg-black/20 border border-white/10 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full bg-background border border-border/40 rounded-lg p-2.5 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                     placeholder="Rp 50.000"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-400">Harga Asli (Coret)</label>
+                  <label className="text-xs font-bold text-on-surface-variant">Harga Asli (Coret)</label>
                   <input
                     type="text"
                     value={formData.original_price}
                     onChange={(e) => setFormData({...formData, original_price: e.target.value})}
-                    className="w-full bg-black/20 border border-white/10 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full bg-background border border-border/40 rounded-lg p-2.5 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                     placeholder="Rp 150.000"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs text-zinc-400">Suffix Harga</label>
+                  <label className="text-xs font-bold text-on-surface-variant">Suffix Harga</label>
                   <input
                     type="text"
                     value={formData.price_suffix}
                     onChange={(e) => setFormData({...formData, price_suffix: e.target.value})}
-                    className="w-full bg-black/20 border border-white/10 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full bg-background border border-border/40 rounded-lg p-2.5 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                     placeholder="/bulan"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-zinc-400">Deskripsi Pendek</label>
+                <label className="text-xs font-bold text-on-surface-variant">Deskripsi Pendek</label>
                 <textarea
                   required
                   rows={2}
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full bg-black/20 border border-white/10 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full bg-background border border-border/40 rounded-lg p-2.5 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-zinc-400">Fitur (Pisahkan dengan Enter/Baris Baru)</label>
+                <label className="text-xs font-bold text-on-surface-variant">Fitur (Pisahkan dengan Enter/Baris Baru)</label>
                 <textarea
                   required
                   rows={5}
                   value={formData.features}
                   onChange={(e) => setFormData({...formData, features: e.target.value})}
-                  className="w-full bg-black/20 border border-white/10 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full bg-background border border-border/40 rounded-lg p-2.5 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   placeholder="Fitur 1&#10;Fitur 2&#10;Fitur 3"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-zinc-400">Highlight Color Class (Tailwind)</label>
+                <label className="text-xs font-bold text-on-surface-variant">Highlight Color Class (Tailwind)</label>
                 <input
                   type="text"
                   value={formData.highlight_color}
                   onChange={(e) => setFormData({...formData, highlight_color: e.target.value})}
-                  className="w-full bg-black/20 border border-white/10 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full bg-background border border-border/40 rounded-lg p-2.5 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   placeholder="from-blue-500/10 to-transparent"
                 />
               </div>
             </form>
 
-            <div className="p-6 border-t border-white/10 flex justify-end gap-3 bg-zinc-900/50">
+            <div className="p-6 border-t border-border/40 flex justify-end gap-3 bg-surface/50 rounded-b-2xl">
               <button
                 type="button"
                 onClick={closeModal}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-colors"
+                className="px-5 py-2.5 rounded-lg text-sm font-bold text-on-surface-variant hover:text-foreground hover:bg-black/5 transition-colors"
               >
                 Batal
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/20"
+                className="px-5 py-2.5 rounded-lg text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
               >
                 Simpan Perubahan
               </button>

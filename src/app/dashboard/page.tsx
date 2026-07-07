@@ -102,8 +102,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">Overview</h1>
-        <p className="text-zinc-400 text-sm mt-1">Pantau performa platform Luvion Anda hari ini.</p>
+        <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Overview</h1>
+        <p className="text-on-surface-variant text-sm mt-1">Pantau performa platform Luvion Anda hari ini.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -113,20 +113,20 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
-            className="bg-zinc-900/50 backdrop-blur-md border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-colors"
+            className="bg-surface border border-border/40 rounded-2xl p-5 hover:border-border/80 transition-colors shadow-xl"
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`p-3 rounded-xl ${stat.bgColor}`}>
                 <stat.icon className={`w-5 h-5 ${stat.iconColor}`} />
               </div>
-              <span className="flex items-center text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full">
+              <span className="flex items-center text-xs font-medium text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full">
                 {stat.growth}
                 <ArrowUpRight className="w-3 h-3 ml-1" />
               </span>
             </div>
             <div>
-              <p className="text-sm font-medium text-zinc-400">{stat.title}</p>
-              <h3 className="text-2xl font-bold text-white mt-1">{stat.value}</h3>
+              <p className="text-sm font-medium text-on-surface-variant">{stat.title}</p>
+              <h3 className="text-2xl font-extrabold text-foreground mt-1">{stat.value}</h3>
             </div>
           </motion.div>
         ))}
@@ -138,23 +138,23 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.4 }}
-          className="lg:col-span-2 bg-zinc-900/50 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden"
+          className="lg:col-span-2 bg-surface border border-border/40 rounded-2xl overflow-hidden shadow-xl"
         >
-          <div className="p-6 border-b border-white/5 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white tracking-tight">Aktivitas Terbaru</h2>
-            <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors">Lihat Semua</button>
+          <div className="p-6 border-b border-border/40 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-foreground tracking-tight">Aktivitas Terbaru</h2>
+            <button className="text-sm text-primary hover:text-primary/80 transition-colors">Lihat Semua</button>
           </div>
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-border/20">
             {data?.recent_activity.map((activity, idx) => (
-              <div key={activity.id} className="p-6 flex items-start gap-4 hover:bg-white/[0.02] transition-colors">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-zinc-800 to-zinc-700 flex items-center justify-center shrink-0 border border-white/5">
+              <div key={activity.id} className="p-6 flex items-start gap-4 hover:bg-black/5 transition-colors">
+                <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/20">
                   <span className="text-xs font-bold">{activity.user.substring(0, 2).toUpperCase()}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{activity.user}</p>
-                  <p className="text-sm text-zinc-400 truncate">{activity.action}</p>
+                  <p className="text-sm font-bold text-foreground truncate">{activity.user}</p>
+                  <p className="text-sm text-on-surface-variant truncate">{activity.action}</p>
                 </div>
-                <div className="text-xs text-zinc-500 whitespace-nowrap">
+                <div className="text-xs text-on-surface-variant/80 whitespace-nowrap">
                   {activity.time}
                 </div>
               </div>
@@ -167,22 +167,22 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.5 }}
-          className="bg-zinc-900/50 backdrop-blur-md border border-white/5 rounded-2xl p-6 relative overflow-hidden group"
+          className="bg-surface border border-border/40 rounded-2xl p-6 relative overflow-hidden group shadow-xl"
         >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full mix-blend-screen filter blur-3xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
-          <h2 className="text-lg font-semibold text-white tracking-tight mb-4">Aksi Cepat</h2>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full mix-blend-screen filter blur-3xl group-hover:bg-primary/20 transition-all duration-500"></div>
+          <h2 className="text-lg font-bold text-foreground tracking-tight mb-4">Aksi Cepat</h2>
           <div className="space-y-3 relative z-10">
-            <button className="w-full flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5 group/btn">
-              <span className="text-sm font-medium text-zinc-200">Tambah Pengguna Baru</span>
-              <Users className="w-4 h-4 text-zinc-400 group-hover/btn:text-white transition-colors" />
+            <button className="w-full flex items-center justify-between p-3 rounded-xl bg-black/5 hover:bg-black/10 transition-colors border border-border/20 group/btn">
+              <span className="text-sm font-semibold text-foreground">Tambah Pengguna Baru</span>
+              <Users className="w-4 h-4 text-on-surface-variant group-hover/btn:text-primary transition-colors" />
             </button>
-            <button className="w-full flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5 group/btn">
-              <span className="text-sm font-medium text-zinc-200">Kelola Modul AI</span>
-              <Box className="w-4 h-4 text-zinc-400 group-hover/btn:text-white transition-colors" />
+            <button className="w-full flex items-center justify-between p-3 rounded-xl bg-black/5 hover:bg-black/10 transition-colors border border-border/20 group/btn">
+              <span className="text-sm font-semibold text-foreground">Kelola Modul AI</span>
+              <Box className="w-4 h-4 text-on-surface-variant group-hover/btn:text-primary transition-colors" />
             </button>
-            <button className="w-full flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5 group/btn">
-              <span className="text-sm font-medium text-zinc-200">Laporan Keuangan</span>
-              <CreditCard className="w-4 h-4 text-zinc-400 group-hover/btn:text-white transition-colors" />
+            <button className="w-full flex items-center justify-between p-3 rounded-xl bg-black/5 hover:bg-black/10 transition-colors border border-border/20 group/btn">
+              <span className="text-sm font-semibold text-foreground">Laporan Keuangan</span>
+              <CreditCard className="w-4 h-4 text-on-surface-variant group-hover/btn:text-primary transition-colors" />
             </button>
           </div>
         </motion.div>
