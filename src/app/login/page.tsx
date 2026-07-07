@@ -6,6 +6,7 @@ import { fetchApi } from "@/lib/apiClient";
 import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import ParticleBackground from "@/components/ui/ParticleBackground";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -37,10 +38,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden p-4">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full mix-blend-screen filter blur-[128px] animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full mix-blend-screen filter blur-[128px] animate-pulse" style={{ animationDelay: "2s" }}></div>
+    <div 
+      className="min-h-screen flex items-center justify-center relative overflow-hidden p-4 group/login"
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      }}
+    >
+      <ParticleBackground />
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-tertiary/5 to-transparent -z-10" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-primary/10 to-tertiary/10 rounded-full blur-[120px] -z-15" />
+      
+      <div
+        className="absolute inset-0 -z-10 pointer-events-none opacity-10 group-hover/login:opacity-100 transition-opacity duration-500"
+        style={{
+          background: `radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 88, 188, 0.15), rgba(141, 34, 192, 0.15), transparent 90%)`,
+        }}
+      />
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
