@@ -204,6 +204,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                 <span className="text-xs text-on-surface-variant/60 font-semibold">{input.length}/500</span>
                 <button
                   type="submit"
+                  aria-label="Kirim Pesan"
                   disabled={isLoading || !input.trim()}
                   className="electric-gradient rounded-full w-12 h-12 flex items-center justify-center shadow-sm hover:scale-[1.05] disabled:scale-95 disabled:opacity-50 transition-all cursor-pointer"
                 >
