@@ -1,0 +1,45 @@
+# luvion.my.id
+
+Luvion adalah platform scale-up bisnis berbasis AI yang dirancang untuk membantu perusahaan melakukan transformasi digital melalui otomatisasi, integrasi sistem cerdas, dan rekomendasi modul operasional yang tepat. Kami menyediakan solusi sistem manajemen bisnis modular dengan harga transparan.
+
+## Daftar Informasi Penting
+
+- [Dokumentasi API](#dokumentasi-api): Referensi rute API untuk integrasi sistem.
+- [Panduan Instalasi](/setup): Cara cepat memasang aplikasi ini di server lokal.
+- [FAQ](#faq): Pertanyaan yang sering diajukan terkait platform Luvion.
+
+---
+
+## Dokumentasi API
+
+Luvion menyediakan RESTful API berbasis JSON. Akses API yang aman (seperti dasbor CMS) memerlukan autentikasi token Bearer (menggunakan Laravel Sanctum).
+
+### Endpoint Publik (Tanpa Autentikasi)
+- `POST /api/login` - Menghasilkan token akses admin.
+- `GET /api/pricing` - Mengambil daftar paket berlangganan.
+- `GET /api/modules` - Mengambil daftar modul AI/Sistem yang tersedia.
+- `GET /api/faq` - Mengambil daftar pertanyaan umum (FAQ).
+- `POST /api/orders` - Mengirim pesanan / pendaftaran paket baru dari klien.
+
+### Endpoint Private / CMS (Memerlukan Token Bearer)
+- `GET /api/dashboard` - Mengambil data statistik dasbor dan aktivitas terbaru.
+- `GET, POST, PUT, DELETE /api/pricing` - CRUD untuk mengelola paket harga.
+- `GET, POST, PUT, DELETE /api/modules` - CRUD untuk mengelola modul bisnis.
+- `GET, POST, PUT, DELETE /api/faq` - CRUD untuk mengelola item FAQ.
+- `GET, POST, PUT, DELETE /api/orders` - CRUD untuk mengelola pesanan klien (mengubah status pembayaran, dll).
+- `GET, POST, PUT, DELETE /api/users` - CRUD untuk mengelola pengguna dasbor.
+
+---
+
+## FAQ
+
+Pertanyaan yang sering diajukan mengenai layanan Luvion dapat dikelola secara dinamis melalui dasbor administrator, tetapi berikut adalah rangkuman dari fitur utama:
+
+1. **Bagaimana cara kerja harga modular Luvion?**
+   Harga kami transparan dan fleksibel. Anda mulai dengan paket dasar (misal: Starter, Pro, atau Enterprise), lalu dapat menambahkan berbagai modul fungsional (seperti Modul SDM, CRM AI, Otomatisasi Pemasaran) secara terpisah sesuai dengan kebutuhan bisnis (*pay-as-you-grow*).
+
+2. **Apakah Luvion dapat diintegrasikan dengan sistem saya yang sudah ada?**
+   Tentu. API Luvion dirancang agar *developer-friendly* sehingga memudahkan integrasi data dengan platform lain, ERP, atau sistem legacy milik perusahaan Anda.
+
+3. **Bagaimana cara mengelola tagihan dan pesanan pengguna?**
+   Semua dapat dikelola secara mudah dari halaman Dasbor CMS di menu *Orders*. Anda dapat melacak tenggat pembayaran, mengubah status (aktif/jatuh tempo), dan memonitor total pendapatan bulanan secara otomatis.
