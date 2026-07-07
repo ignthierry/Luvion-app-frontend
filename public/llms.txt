@@ -33,13 +33,22 @@ Luvion menyediakan RESTful API berbasis JSON. Akses API yang aman (seperti dasbo
 
 ## FAQ
 
-Pertanyaan yang sering diajukan mengenai layanan Luvion dapat dikelola secara dinamis melalui dasbor administrator, tetapi berikut adalah rangkuman dari fitur utama:
+Pertanyaan yang sering diajukan mengenai layanan Luvion:
 
-1. **Bagaimana cara kerja harga modular Luvion?**
-   Harga kami transparan dan fleksibel. Anda mulai dengan paket dasar (misal: Starter, Pro, atau Enterprise), lalu dapat menambahkan berbagai modul fungsional (seperti Modul SDM, CRM AI, Otomatisasi Pemasaran) secara terpisah sesuai dengan kebutuhan bisnis (*pay-as-you-grow*).
+1. **Apa itu Luvion?**
+   Luvion adalah platform SaaS yang memudahkan bisnis untuk membangun ekosistem digital (kasir, stok, kurir, pre-order) secara cepat.
 
-2. **Apakah Luvion dapat diintegrasikan dengan sistem saya yang sudah ada?**
-   Tentu. API Luvion dirancang agar *developer-friendly* sehingga memudahkan integrasi data dengan platform lain, ERP, atau sistem legacy milik perusahaan Anda.
+2. **Bagaimana cara kerja Luvion AI?**
+   Cukup ketik alur kerja atau masalah operasional bisnis Anda pada kolom AI di bagian Hero. AI kami akan menganalisis kebutuhan Anda, menyusun rekomendasi modul sistem, dan menyiapkannya untuk diluncurkan dalam waktu kurang dari 5 menit.
 
-3. **Bagaimana cara mengelola tagihan dan pesanan pengguna?**
-   Semua dapat dikelola secara mudah dari halaman Dasbor CMS di menu *Orders*. Anda dapat melacak tenggat pembayaran, mengubah status (aktif/jatuh tempo), dan memonitor total pendapatan bulanan secara otomatis.
+3. **Apakah data bisnis saya aman dengan Luvion?**
+   Keamanan data Anda adalah prioritas kami. Semua komunikasi dienkripsi melalui protokol SSL/TLS, data sensitif dilindungi, dan infrastruktur database kami didukung oleh server cloud yang aman dan andal.
+
+4. **Apakah ada biaya tersembunyi?**
+   Tidak ada biaya tersembunyi. Harga kami sangat transparan: Paket Starter gratis selamanya untuk 3 proyek dasar, Paket Pro flat senilai $20/bulan untuk proyek tanpa batas, dan Paket Enterprise disesuaikan dengan SLA perusahaan Anda.
+
+5. **Apakah saya bisa menggunakan domain sendiri?**
+   Ya, pada Paket Paid Pro, Anda dapat sepenuhnya menghubungkan domain kustom Anda sendiri (.com, .net, dll.), lengkap dengan konfigurasi sertifikat SSL otomatis dari Luvion.
+
+6. **Bagaimana jika saya membutuhkan bantuan teknis?**
+   Pengguna Paket Starter mendapatkan akses ke forum diskusi komunitas. Sementara itu, pengguna Paket Pro dan Enterprise memiliki dukungan teknis prioritas 24/7 langsung dari tim engineering kami.
