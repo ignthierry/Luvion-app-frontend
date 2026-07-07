@@ -3,8 +3,10 @@
 import React from 'react';
 import { Sparkles, Cloud, Lock, Server, BarChart2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function ValueProp() {
+  const { t } = useLanguage();
   return (
     <section id="features" className="py-24 px-6 bg-surface-container-low/30 relative border-t border-b border-border/15">
       <div className="max-w-7xl mx-auto space-y-32">
@@ -16,9 +18,9 @@ export default function ValueProp() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-2xl mx-auto"
         >
-          <h2 className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Keunggulan Utama</h2>
+          <h2 className="text-xs font-bold text-primary uppercase tracking-widest mb-3">{t('valueProp.headerTitle')}</h2>
           <p className="font-sans font-extrabold text-3xl md:text-5xl text-on-surface leading-tight tracking-tight">
-            Digitalisasi Bisnis Tanpa Hambatan Teknis
+            {t('valueProp.headerSubtitle')}
           </p>
         </motion.div>
 
@@ -33,17 +35,17 @@ export default function ValueProp() {
           >
             <span className="text-xs font-bold text-on-surface-variant/60 tracking-widest uppercase">01 / 02</span>
             <h3 className="font-sans font-extrabold text-2xl md:text-4xl text-on-surface leading-tight">
-              Jelaskan Ide Sistem Anda, Luvion yang Membangun
+              {t('valueProp.f1Title')}
             </h3>
             <p className="text-base text-on-surface-variant leading-relaxed font-medium">
-              Cukup jelaskan model bisnis atau alur kerja yang Anda inginkan dengan bahasa sehari-hari. Luvion AI Engine akan menerjemahkan deskripsi tersebut menjadi modul operasional digital yang siap pakai, mulai dari kasir hingga dashboard manajemen stok.
+              {t('valueProp.f1Desc')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <div className="flex items-center gap-2 text-sm font-bold text-primary">
-                <Sparkles className="h-4 w-4" /> Kustomisasi instan melalui perintah
+                <Sparkles className="h-4 w-4" /> {t('valueProp.f1Point1')}
               </div>
               <div className="flex items-center gap-2 text-sm font-bold text-on-surface-variant">
-                <BarChart2 className="h-4 w-4" /> Visualisasi waktu nyata
+                <BarChart2 className="h-4 w-4" /> {t('valueProp.f1Point2')}
               </div>
             </div>
           </motion.div>
@@ -96,17 +98,17 @@ export default function ValueProp() {
           >
             <span className="text-xs font-bold text-on-surface-variant/60 tracking-widest uppercase">02 / 02</span>
             <h3 className="font-sans font-extrabold text-2xl md:text-4xl text-on-surface leading-tight">
-              Infrastruktur Backend Otomatis & Aman
+              {t('valueProp.f2Title')}
             </h3>
             <p className="text-base text-on-surface-variant leading-relaxed font-medium">
-              Anda tidak perlu memikirkan hosting, setup server, migrasi database, atau instalasi SSL. Luvion menulis kode server, melakukan propagasi CDN runtime edge, dan mengenkripsi semua transaksi Anda secara otomatis dalam hitungan detik.
+              {t('valueProp.f2Desc')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <div className="flex items-center gap-2 text-sm font-bold text-emerald-600">
-                <Lock className="h-4 w-4" /> SSL & Enkripsi Aktif
+              <div className="flex items-center gap-2 text-sm font-bold text-primary">
+                <Server className="h-4 w-4" /> {t('valueProp.f2Point1')}
               </div>
-              <div className="flex items-center gap-2 text-sm font-bold text-[#326578]">
-                <Server className="h-4 w-4" /> Migrasi Database Edge
+              <div className="flex items-center gap-2 text-sm font-bold text-on-surface-variant">
+                <Lock className="h-4 w-4" /> {t('valueProp.f2Point2')}
               </div>
             </div>
           </motion.div>

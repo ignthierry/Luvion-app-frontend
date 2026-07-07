@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUp, Plus, ToggleLeft, ToggleRight, Sparkles, Code, Calendar, ChevronRight } from 'lucide-react';
+import { ArrowUp, Plus, ToggleLeft, ToggleRight, Sparkles } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 import ParticleBackground from '@/components/ui/ParticleBackground';
 
 interface HeroProps {
@@ -11,6 +11,7 @@ interface HeroProps {
 }
 
 export default function Hero({ onRecommendTier }: HeroProps) {
+  const { t } = useLanguage();
   const [planEnabled, setPlanEnabled] = useState(true);
   const [input, setInput] = useState('');
   
@@ -54,33 +55,12 @@ export default function Hero({ onRecommendTier }: HeroProps) {
       }
     } catch (err) {
       console.error(err);
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Maaf, terjadi kesalahan jaringan.' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: t('hero.chatError') }]);
     } finally {
       setStatus('ready');
     }
   };
 
-  // Recommended prompt templates for UMKM
-  const templates = [
-    {
-      label: 'Keuangan & Kasir',
-      prompt: 'Tolong buatkan Dashboard Keuangan untuk memantau profitabilitas dan sistem kasir untuk toko kelontong saya.',
-    },
-    {
-      label: 'CRM & WhatsApp',
-      prompt: 'Saya butuh sistem CRM untuk melacak data pelanggan dan mengotomatiskan chat follow-up WhatsApp.',
-    },
-    {
-      label: 'Multi-Gudang & Kurir',
-      prompt: 'Saya ingin sistem manajemen stok multi-gudang dan pelacakan kurir untuk toko ritel saya.',
-    },
-    {
-      label: 'Manajemen Pesanan',
-      prompt: 'Saya memerlukan sistem manajemen pesanan untuk merekap pesanan, menghitung ongkos kirim secara otomatis, dan mengelola pembayaran.',
-    },
-  ];
-
-  // Helper to extract text from Vercel AI SDK v4 parts-based UIMessage, with fallback for runtime content string
   const getMessageText = (message: any) => {
     if (!message) return '';
     if (typeof message.content === 'string' && message.content.length > 0) {
@@ -95,7 +75,6 @@ export default function Hero({ onRecommendTier }: HeroProps) {
     return '';
   };
 
-  // Look for the recommendation marker in messages to trigger the pricing highlight
   const lastAssistantMessage = messages.findLast((m) => m.role === 'assistant');
   
   useEffect(() => {
@@ -136,8 +115,6 @@ export default function Hero({ onRecommendTier }: HeroProps) {
     }
   };
 
-
-
   return (
     <section 
       className="relative pt-40 pb-24 px-6 min-h-[95vh] flex flex-col items-center justify-center text-center overflow-hidden group/hero"
@@ -148,11 +125,9 @@ export default function Hero({ onRecommendTier }: HeroProps) {
       }}
     >
       <ParticleBackground />
-      {/* Background gradients */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-tertiary/5 to-transparent -z-10" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-primary/10 to-tertiary/10 rounded-full blur-[120px] -z-15" />
       
-      {/* Interactive glow following the mouse */}
       <div
         className="absolute inset-0 -z-10 pointer-events-none opacity-10 group-hover/hero:opacity-100 transition-opacity duration-500"
         style={{
@@ -160,7 +135,6 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         }}
       />
 
-      {/* Feature Badge */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -168,37 +142,34 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         className="inline-flex items-center gap-2 glass-panel rounded-full px-4 py-2 mb-8 hover:scale-[1.02] transition-transform"
       >
         <span className="bg-secondary-container text-on-secondary-container text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-          Baru
+          {t('hero.badgeNew')}
         </span>
         <span className="text-sm font-semibold text-on-surface flex items-center gap-1">
-          Luvion AI Engine v1.0 <Sparkles className="h-3.5 w-3.5 text-primary" />
+          {t('hero.badgeText')} <Sparkles className="h-3.5 w-3.5 text-primary" />
         </span>
       </motion.div>
 
-      {/* Headline */}
       <motion.h1
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
         className="font-sans font-extrabold text-4xl md:text-6xl lg:text-7xl leading-[1.1] tracking-tighter text-on-surface max-w-5xl mb-6"
       >
-        Kembangkan Bisnis Anda <br />
+        {t('hero.headlinePart1')} <br />
         <span className="vibrant-text-gradient">
-          Bangun Bersama Luvion
+          {t('hero.headlinePart2')}
         </span>
       </motion.h1>
 
-      {/* Sub-headline */}
       <motion.p
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
         className="text-base md:text-lg text-on-surface-variant max-w-3xl mb-12 font-medium"
       >
-        Luvion membantu Anda merancang sistem digital seperti Dashboard, Website, & ekosistem modul bisnis. Jelaskan masalah bisnis Anda di bawah ini, AI kami akan menganalisis kebutuhan Anda secara real-time!
+        {t('hero.subHeadline')}
       </motion.p>
 
-      {/* Initial Prompt Area - shown only before first message */}
       {messages.length === 0 && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -213,7 +184,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
               onKeyDown={handleKeyDown}
               maxLength={500}
               className="w-full bg-transparent border-none resize-none text-base md:text-lg text-on-surface placeholder:text-outline/70 focus:outline-none focus:ring-0 min-h-[90px] hide-scrollbar"
-              placeholder="Jelaskan masalah operasional bisnis Anda di sini... (contoh: 'Saya menjalankan toko pakaian ritel dan ingin melacak stok di 3 cabang')"
+              placeholder={t('hero.placeholder')}
             />
             <div className="flex items-center justify-between pt-4 border-t border-white/40 dark:border-white/10">
               <div className="flex items-center gap-3">
@@ -227,7 +198,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                   onClick={() => setPlanEnabled(!planEnabled)}
                   className="flex items-center gap-2 bg-white/60 dark:bg-white/10 border border-white/80 dark:border-white/10 rounded-full px-4 py-1.5 cursor-pointer shadow-sm hover:bg-white/80 transition-colors"
                 >
-                  <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">AI Planner</span>
+                  <span className="text-xs font-bold text-on-surface-variant group-hover:text-primary transition-colors">{t('hero.reset')}</span>
                   {planEnabled ? (
                     <ToggleRight className="h-6 w-6 text-primary" />
                   ) : (
@@ -250,15 +221,14 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         </motion.div>
       )}
 
-      {/* Quick Suggestions */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.4 }}
         className="flex flex-wrap items-center justify-center gap-3 max-w-4xl"
       >
-        <span className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mr-1">Rekomendasi Cepat:</span>
-        {templates.map((tmpl, idx) => (
+        <span className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest mr-1">{t('hero.suggestionTitle')}:</span>
+        {(t('hero.suggestions') as unknown as {label: string, prompt: string}[]).map((tmpl, idx) => (
           <button
             key={idx}
             onClick={() => handleTemplateClick(tmpl.prompt)}
@@ -269,7 +239,6 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         ))}
       </motion.div>
 
-      {/* AI Streaming Response / Canvas Showcase */}
       <AnimatePresence>
         {messages.length > 0 && (
           <motion.div
@@ -280,19 +249,17 @@ export default function Hero({ onRecommendTier }: HeroProps) {
             className="w-full max-w-4xl mt-16"
           >
             <div className="relative rounded-[2rem] glass-panel overflow-hidden min-h-[400px] flex flex-col">
-              {/* Chat header */}
               <div className="px-8 pt-6 pb-4 border-b border-white/20 dark:border-white/5">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/15 border border-primary/20 flex items-center justify-center">
                     <Sparkles className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-primary">Ruang Kerja Interaktif</span>
+                    <span className="text-xs font-bold text-primary">{t('hero.workspaceTitle')}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Chat messages */}
               <div className="p-8 flex-1 flex flex-col justify-start text-left max-h-[500px] overflow-y-auto hide-scrollbar">
                 <div className="space-y-6 font-sans text-sm md:text-base leading-relaxed flex-1">
                   {messages.map((m, idx) => {
@@ -306,7 +273,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                             <span className="text-xs font-bold text-tertiary">U</span>
                           </div>
                           <div className="flex-1 flex flex-col items-end">
-                            <span className="text-[10px] font-bold text-on-surface-variant/50 uppercase mb-1">Anda</span>
+                            <span className="text-[10px] font-bold text-on-surface-variant/50 uppercase mb-1">{t('hero.you')}</span>
                             <div className="bg-primary/10 border border-primary/20 text-on-surface rounded-2xl rounded-tr-none p-3 max-w-[85%] text-left font-semibold">
                               {text}
                             </div>
@@ -320,7 +287,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                             <Sparkles className="h-4 w-4 text-primary" />
                           </div>
                           <div className="flex-1 flex flex-col items-start">
-                            <span className="text-[10px] font-bold text-primary uppercase mb-1">Luvion AI</span>
+                            <span className="text-[10px] font-bold text-primary uppercase mb-1">{t('hero.aiName')}</span>
                             <div className="bg-white/50 dark:bg-white/5 border border-white/60 dark:border-white/10 text-on-surface rounded-2xl rounded-tl-none p-4 max-w-[85%] text-left font-medium">
                               {cleanMessageContent(text || m.content || JSON.stringify(m))}
                             </div>
@@ -334,13 +301,12 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse [animation-delay:0.2s]" />
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse [animation-delay:0.4s]" />
-                      <span>AI sedang berpikir...</span>
+                      <span>{t('hero.thinking')}</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Chat input at bottom of workspace */}
               <div className="px-6 py-4 border-t border-white/20 dark:border-white/5">
                 <form onSubmit={handleSubmitForm} className="flex items-end gap-3">
                   <textarea
@@ -350,7 +316,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                     maxLength={500}
                     rows={1}
                     className="flex-1 bg-white/40 dark:bg-white/5 border border-white/60 dark:border-white/10 rounded-2xl px-4 py-3 resize-none text-sm md:text-base text-on-surface placeholder:text-outline/50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all hide-scrollbar"
-                    placeholder="Ketik pesan Anda... (Enter untuk mengirim, Shift+Enter untuk baris baru)"
+                    placeholder={t('hero.chatPlaceholder')}
                     style={{ maxHeight: '120px', minHeight: '44px' }}
                     onInput={(e) => {
                       const target = e.target as HTMLTextAreaElement;
