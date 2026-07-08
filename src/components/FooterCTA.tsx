@@ -83,6 +83,8 @@ export default function FooterCTA() {
               <span>I Gusti Ngurah Thierry Agusta</span>
               <span>Perum. Shojiland Blok EJ.02 Candi Sidoarjo</span>
               <span>Telp/WA: 081357748559</span>
+              <span>Email Admin: <a href="mailto:admin@luvion.my.id" className="hover:text-primary transition-colors">admin@luvion.my.id</a></span>
+              <span>Email CS: <a href="mailto:cs@luvion.my.id" className="hover:text-primary transition-colors">cs@luvion.my.id</a></span>
             </div>
           </div>
 

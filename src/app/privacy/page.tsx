@@ -113,7 +113,8 @@ export default function PrivacyPolicy() {
                 Jika Anda memiliki pertanyaan, komplain, atau permintaan terkait privasi data Anda, silakan hubungi tim dukungan kami:
               </p>
               <div className="mt-4 inline-block bg-surface-variant/50 p-4 rounded-xl border border-border/50">
-                <p className="text-on-surface font-semibold">Email: <a href="mailto:admin@luvion.my.id" className="text-primary hover:underline">privacy@luvion.my.id</a></p>
+                <p className="text-on-surface font-semibold">Email Admin: <a href="mailto:admin@luvion.my.id" className="text-primary hover:underline">admin@luvion.my.id</a></p>
+                <p className="text-on-surface font-semibold">Email CS: <a href="mailto:cs@luvion.my.id" className="text-primary hover:underline">cs@luvion.my.id</a></p>
                 <p className="text-on-surface font-semibold">WhatsApp: <a href="https://wa.me/6281357748559" className="text-primary hover:underline">+62 813 5774 8559</a></p>
               </div>
             </section>
