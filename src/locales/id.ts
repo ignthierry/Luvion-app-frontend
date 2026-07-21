@@ -5,7 +5,8 @@ export const id = {
     resources: 'Sumber Daya',
     pricing: 'Harga',
     enterprise: 'Enterprise',
-    startBuilding: 'Mulai Bangun'
+    startBuilding: 'Mulai Bangun',
+    login: 'Masuk'
   },
   hero: {
     badgeNew: 'Baru',

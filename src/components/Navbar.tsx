@@ -83,6 +83,9 @@ export default function Navbar() {
           </AnimatePresence>
         </div>
 
+        <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm mr-2" href="/login">
+          {t('navbar.login')}
+        </a>
         <a className="electric-gradient font-semibold px-5 py-2 rounded-full text-sm hover:scale-[1.03] active:scale-[0.97]" href="#pricing">
           {t('navbar.startBuilding')}
         </a>

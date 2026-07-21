@@ -5,7 +5,8 @@ export const en = {
     resources: 'Resources',
     pricing: 'Pricing',
     enterprise: 'Enterprise',
-    startBuilding: 'Start Building'
+    startBuilding: 'Start Building',
+    login: 'Login'
   },
   hero: {
     badgeNew: 'New',
