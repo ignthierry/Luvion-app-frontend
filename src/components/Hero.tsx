@@ -135,19 +135,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         }}
       />
 
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="inline-flex items-center gap-2 glass-panel rounded-full px-4 py-2 mb-8 hover:scale-[1.02] transition-transform"
-      >
-        <span className="bg-secondary-container text-on-secondary-container text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-          {t('hero.badgeNew')}
-        </span>
-        <span className="text-sm font-semibold text-on-surface flex items-center gap-1">
-          {t('hero.badgeText')} <Sparkles className="h-3.5 w-3.5 text-primary" />
-        </span>
-      </motion.div>
+
 
       <motion.h1
         initial={{ opacity: 0, y: 15 }}
@@ -156,7 +144,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
         className="font-sans font-extrabold text-4xl md:text-6xl lg:text-7xl leading-[1.1] tracking-tighter text-on-surface max-w-5xl mb-6"
       >
         {t('hero.headlinePart1')} <br />
-        <span className="vibrant-text-gradient">
+        <span className="text-primary">
           {t('hero.headlinePart2')}
         </span>
       </motion.h1>

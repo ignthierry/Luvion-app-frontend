@@ -564,7 +564,7 @@ export default function OrdersDashboard() {
 
       {/* Invoice Modal */}
       {invoiceModalData && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[1050] flex items-center justify-center p-4 overflow-y-auto">
           <div className="glass-panel border-border/40 rounded-3xl w-full max-w-lg flex flex-col shadow-2xl relative">
             
             <div className="flex items-center justify-between p-6 border-b border-border/40">
@@ -606,7 +606,7 @@ export default function OrdersDashboard() {
       )}
       {/* Edit Modal */}
       {isEditModalOpen && selectedOrder && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[1050] flex items-center justify-center p-4 overflow-y-auto">
           <div className="glass-panel border-border/40 rounded-3xl w-full max-w-2xl flex flex-col shadow-2xl relative my-8">
             <div className="flex items-center justify-between p-6 border-b border-border/40">
               <h2 className="text-xl font-extrabold text-foreground">Edit Header Pesanan</h2>
