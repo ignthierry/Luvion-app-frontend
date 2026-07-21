@@ -133,7 +133,7 @@ export default function DashboardLayout({
       </motion.aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative z-0">
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative">
         {/* Background Decorative */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full mix-blend-screen filter blur-[128px] pointer-events-none -z-10"></div>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full mix-blend-screen filter blur-[128px] pointer-events-none -z-10"></div>

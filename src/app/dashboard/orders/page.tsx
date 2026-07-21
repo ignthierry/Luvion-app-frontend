@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/apiClient";
-import { Loader2, Eye, Trash2, X, RefreshCw, Receipt, Link as LinkIcon, Copy, Edit2 } from "lucide-react";
+import { Loader2, Trash2, X, RefreshCw, Receipt, Copy, Edit2 } from "lucide-react";
 import { format } from "date-fns";
 
 interface ClientOrder {
@@ -301,8 +301,8 @@ export default function OrdersDashboard() {
 
       {/* Detail Modal */}
       {isModalOpen && selectedOrder && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="glass-panel border-border/40 rounded-3xl w-full max-w-6xl my-8 flex flex-col shadow-2xl relative">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[999] flex items-center justify-center p-4 overflow-y-auto">
+          <div className="glass-panel border-border/40 rounded-3xl w-full max-w-6xl my-8 flex flex-col shadow-2xl relative z-[1000]">
             
             <div className="flex items-center justify-between p-6 border-b border-border/40">
               <div>
