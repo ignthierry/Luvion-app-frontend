@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchApi, STORAGE_BASE_URL } from "@/lib/apiClient";
+import { fetchApi, API_BASE_URL, STORAGE_BASE_URL } from "@/lib/apiClient";
 import { showSuccess, showError } from "@/lib/swal";
 import { 
   Activity, 
@@ -20,7 +20,11 @@ import {
   FileText,
   Building2,
   Filter,
-  Palette
+  Palette,
+  Edit2,
+  Upload,
+  Image as ImageIcon,
+  X
 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -85,12 +89,107 @@ export default function ClientDashboardPage() {
   const [selectedOrderId, setSelectedOrderId] = useState<number | "all">("all");
   const [invoiceFilterOrderId, setInvoiceFilterOrderId] = useState<number | "all">("all");
 
+  // Edit Project Profile & Upload Logo State
+  const [isEditOrderModalOpen, setIsEditOrderModalOpen] = useState(false);
+  const [editingOrder, setEditingOrder] = useState<ClientOrder | null>(null);
+  const [editOrderData, setEditOrderData] = useState({
+    company_name: "",
+    full_name: "",
+    phone: "",
+    subdomain: "",
+    theme_color: "#0058bc",
+    purpose: "",
+    integration_needs: "",
+    notes: "",
+    logo: null as File | null,
+    logo_preview: null as string | null,
+  });
+  const [isSavingOrderProfile, setIsSavingOrderProfile] = useState(false);
+
   // Request form state
   const [requestType, setRequestType] = useState("addon");
   const [requestOrderId, setRequestOrderId] = useState<number | "">("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
+
+  const openEditOrderModal = (ord: ClientOrder) => {
+    setEditingOrder(ord);
+    setEditOrderData({
+      company_name: ord.company_name,
+      full_name: ord.full_name,
+      phone: ord.phone,
+      subdomain: ord.subdomain || "",
+      theme_color: ord.theme_color || "#0058bc",
+      purpose: ord.purpose || "",
+      integration_needs: ord.integration_needs || "",
+      notes: ord.notes || "",
+      logo: null,
+      logo_preview: ord.logo_path ? (ord.logo_path.startsWith('http') ? ord.logo_path : `${STORAGE_BASE_URL}/${ord.logo_path.replace(/^\//, '')}`) : null,
+    });
+    setIsEditOrderModalOpen(true);
+  };
+
+  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2048 * 1024) {
+        showError("Ukuran File Terlalu Besar", "Ukuran logo maksimal adalah 2MB.");
+        return;
+      }
+      setEditOrderData(prev => ({
+        ...prev,
+        logo: file,
+        logo_preview: URL.createObjectURL(file),
+      }));
+    }
+  };
+
+  const handleSaveOrderProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingOrder) return;
+
+    setIsSavingOrderProfile(true);
+    try {
+      const formData = new FormData();
+      formData.append("company_name", editOrderData.company_name);
+      formData.append("full_name", editOrderData.full_name);
+      formData.append("phone", editOrderData.phone);
+      formData.append("subdomain", editOrderData.subdomain);
+      formData.append("theme_color", editOrderData.theme_color);
+      formData.append("purpose", editOrderData.purpose);
+      formData.append("integration_needs", editOrderData.integration_needs);
+      formData.append("notes", editOrderData.notes);
+
+      if (editOrderData.logo) {
+        formData.append("logo", editOrderData.logo);
+      }
+
+      const token = localStorage.getItem("auth_token");
+      const res = await fetch(`${API_BASE_URL}/client/orders/${editingOrder.id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        throw new Error(errorData?.message || "Gagal memperbarui profil proyek.");
+      }
+
+      const responseData = await res.json();
+      showSuccess("Berhasil", responseData.message || "Profil proyek & logo perusahaan berhasil diperbarui.");
+      setIsEditOrderModalOpen(false);
+      loadClientData();
+    } catch (err: any) {
+      showError("Gagal", err.message || "Terjadi kesalahan saat memperbarui profil proyek.");
+    } finally {
+      setIsSavingOrderProfile(false);
+    }
+  };
 
   useEffect(() => {
     setUserName(localStorage.getItem("user_name") || "Pelanggan Luvion");
@@ -360,10 +459,17 @@ export default function ClientDashboardPage() {
                     )}
 
                     {/* Card Actions */}
-                    <div className="flex justify-end gap-2 pt-2">
+                    <div className="flex flex-wrap items-center justify-end gap-2 pt-2">
+                      <button
+                        onClick={() => openEditOrderModal(ord)}
+                        className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-all flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
+                        title="Edit Profil & Upload Logo"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" /> Edit Profil & Upload Logo
+                      </button>
                       <button
                         onClick={() => setInvoiceFilterOrderId(ord.id)}
-                        className="px-3 py-1.5 rounded-lg text-xs font-bold bg-surface hover:bg-surface-variant text-foreground border border-border/50 transition-all flex items-center gap-1.5"
+                        className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-surface hover:bg-surface-variant text-foreground border border-border/50 transition-all flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         <Filter className="w-3.5 h-3.5 text-primary" /> Filter Tagihan Proyek Ini
                       </button>
@@ -597,6 +703,168 @@ export default function ClientDashboardPage() {
         </div>
 
       </div>
+
+      {/* Modal Edit Profil Proyek & Upload Logo */}
+      {isEditOrderModalOpen && editingOrder && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[1100] flex items-center justify-center p-4 overflow-y-auto">
+          <div className="glass-panel border-border/40 rounded-3xl w-full max-w-2xl shadow-2xl p-6 sm:p-8 relative my-8">
+            <div className="flex items-center justify-between border-b border-border/40 pb-4 mb-6">
+              <div>
+                <h3 className="text-xl font-extrabold text-foreground flex items-center gap-2">
+                  <Edit2 className="w-5 h-5 text-primary" />
+                  Edit Profil Proyek & Upload Logo
+                </h3>
+                <p className="text-xs text-on-surface-variant">Perbarui informasi perusahaan, kontak, subdomain, dan logo {editingOrder.company_name}</p>
+              </div>
+              <button onClick={() => setIsEditOrderModalOpen(false)} className="text-on-surface-variant hover:text-foreground"><X className="w-5 h-5" /></button>
+            </div>
+
+            <form onSubmit={handleSaveOrderProfile} className="space-y-5">
+              {/* Logo Upload Box */}
+              <div>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 block">Logo Perusahaan / Organisasi</label>
+                <div className="flex items-center gap-4 bg-surface/50 p-4 rounded-2xl border border-border/40">
+                  <div className="w-20 h-20 rounded-xl bg-white border border-border/40 flex items-center justify-center overflow-hidden shrink-0 p-1">
+                    {editOrderData.logo_preview ? (
+                      <img src={editOrderData.logo_preview} alt="Logo Preview" className="w-full h-full object-contain" />
+                    ) : (
+                      <ImageIcon className="w-8 h-8 text-zinc-400" />
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <input
+                      type="file"
+                      id="client-logo-upload"
+                      accept="image/png, image/jpeg, image/jpg, image/gif"
+                      onChange={handleLogoFileChange}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="client-logo-upload"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-bold cursor-pointer transition-all shadow-md shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <Upload className="w-4 h-4" /> Upload Logo Baru
+                    </label>
+                    <p className="text-[11px] text-on-surface-variant">Format PNG, JPG, JPEG, GIF. Maksimal 2MB.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Nama Perusahaan / Organisasi</label>
+                  <input
+                    type="text"
+                    required
+                    value={editOrderData.company_name}
+                    onChange={(e) => setEditOrderData({ ...editOrderData, company_name: e.target.value })}
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Nama Kontak Utama</label>
+                  <input
+                    type="text"
+                    required
+                    value={editOrderData.full_name}
+                    onChange={(e) => setEditOrderData({ ...editOrderData, full_name: e.target.value })}
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">No. Telepon / WhatsApp</label>
+                  <input
+                    type="text"
+                    required
+                    value={editOrderData.phone}
+                    onChange={(e) => setEditOrderData({ ...editOrderData, phone: e.target.value })}
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Subdomain Preferensi</label>
+                  <input
+                    type="text"
+                    value={editOrderData.subdomain}
+                    onChange={(e) => setEditOrderData({ ...editOrderData, subdomain: e.target.value })}
+                    placeholder="misal: namabisnis.luvion.my.id"
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3.5 py-2.5 text-sm font-mono text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Warna Tema Utama</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={editOrderData.theme_color}
+                      onChange={(e) => setEditOrderData({ ...editOrderData, theme_color: e.target.value })}
+                      className="w-10 h-10 rounded-lg cursor-pointer border border-border/50 p-0 bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={editOrderData.theme_color}
+                      onChange={(e) => setEditOrderData({ ...editOrderData, theme_color: e.target.value })}
+                      className="w-32 bg-surface border border-border/50 rounded-xl px-3 py-2 text-xs font-mono text-foreground focus:ring-2 focus:ring-primary/50 outline-none uppercase"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Tujuan Utama Penggunaan</label>
+                  <textarea
+                    rows={2}
+                    value={editOrderData.purpose}
+                    onChange={(e) => setEditOrderData({ ...editOrderData, purpose: e.target.value })}
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Kebutuhan Integrasi API</label>
+                  <textarea
+                    rows={2}
+                    value={editOrderData.integration_needs}
+                    onChange={(e) => setEditOrderData({ ...editOrderData, integration_needs: e.target.value })}
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Catatan Tambahan</label>
+                  <textarea
+                    rows={2}
+                    value={editOrderData.notes}
+                    onChange={(e) => setEditOrderData({ ...editOrderData, notes: e.target.value })}
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-border/40 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsEditOrderModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-on-surface-variant hover:text-foreground hover:bg-white/5 transition-all"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingOrderProfile}
+                  className="px-5 py-2.5 rounded-xl text-xs font-extrabold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all flex items-center gap-2 disabled:opacity-50"
+                >
+                  {isSavingOrderProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                  <span>{isSavingOrderProfile ? 'Menyimpan...' : 'Simpan Perubahan & Logo'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
