@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/apiClient";
+import { showSuccess, showError, showConfirm } from "@/lib/swal";
 import { Loader2, Plus, Edit2, Trash2, X } from "lucide-react";
 
 interface FAQ {
@@ -78,6 +79,7 @@ export default function FaqCMS() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const isEditing = !!editingFaq;
     try {
       const payload = {
         ...formData,
@@ -97,20 +99,23 @@ export default function FaqCMS() {
       }
       closeModal();
       loadFaqs();
+      showSuccess("Berhasil", isEditing ? "FAQ berhasil diperbarui." : "FAQ baru berhasil ditambahkan.");
     } catch (error) {
       console.error("Error saving faq:", error);
-      alert("Gagal menyimpan FAQ. Silakan coba lagi.");
+      showError("Gagal", "Gagal menyimpan FAQ. Silakan coba lagi.");
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm("Apakah Anda yakin ingin menghapus FAQ ini?")) {
+    const confirmed = await showConfirm("Hapus FAQ", "Apakah Anda yakin ingin menghapus FAQ ini?");
+    if (confirmed) {
       try {
         await fetchApi(`/faq/${id}`, { method: "DELETE" });
         loadFaqs();
+        showSuccess("Berhasil Dihapus", "FAQ telah berhasil dihapus.");
       } catch (error) {
         console.error("Error deleting faq:", error);
-        alert("Gagal menghapus FAQ.");
+        showError("Gagal Hapus", "Gagal menghapus FAQ.");
       }
     }
   };

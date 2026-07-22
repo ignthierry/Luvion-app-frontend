@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/apiClient";
+import { showSuccess, showError, showConfirm } from "@/lib/swal";
 import { Loader2, Plus, Edit2, Trash2, X } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
@@ -124,18 +125,21 @@ export default function ModulesCMS() {
       }
       closeModal();
       loadModules();
+      showSuccess("Berhasil", editingModule ? "Modul berhasil diperbarui." : "Modul baru berhasil ditambahkan.");
     } catch (err: any) {
-      alert("Error: " + err.message);
+      showError("Gagal", err.message || "Terjadi kesalahan.");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Apakah Anda yakin ingin menghapus modul ini?")) {
+    const confirmed = await showConfirm("Hapus Modul", "Apakah Anda yakin ingin menghapus modul ini?");
+    if (confirmed) {
       try {
         await fetchApi(`/modules/${id}`, { method: "DELETE" });
         loadModules();
+        showSuccess("Berhasil Dihapus", "Modul telah berhasil dihapus.");
       } catch (err: any) {
-        alert("Error: " + err.message);
+        showError("Gagal Hapus", err.message || "Terjadi kesalahan.");
       }
     }
   };

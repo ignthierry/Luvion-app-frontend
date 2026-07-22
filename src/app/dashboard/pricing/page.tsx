@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/apiClient";
+import { showSuccess, showError, showConfirm } from "@/lib/swal";
 import { Loader2, Plus, Edit2, Trash2, X } from "lucide-react";
 
 interface PricingTier {
@@ -93,6 +94,7 @@ export default function PricingCMS() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const isEditing = Boolean(editingTier);
     const payload = {
       ...formData,
       features: formData.features.split("\n").filter(f => f.trim() !== ""),
@@ -112,18 +114,21 @@ export default function PricingCMS() {
       }
       closeModal();
       loadTiers();
+      showSuccess("Berhasil", isEditing ? "Paket harga berhasil diperbarui." : "Paket harga baru berhasil ditambahkan.");
     } catch (err: any) {
-      alert("Error: " + err.message);
+      showError("Gagal", err.message || "Terjadi kesalahan.");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Apakah Anda yakin ingin menghapus paket harga ini?")) {
+    const confirmed = await showConfirm("Hapus Paket", "Apakah Anda yakin ingin menghapus paket harga ini?");
+    if (confirmed) {
       try {
         await fetchApi(`/pricing/${id}`, { method: "DELETE" });
         loadTiers();
+        showSuccess("Berhasil Dihapus", "Paket harga telah berhasil dihapus.");
       } catch (err: any) {
-        alert("Error: " + err.message);
+        showError("Gagal Hapus", err.message || "Terjadi kesalahan.");
       }
     }
   };

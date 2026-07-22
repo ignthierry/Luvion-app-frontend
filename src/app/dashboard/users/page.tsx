@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/apiClient";
+import { showSuccess, showError, showConfirm } from "@/lib/swal";
 import { Loader2, Plus, Edit2, Trash2, X, User as UserIcon, Shield, Mail } from "lucide-react";
 
 interface UserData {
@@ -92,20 +93,23 @@ export default function UsersCMS() {
       }
       closeModal();
       loadUsers();
+      showSuccess("Berhasil", editingUser ? "Data user berhasil diperbarui." : "User baru berhasil ditambahkan.");
     } catch (err: any) {
-      alert("Error: " + err.message);
+      showError("Gagal", err.message || "Terjadi kesalahan.");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm("Apakah Anda yakin ingin menghapus user ini?")) {
+    const confirmed = await showConfirm("Hapus User", "Apakah Anda yakin ingin menghapus user ini?");
+    if (confirmed) {
       try {
         await fetchApi(`/users/${id}`, {
           method: "DELETE"
         });
         loadUsers();
+        showSuccess("Berhasil Dihapus", "User telah berhasil dihapus.");
       } catch (err: any) {
-        alert("Error: " + err.message);
+        showError("Gagal Hapus", err.message || "Terjadi kesalahan.");
       }
     }
   };

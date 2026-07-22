@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchApi, STORAGE_BASE_URL } from "@/lib/apiClient";
+import { showSuccess, showError, showWarning, showConfirm } from "@/lib/swal";
 import { Loader2, Trash2, X, RefreshCw, Receipt, Copy, Edit2, Printer, Send, ExternalLink, Check, Mail, MessageSquare, CreditCard } from "lucide-react";
 import { format } from "date-fns";
 
@@ -57,6 +58,7 @@ export default function OrdersDashboard() {
   const [invoiceModalData, setInvoiceModalData] = useState<{order: ClientOrder, invoice: Invoice} | null>(null);
   const [isSendingInvoice, setIsSendingInvoice] = useState<number | null>(null);
   const [isCheckingStatus, setIsCheckingStatus] = useState<number | null>(null);
+  const [isSendingWaha, setIsSendingWaha] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
   const handleCopyLink = (url: string) => {
@@ -72,18 +74,37 @@ export default function OrdersDashboard() {
         method: "POST"
       });
       if (res.status === 'success') {
-        alert(res.message || "Status pembayaran berhasil diperbarui!");
+        showSuccess("Berhasil Sinkron", res.message || "Status pembayaran berhasil diperbarui!");
         const updatedInvoices = await fetchApi(`/orders/${order.id}/invoices`);
         setOrderInvoices(updatedInvoices);
         loadOrders();
       } else {
-        alert("Gagal: " + (res.message || "Terjadi kesalahan"));
+        showError("Gagal Sinkron", res.message || "Terjadi kesalahan");
       }
     } catch (err: any) {
       console.error(err);
-      alert("Gagal mengecek status pembayaran dari Midtrans.");
+      showError("Gagal", "Gagal mengecek status pembayaran dari Midtrans.");
     } finally {
       setIsCheckingStatus(null);
+    }
+  };
+
+  const handleSendWaha = async (invoiceId: number) => {
+    setIsSendingWaha(true);
+    try {
+      const res = await fetchApi(`/invoices/${invoiceId}/send-whatsapp`, {
+        method: "POST"
+      });
+      if (res.status === 'success') {
+        showSuccess("WhatsApp Terkirim", res.message || "Pesan WhatsApp berhasil dikirim via WAHA API!");
+      } else {
+        showError("Gagal Kirim WhatsApp", res.message || "Terjadi kesalahan");
+      }
+    } catch (err: any) {
+      console.error(err);
+      showError("Gagal Kirim WhatsApp", err.message || "Terjadi kesalahan");
+    } finally {
+      setIsSendingWaha(false);
     }
   };
   
@@ -121,12 +142,13 @@ export default function OrdersDashboard() {
         setOrderInvoices(updatedInvoices);
         const freshInvoice = updatedInvoices.find((i: Invoice) => i.id === invoice.id) || { ...invoice, payment_url: res.payment_url, snap_token: res.snap_token };
         setInvoiceModalData({ order, invoice: freshInvoice });
+        showSuccess("Link Pembayaran Siap", "Link pembayaran Midtrans berhasil dibuat.");
       } else {
-        alert("Gagal: " + (res.message || 'Terjadi kesalahan'));
+        showError("Gagal Buat Link", res.message || 'Terjadi kesalahan');
       }
     } catch (err: any) {
       console.error(err);
-      alert("Terjadi kesalahan saat membuat link tagihan.");
+      showError("Gagal", "Terjadi kesalahan saat membuat link tagihan.");
     } finally {
       setIsSendingInvoice(null);
     }
@@ -139,11 +161,12 @@ export default function OrdersDashboard() {
       if (res.status === 'success') {
         const invoices = await fetchApi(`/orders/${orderId}/invoices`);
         setOrderInvoices(invoices);
+        showSuccess("Invoice Dibuat", "Tagihan invoice baru berhasil dibuat.");
       } else {
-        alert("Gagal: " + (res.message || 'Terjadi kesalahan'));
+        showError("Gagal Buat Tagihan", res.message || 'Terjadi kesalahan');
       }
     } catch (e: any) {
-      alert("Terjadi kesalahan. Pastikan pesanan memiliki harga dasar.");
+      showError("Gagal", "Terjadi kesalahan. Pastikan pesanan memiliki harga dasar.");
     } finally {
       setIsGeneratingInvoice(false);
     }
@@ -194,9 +217,10 @@ export default function OrdersDashboard() {
       });
       loadOrders();
       closeEditModal();
+      showSuccess("Berhasil Disimpan", "Data pesanan berhasil diperbarui.");
     } catch (error) {
       console.error("Error updating order:", error);
-      alert("Gagal memperbarui data pesanan.");
+      showError("Gagal", "Gagal memperbarui data pesanan.");
     } finally {
       setIsSavingEdit(false);
     }
@@ -214,19 +238,24 @@ export default function OrdersDashboard() {
       }
     } catch (error) {
       console.error("Error updating order:", error);
-      alert(`Gagal memperbarui ${field}.`);
+      showError("Gagal", `Gagal memperbarui ${field}.`);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm("Apakah Anda yakin ingin menghapus pesanan ini? Aksi ini akan menyembunyikan data (soft delete).")) {
+    const confirmed = await showConfirm(
+      "Hapus Pesanan",
+      "Apakah Anda yakin ingin menghapus pesanan ini? Data akan disembunyikan (soft delete)."
+    );
+    if (confirmed) {
       try {
         await fetchApi(`/orders/${id}`, { method: "DELETE" });
         loadOrders();
         closeModal();
+        showSuccess("Berhasil Dihapus", "Pesanan telah berhasil dihapus.");
       } catch (error) {
         console.error("Error deleting order:", error);
-        alert("Gagal menghapus pesanan.");
+        showError("Gagal Hapus", "Gagal menghapus pesanan.");
       }
     }
   };
@@ -723,20 +752,18 @@ export default function OrdersDashboard() {
                   </div>
                 </div>
               )}
-
               {/* Action Buttons */}
               <div>
                 <p className="text-xs font-bold text-on-surface-variant mb-3 uppercase tracking-wider">Kirim Langsung via:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <a 
-                    href={`https://wa.me/${invoiceModalData.order.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Halo ${invoiceModalData.order.full_name},\n\nBerikut adalah tagihan untuk layanan Luvion SaaS (${invoiceModalData.order.plan_name}).\n\nTotal: Rp ${new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}\nSilakan lakukan pembayaran melalui link berikut:\n${invoiceModalData.invoice.payment_url}\n\nTerima kasih,\nTim Luvion`)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center justify-center gap-2.5 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  <button 
+                    onClick={() => handleSendWaha(invoiceModalData.invoice.id)}
+                    disabled={isSendingWaha}
+                    className="flex items-center justify-center gap-2.5 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
                   >
-                    <MessageSquare className="w-4 h-4" />
-                    <span>Kirim via WhatsApp</span>
-                  </a>
+                    {isSendingWaha ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+                    <span>{isSendingWaha ? 'Mengirim via WAHA...' : 'Kirim WA (WAHA API)'}</span>
+                  </button>
                   
                   <a 
                     href={`mailto:${invoiceModalData.order.email}?subject=Tagihan Layanan Luvion SaaS - ${invoiceModalData.order.company_name}&body=${encodeURIComponent(`Halo ${invoiceModalData.order.full_name},\n\nBerikut adalah tagihan untuk layanan Luvion SaaS (${invoiceModalData.order.plan_name}).\n\nTotal: Rp ${new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}\nSilakan lakukan pembayaran melalui link berikut:\n${invoiceModalData.invoice.payment_url}\n\nTerima kasih,\nTim Luvion`)}`}
@@ -744,6 +771,16 @@ export default function OrdersDashboard() {
                   >
                     <Mail className="w-4 h-4" />
                     <span>Kirim via Email</span>
+                  </a>
+                </div>
+                <div className="mt-2 text-center">
+                  <a 
+                    href={`https://wa.me/${invoiceModalData.order.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Halo ${invoiceModalData.order.full_name},\n\nBerikut adalah tagihan untuk layanan Luvion SaaS (${invoiceModalData.order.plan_name}).\n\nTotal: Rp ${new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}\nSilakan lakukan pembayaran melalui link berikut:\n${invoiceModalData.invoice.payment_url}\n\nTerima kasih,\nTim Luvion`)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[11px] text-on-surface-variant hover:text-emerald-500 transition-colors inline-block"
+                  >
+                    Atau buka manual via WhatsApp Web (wa.me) ↗
                   </a>
                 </div>
               </div>
