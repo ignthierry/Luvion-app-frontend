@@ -32,6 +32,7 @@ interface Invoice {
   due_date: string | null;
   payment_url: string | null;
   snap_token: string | null;
+  payment_type?: string | null;
   created_at: string;
   client_order: ClientOrder;
 }
@@ -138,7 +139,14 @@ export default function InvoicePage() {
           <div className="text-right">
             <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider mb-2">Status Pembayaran:</p>
             {invoice.status === 'paid' ? (
-              <span className="inline-block px-4 py-1.5 rounded bg-green-100 text-green-700 font-bold text-sm">LUNAS</span>
+              <div className="flex flex-col items-end gap-1">
+                <span className="inline-block px-4 py-1.5 rounded bg-green-100 text-green-700 font-bold text-sm">LUNAS</span>
+                {invoice.payment_type && (
+                  <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wide">
+                    VIA {invoice.payment_type.replace('_', ' ')}
+                  </span>
+                )}
+              </div>
             ) : (
               <span className="inline-block px-4 py-1.5 rounded bg-red-100 text-red-700 font-bold text-sm">BELUM DIBAYAR</span>
             )}

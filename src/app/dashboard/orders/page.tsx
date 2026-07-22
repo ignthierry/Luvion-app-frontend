@@ -41,6 +41,7 @@ interface Invoice {
   due_date: string | null;
   payment_url: string | null;
   snap_token: string | null;
+  payment_type?: string | null;
   created_at: string;
 }
 
@@ -542,11 +543,18 @@ export default function OrdersDashboard() {
                             <td className="px-4 py-3">{inv.due_date ? format(new Date(inv.due_date), "dd MMM yyyy") : '-'}</td>
                             <td className="px-4 py-3">Rp {Number(inv.amount).toLocaleString('id-ID')}</td>
                             <td className="px-4 py-3">
-                              <span className={`px-2 py-1 rounded text-xs font-medium 
-                                ${inv.status === 'paid' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-500'}`}
-                              >
-                                {inv.status.toUpperCase()}
-                              </span>
+                              <div className="flex flex-col gap-1 items-start">
+                                <span className={`px-2 py-1 rounded text-xs font-medium 
+                                  ${inv.status === 'paid' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-500'}`}
+                                >
+                                  {inv.status.toUpperCase()}
+                                </span>
+                                {inv.payment_type && (
+                                  <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                                    {inv.payment_type.replace('_', ' ')}
+                                  </span>
+                                )}
+                              </div>
                             </td>
                             <td className="px-4 py-3 text-right">
                               <div className="flex items-center justify-end gap-2">
