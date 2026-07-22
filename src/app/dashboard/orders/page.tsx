@@ -42,6 +42,7 @@ interface Invoice {
   payment_url: string | null;
   snap_token: string | null;
   payment_type?: string | null;
+  paid_at?: string | null;
   created_at: string;
 }
 
@@ -525,9 +526,10 @@ export default function OrdersDashboard() {
                     <thead className="bg-white/5 text-on-surface-variant border-b border-border/20">
                       <tr>
                         <th className="px-4 py-3 font-semibold">No. Invoice</th>
+                        <th className="px-4 py-3 font-semibold">Tgl Dibuat</th>
                         <th className="px-4 py-3 font-semibold">Tgl Jatuh Tempo</th>
                         <th className="px-4 py-3 font-semibold">Nominal</th>
-                        <th className="px-4 py-3 font-semibold">Status</th>
+                        <th className="px-4 py-3 font-semibold">Status & Tanggal</th>
                         <th className="px-4 py-3 font-semibold text-right">Aksi</th>
                       </tr>
                     </thead>
@@ -539,19 +541,29 @@ export default function OrdersDashboard() {
                       ) : (
                         orderInvoices.map(inv => (
                           <tr key={inv.id} className="hover:bg-white/5">
-                            <td className="px-4 py-3 font-medium">{inv.invoice_number}</td>
-                            <td className="px-4 py-3">{inv.due_date ? format(new Date(inv.due_date), "dd MMM yyyy") : '-'}</td>
-                            <td className="px-4 py-3">Rp {Number(inv.amount).toLocaleString('id-ID')}</td>
+                            <td className="px-4 py-3 font-medium text-foreground">{inv.invoice_number}</td>
+                            <td className="px-4 py-3 text-on-surface-variant text-xs">{inv.created_at ? format(new Date(inv.created_at), "dd MMM yyyy") : '-'}</td>
+                            <td className="px-4 py-3 text-on-surface-variant text-xs">{inv.due_date ? format(new Date(inv.due_date), "dd MMM yyyy") : '-'}</td>
+                            <td className="px-4 py-3 font-semibold text-foreground">Rp {Number(inv.amount).toLocaleString('id-ID')}</td>
                             <td className="px-4 py-3">
                               <div className="flex flex-col gap-1 items-start">
-                                <span className={`px-2 py-1 rounded text-xs font-medium 
-                                  ${inv.status === 'paid' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-500'}`}
+                                <span className={`px-2 py-0.5 rounded text-xs font-bold 
+                                  ${inv.status === 'paid' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30'}`}
                                 >
                                   {inv.status.toUpperCase()}
                                 </span>
-                                {inv.payment_type && (
-                                  <span className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                                    {inv.payment_type.replace('_', ' ')}
+                                {inv.status === 'paid' ? (
+                                  <div className="flex flex-col text-[11px] text-emerald-600 dark:text-emerald-400 font-medium leading-tight">
+                                    <span>{inv.paid_at ? `Lunas: ${format(new Date(inv.paid_at), "dd MMM yyyy, HH:mm")}` : 'Sudah Dibayar'}</span>
+                                    {inv.payment_type && (
+                                      <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
+                                        Via {inv.payment_type.replace('_', ' ')}
+                                      </span>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-[11px] text-yellow-600 dark:text-yellow-400/90 font-medium">
+                                    {inv.due_date ? `Jatuh Tempo: ${format(new Date(inv.due_date), "dd MMM yyyy")}` : 'Belum Dibayar'}
                                   </span>
                                 )}
                               </div>

@@ -33,6 +33,7 @@ interface Invoice {
   payment_url: string | null;
   snap_token: string | null;
   payment_type?: string | null;
+  paid_at?: string | null;
   created_at: string;
   client_order: ClientOrder;
 }
@@ -81,32 +82,34 @@ export default function InvoicePage() {
   const totalPricing = Number(invoice.amount || 0);
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900 print:bg-white p-8 md:p-16 flex justify-center">
+    <div className="min-h-screen bg-white text-zinc-900 print:bg-white p-4 sm:p-8 md:p-12 flex flex-col items-center">
       
-      {/* Floating Action Buttons (Hidden on Print) */}
-      <div className="fixed top-6 right-6 flex gap-3 print:hidden z-50">
+      {/* Action Bar Header (Hidden on Print) */}
+      <div className="w-full max-w-4xl flex items-center justify-between mb-6 print:hidden">
         <Link 
           href="/dashboard/orders"
-          className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl transition-all font-semibold text-sm shadow-md border border-zinc-200 hover:scale-[1.02] active:scale-[0.98]"
+          className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl transition-all font-semibold text-sm shadow-sm border border-zinc-200 hover:scale-[1.02] active:scale-[0.98]"
         >
-          <ArrowLeft className="w-4 h-4" /> Kembali
+          <ArrowLeft className="w-4 h-4" /> Kembali ke Pesanan
         </Link>
-        {invoice.payment_url && invoice.status !== 'paid' && (
-          <a
-            href={invoice.payment_url}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all font-semibold text-sm shadow-md shadow-emerald-600/20 hover:scale-[1.02] active:scale-[0.98]"
+        <div className="flex items-center gap-3">
+          {invoice.payment_url && invoice.status !== 'paid' && (
+            <a
+              href={invoice.payment_url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all font-semibold text-sm shadow-md shadow-emerald-600/20 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <CreditCard className="w-4 h-4" /> Bayar via Midtrans
+            </a>
+          )}
+          <button 
+            onClick={() => window.print()}
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all font-semibold text-sm shadow-md shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
           >
-            <CreditCard className="w-4 h-4" /> Bayar via Midtrans
-          </a>
-        )}
-        <button 
-          onClick={() => window.print()}
-          className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all font-semibold text-sm shadow-md shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
-        >
-          <Printer className="w-4 h-4" /> Cetak Invoice
-        </button>
+            <Printer className="w-4 h-4" /> Cetak Invoice
+          </button>
+        </div>
       </div>
 
       {/* Invoice Container */}
@@ -123,7 +126,8 @@ export default function InvoicePage() {
           <div className="text-right">
             <h2 className="text-3xl font-bold text-zinc-300 uppercase tracking-widest mb-2">Invoice</h2>
             <p className="text-sm font-bold text-zinc-800">#{invoiceNumber}</p>
-            <p className="text-sm text-zinc-500">Tanggal: {format(new Date(), "dd MMMM yyyy")}</p>
+            <p className="text-sm text-zinc-500">Tgl Dibuat: {invoice.created_at ? format(new Date(invoice.created_at), "dd MMMM yyyy") : '-'}</p>
+            <p className="text-sm text-zinc-500">Jatuh Tempo: {invoice.due_date ? format(new Date(invoice.due_date), "dd MMMM yyyy") : '-'}</p>
           </div>
         </div>
 
@@ -141,6 +145,11 @@ export default function InvoicePage() {
             {invoice.status === 'paid' ? (
               <div className="flex flex-col items-end gap-1">
                 <span className="inline-block px-4 py-1.5 rounded bg-green-100 text-green-700 font-bold text-sm">LUNAS</span>
+                {invoice.paid_at && (
+                  <span className="text-[11px] font-semibold text-green-700">
+                    Pada {format(new Date(invoice.paid_at), "dd MMM yyyy, HH:mm")}
+                  </span>
+                )}
                 {invoice.payment_type && (
                   <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wide">
                     VIA {invoice.payment_type.replace('_', ' ')}
@@ -148,7 +157,14 @@ export default function InvoicePage() {
                 )}
               </div>
             ) : (
-              <span className="inline-block px-4 py-1.5 rounded bg-red-100 text-red-700 font-bold text-sm">BELUM DIBAYAR</span>
+              <div className="flex flex-col items-end gap-1">
+                <span className="inline-block px-4 py-1.5 rounded bg-red-100 text-red-700 font-bold text-sm">BELUM DIBAYAR</span>
+                {invoice.due_date && (
+                  <span className="text-[11px] text-red-600 font-medium">
+                    Jatuh Tempo: {format(new Date(invoice.due_date), "dd MMM yyyy")}
+                  </span>
+                )}
+              </div>
             )}
           </div>
         </div>
