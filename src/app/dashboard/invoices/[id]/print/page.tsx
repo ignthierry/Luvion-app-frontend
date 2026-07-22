@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { fetchApi } from "@/lib/apiClient";
 import { format } from "date-fns";
-import { Loader2, Printer, ArrowLeft } from "lucide-react";
+import { Loader2, Printer, ArrowLeft, CreditCard, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 interface ClientOrder {
@@ -83,16 +83,26 @@ export default function InvoicePage() {
     <div className="min-h-screen bg-white text-zinc-900 print:bg-white p-8 md:p-16 flex justify-center">
       
       {/* Floating Action Buttons (Hidden on Print) */}
-      <div className="fixed top-6 right-6 flex gap-4 print:hidden">
+      <div className="fixed top-6 right-6 flex gap-3 print:hidden z-50">
         <Link 
           href="/dashboard/orders"
-          className="flex items-center gap-2 px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-lg transition-colors font-medium shadow-sm"
+          className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl transition-all font-semibold text-sm shadow-md border border-zinc-200 hover:scale-[1.02] active:scale-[0.98]"
         >
           <ArrowLeft className="w-4 h-4" /> Kembali
         </Link>
+        {invoice.payment_url && invoice.status !== 'paid' && (
+          <a
+            href={invoice.payment_url}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all font-semibold text-sm shadow-md shadow-emerald-600/20 hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <CreditCard className="w-4 h-4" /> Bayar via Midtrans
+          </a>
+        )}
         <button 
           onClick={() => window.print()}
-          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors font-medium shadow-sm"
+          className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all font-semibold text-sm shadow-md shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
         >
           <Printer className="w-4 h-4" /> Cetak Invoice
         </button>
@@ -176,13 +186,29 @@ export default function InvoicePage() {
 
         {/* Payment Info */}
         {invoice.payment_url && invoice.status !== 'paid' && (
-          <div className="bg-zinc-50 p-6 rounded-xl border border-zinc-200 print:border-none print:bg-transparent print:p-0 mb-12">
-            <h3 className="font-bold text-zinc-800 mb-2">Cara Pembayaran</h3>
-            <p className="text-sm text-zinc-600 mb-4">
-              Silakan selesaikan pembayaran tagihan ini dengan mengunjungi tautan Midtrans berikut:
-            </p>
-            <div className="flex flex-col gap-2">
-              <a href={invoice.payment_url} target="_blank" rel="noreferrer" className="text-primary hover:underline font-medium break-all">
+          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-200 print:border-none print:bg-transparent print:p-0 mb-12">
+            <div className="flex items-center justify-between flex-wrap gap-4 mb-3">
+              <div>
+                <h3 className="font-bold text-emerald-950 text-base flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-emerald-600 print:hidden" />
+                  Pembayaran Online via Midtrans
+                </h3>
+                <p className="text-xs text-emerald-700 mt-1">
+                  Selesaikan pembayaran secara cepat dan aman melalui berbagai metode pembayaran (QRIS, Transfer Bank, E-Wallet, dll).
+                </p>
+              </div>
+              <a 
+                href={invoice.payment_url} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="print:hidden inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/20 transition-all hover:scale-105 text-sm"
+              >
+                <ExternalLink className="w-4 h-4" /> Bayar Sekarang
+              </a>
+            </div>
+            <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-emerald-200/60 print:bg-transparent print:p-0 print:border-none">
+              <span className="text-xs font-semibold text-emerald-800 block mb-1">Link Pembayaran:</span>
+              <a href={invoice.payment_url} target="_blank" rel="noreferrer" className="text-emerald-700 hover:underline font-mono text-xs break-all">
                 {invoice.payment_url}
               </a>
             </div>

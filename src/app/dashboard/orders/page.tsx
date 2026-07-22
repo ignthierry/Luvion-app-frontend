@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchApi } from "@/lib/apiClient";
-import { Loader2, Trash2, X, RefreshCw, Receipt, Copy, Edit2 } from "lucide-react";
+import { fetchApi, STORAGE_BASE_URL } from "@/lib/apiClient";
+import { Loader2, Trash2, X, RefreshCw, Receipt, Copy, Edit2, Printer, Send, ExternalLink, Check, Mail, MessageSquare, CreditCard } from "lucide-react";
 import { format } from "date-fns";
 
 interface ClientOrder {
@@ -54,6 +54,36 @@ export default function OrdersDashboard() {
   const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false);
   const [invoiceModalData, setInvoiceModalData] = useState<{order: ClientOrder, invoice: Invoice} | null>(null);
   const [isSendingInvoice, setIsSendingInvoice] = useState<number | null>(null);
+  const [isCheckingStatus, setIsCheckingStatus] = useState<number | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleCopyLink = (url: string) => {
+    navigator.clipboard.writeText(url);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
+
+  const handleCheckStatus = async (invoice: Invoice, order: ClientOrder) => {
+    setIsCheckingStatus(invoice.id);
+    try {
+      const res = await fetchApi(`/invoices/${invoice.id}/check-status`, {
+        method: "POST"
+      });
+      if (res.status === 'success') {
+        alert(res.message || "Status pembayaran berhasil diperbarui!");
+        const updatedInvoices = await fetchApi(`/orders/${order.id}/invoices`);
+        setOrderInvoices(updatedInvoices);
+        loadOrders();
+      } else {
+        alert("Gagal: " + (res.message || "Terjadi kesalahan"));
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert("Gagal mengecek status pembayaran dari Midtrans.");
+    } finally {
+      setIsCheckingStatus(null);
+    }
+  };
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editFormData, setEditFormData] = useState<Partial<ClientOrder>>({});
@@ -266,29 +296,32 @@ export default function OrdersDashboard() {
                     </select>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex flex-col items-end gap-2">
-                      <div className="flex items-center">
-                        <button
-                          onClick={() => openEditModal(order)}
-                          className="text-blue-500 hover:text-blue-400 p-1.5 transition-colors"
-                          title="Edit Pesanan"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(order.id)}
-                          className="text-error hover:text-error/80 p-1.5 transition-colors ml-1"
-                          title="Hapus (Soft Delete)"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                    <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => openModal(order)}
-                        className="flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors w-full justify-center"
-                        title="Lihat Tagihan & Detail"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm"
+                        title="Lihat Tagihan & Detail Pesanan"
                       >
-                        <Receipt className="w-4 h-4" /> Invoice
+                        <Receipt className="w-3.5 h-3.5" />
+                        <span>Invoice</span>
+                      </button>
+
+                      <button
+                        onClick={() => openEditModal(order)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 hover:border-blue-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm"
+                        title="Edit Pesanan"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                        <span>Edit</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(order.id)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-500/20 hover:border-red-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm"
+                        title="Hapus Pesanan"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Hapus</span>
                       </button>
                     </div>
                   </td>
@@ -456,7 +489,7 @@ export default function OrdersDashboard() {
                     <p className="text-xs text-on-surface-variant mb-2">Logo Perusahaan</p>
                     <div className="bg-white p-2 rounded-lg inline-block">
                       <img 
-                        src={`http://localhost:8000/storage/${selectedOrder.logo_path}`} 
+                        src={`${STORAGE_BASE_URL}/${selectedOrder.logo_path}`} 
                         alt="Logo Klien" 
                         className="h-16 w-auto object-contain"
                         onError={(e) => {
@@ -516,23 +549,56 @@ export default function OrdersDashboard() {
                               </span>
                             </td>
                             <td className="px-4 py-3 text-right">
-                              <button
-                                onClick={() => handleGenerateLink(inv, selectedOrder)}
-                                disabled={isSendingInvoice === inv.id}
-                                className="text-green-500 hover:text-green-400 p-1.5 transition-colors disabled:opacity-50"
-                                title="Kirim/Generate Tagihan Midtrans"
-                              >
-                                {isSendingInvoice === inv.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Receipt className="w-4 h-4" />}
-                              </button>
-                              <a
-                                href={`/dashboard/invoices/${inv.id}/print`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-primary hover:text-primary/80 p-1.5 transition-colors inline-block ml-1"
-                                title="Cetak PDF"
-                              >
-                                <Copy className="w-4 h-4" />
-                              </a>
+                              <div className="flex items-center justify-end gap-2">
+                                {inv.status !== 'paid' && (
+                                  <button
+                                    onClick={() => handleCheckStatus(inv, selectedOrder)}
+                                    disabled={isCheckingStatus === inv.id}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 hover:border-amber-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
+                                    title="Cek & Sinkronkan Status Pembayaran dari Midtrans"
+                                  >
+                                    {isCheckingStatus === inv.id ? (
+                                      <>
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                        <span>Cek...</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <RefreshCw className="w-3.5 h-3.5" />
+                                        <span>Cek Status</span>
+                                      </>
+                                    )}
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => handleGenerateLink(inv, selectedOrder)}
+                                  disabled={isSendingInvoice === inv.id}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
+                                  title="Kirim atau Generate Link Pembayaran Midtrans"
+                                >
+                                  {isSendingInvoice === inv.id ? (
+                                    <>
+                                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                      <span>Memproses...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Send className="w-3.5 h-3.5" />
+                                      <span>{inv.payment_url ? 'Kirim Link' : 'Buat Link'}</span>
+                                    </>
+                                  )}
+                                </button>
+                                <a
+                                  href={`/dashboard/invoices/${inv.id}/print`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 hover:border-blue-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm"
+                                  title="Cetak PDF Invoice"
+                                >
+                                  <Printer className="w-3.5 h-3.5" />
+                                  <span>Cetak</span>
+                                </a>
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -565,38 +631,99 @@ export default function OrdersDashboard() {
       {/* Invoice Modal */}
       {invoiceModalData && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[1050] flex items-center justify-center p-4 overflow-y-auto">
-          <div className="glass-panel border-border/40 rounded-3xl w-full max-w-lg flex flex-col shadow-2xl relative">
+          <div className="glass-panel border-border/40 rounded-3xl w-full max-w-lg flex flex-col shadow-2xl relative overflow-hidden">
             
-            <div className="flex items-center justify-between p-6 border-b border-border/40">
-              <h2 className="text-xl font-extrabold text-foreground">Kirim Tagihan</h2>
-              <button onClick={() => setInvoiceModalData(null)} className="text-on-surface-variant hover:text-foreground transition-colors"><X className="w-5 h-5" /></button>
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-border/40 bg-surface/50">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                  <CreditCard className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-extrabold text-foreground">Kirim Tagihan Midtrans</h2>
+                  <p className="text-xs text-on-surface-variant">Bagikan link pembayaran ke pelanggan</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setInvoiceModalData(null)} 
+                className="p-1.5 rounded-lg text-on-surface-variant hover:text-foreground hover:bg-surface transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
             <div className="p-6 space-y-6">
-              <div className="bg-surface/30 p-4 rounded-xl border border-border/20 text-center">
-                <p className="text-sm text-on-surface-variant mb-1">Total Tagihan (Rp)</p>
-                <p className="text-3xl font-extrabold text-primary">{new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}</p>
-                <p className="text-sm text-foreground mt-2">{invoiceModalData.order.plan_name} - {invoiceModalData.invoice.invoice_number}</p>
-                <p className="text-xs text-on-surface-variant">{invoiceModalData.order.company_name} ({invoiceModalData.order.full_name})</p>
+              {/* Invoice Summary Card */}
+              <div className="bg-gradient-to-br from-primary/10 via-surface/40 to-surface/20 p-5 rounded-2xl border border-primary/20 text-center relative overflow-hidden">
+                <p className="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-1">Total Tagihan</p>
+                <p className="text-3xl font-black text-primary tracking-tight">
+                  Rp {new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}
+                </p>
+                <div className="mt-3 pt-3 border-t border-border/20 flex flex-col items-center gap-1 text-xs">
+                  <span className="font-semibold text-foreground">{invoiceModalData.order.plan_name} • {invoiceModalData.invoice.invoice_number}</span>
+                  <span className="text-on-surface-variant">{invoiceModalData.order.company_name} ({invoiceModalData.order.full_name})</span>
+                </div>
               </div>
 
+              {/* Midtrans Link Box */}
+              {invoiceModalData.invoice.payment_url && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-on-surface-variant">Link Pembayaran Midtrans:</span>
+                    {copiedLink && (
+                      <span className="text-emerald-500 font-bold text-xs flex items-center gap-1">
+                        <Check className="w-3.5 h-3.5" /> Tersalin!
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={invoiceModalData.invoice.payment_url}
+                      className="flex-1 bg-surface border border-border/50 rounded-xl px-3 py-2 text-xs font-mono text-foreground focus:outline-none select-all"
+                    />
+                    <button
+                      onClick={() => handleCopyLink(invoiceModalData.invoice.payment_url!)}
+                      className="px-3.5 py-2 bg-surface hover:bg-surface-variant text-foreground border border-border/50 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
+                      title="Salin Link"
+                    >
+                      {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copiedLink ? 'Tersalin' : 'Salin'}</span>
+                    </button>
+                    <a
+                      href={invoiceModalData.invoice.payment_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
+                      title="Buka Link"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
               <div>
-                <p className="text-xs text-on-surface-variant mb-2">Pilih metode pengiriman:</p>
-                <div className="flex flex-col gap-3">
+                <p className="text-xs font-bold text-on-surface-variant mb-3 uppercase tracking-wider">Kirim Langsung via:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <a 
                     href={`https://wa.me/${invoiceModalData.order.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Halo ${invoiceModalData.order.full_name},\n\nBerikut adalah tagihan untuk layanan Luvion SaaS (${invoiceModalData.order.plan_name}).\n\nTotal: Rp ${new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}\nSilakan lakukan pembayaran melalui link berikut:\n${invoiceModalData.invoice.payment_url}\n\nTerima kasih,\nTim Luvion`)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full flex justify-center items-center gap-2 py-3 bg-green-500/20 text-green-500 font-bold rounded-xl hover:bg-green-500/30 transition-colors"
+                    className="flex items-center justify-center gap-2.5 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
                   >
-                    Kirim via WhatsApp
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Kirim via WhatsApp</span>
                   </a>
                   
                   <a 
                     href={`mailto:${invoiceModalData.order.email}?subject=Tagihan Layanan Luvion SaaS - ${invoiceModalData.order.company_name}&body=${encodeURIComponent(`Halo ${invoiceModalData.order.full_name},\n\nBerikut adalah tagihan untuk layanan Luvion SaaS (${invoiceModalData.order.plan_name}).\n\nTotal: Rp ${new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}\nSilakan lakukan pembayaran melalui link berikut:\n${invoiceModalData.invoice.payment_url}\n\nTerima kasih,\nTim Luvion`)}`}
-                    className="w-full flex justify-center items-center gap-2 py-3 bg-blue-500/20 text-blue-400 font-bold rounded-xl hover:bg-blue-500/30 transition-colors"
+                    className="flex items-center justify-center gap-2.5 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
                   >
-                    Kirim via Email
+                    <Mail className="w-4 h-4" />
+                    <span>Kirim via Email</span>
                   </a>
                 </div>
               </div>

@@ -1,4 +1,5 @@
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.luvion.my.id/api';
+export const STORAGE_BASE_URL = API_BASE_URL.replace(/\/api\/?$/, '') + '/storage';
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
