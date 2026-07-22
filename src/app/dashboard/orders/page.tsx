@@ -82,8 +82,7 @@ export default function OrdersDashboard() {
         showError("Gagal Sinkron", res.message || "Terjadi kesalahan");
       }
     } catch (err: any) {
-      console.error(err);
-      showError("Gagal", "Gagal mengecek status pembayaran dari Midtrans.");
+      showWarning("Status Pembayaran", err.message || "Gagal mengecek status pembayaran dari Midtrans.");
     } finally {
       setIsCheckingStatus(null);
     }
@@ -101,7 +100,6 @@ export default function OrdersDashboard() {
         showError("Gagal Kirim WhatsApp", res.message || "Terjadi kesalahan");
       }
     } catch (err: any) {
-      console.error(err);
       showError("Gagal Kirim WhatsApp", err.message || "Terjadi kesalahan");
     } finally {
       setIsSendingWaha(false);
@@ -147,8 +145,7 @@ export default function OrdersDashboard() {
         showError("Gagal Buat Link", res.message || 'Terjadi kesalahan');
       }
     } catch (err: any) {
-      console.error(err);
-      showError("Gagal", "Terjadi kesalahan saat membuat link tagihan.");
+      showError("Gagal", err.message || "Terjadi kesalahan saat membuat link tagihan.");
     } finally {
       setIsSendingInvoice(null);
     }
@@ -166,7 +163,7 @@ export default function OrdersDashboard() {
         showError("Gagal Buat Tagihan", res.message || 'Terjadi kesalahan');
       }
     } catch (e: any) {
-      showError("Gagal", "Terjadi kesalahan. Pastikan pesanan memiliki harga dasar.");
+      showError("Gagal", e.message || "Terjadi kesalahan. Pastikan pesanan memiliki harga dasar.");
     } finally {
       setIsGeneratingInvoice(false);
     }
@@ -373,6 +370,14 @@ export default function OrdersDashboard() {
                 <h2 className="text-xl font-extrabold text-foreground">Detail Pesanan #{selectedOrder.id}</h2>
               </div>
               <div className="flex items-center gap-4">
+                <button
+                  onClick={() => openEditModal(selectedOrder)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 hover:border-blue-500/50 transition-all"
+                  title="Edit Pesanan"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                  <span>Edit Pesanan</span>
+                </button>
                 <button onClick={closeModal} className="text-on-surface-variant hover:text-foreground transition-colors"><X className="w-5 h-5" /></button>
               </div>
             </div>
@@ -382,21 +387,14 @@ export default function OrdersDashboard() {
               <div className="flex flex-wrap gap-4 items-center justify-between bg-surface/30 p-4 rounded-xl border border-border/20">
                 <div>
                   <p className="text-xs text-on-surface-variant uppercase tracking-wider mb-1">Status</p>
-                  <select
-                    value={selectedOrder.status}
-                    onChange={(e) => handleUpdateField(selectedOrder.id, 'status', e.target.value)}
-                    className={`text-sm px-3 py-1.5 rounded-lg font-bold border-0 focus:ring-2 focus:ring-primary/50 outline-none
-                      ${selectedOrder.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500' : ''}
-                      ${selectedOrder.status === 'processing' ? 'bg-blue-500/20 text-blue-400' : ''}
-                      ${selectedOrder.status === 'completed' ? 'bg-green-500/20 text-green-400' : ''}
-                      ${selectedOrder.status === 'cancelled' ? 'bg-red-500/20 text-red-400' : ''}
-                    `}
-                  >
-                    <option value="pending" className="bg-zinc-900 text-yellow-500">Pending</option>
-                    <option value="processing" className="bg-zinc-900 text-blue-400">Processing</option>
-                    <option value="completed" className="bg-zinc-900 text-green-400">Completed</option>
-                    <option value="cancelled" className="bg-zinc-900 text-red-400">Cancelled</option>
-                  </select>
+                  <span className={`inline-block text-xs px-3 py-1 rounded-md font-bold uppercase tracking-wider
+                    ${selectedOrder.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' : ''}
+                    ${selectedOrder.status === 'processing' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : ''}
+                    ${selectedOrder.status === 'completed' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : ''}
+                    ${selectedOrder.status === 'cancelled' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : ''}
+                  `}>
+                    {selectedOrder.status}
+                  </span>
                 </div>
                 <div>
                   <p className="text-xs text-on-surface-variant uppercase tracking-wider mb-1">Tanggal Pesanan</p>
@@ -452,19 +450,19 @@ export default function OrdersDashboard() {
                     <p className="font-medium text-foreground">{selectedOrder.users_count} Users</p>
                   </div>
                   <div>
-                    <p className="text-xs text-on-surface-variant mb-1">Harga Langganan (Rp)</p>
-                    <input
-                      type="number"
-                      value={selectedOrder.pricing_payment || ''}
-                      onChange={(e) => handleUpdateField(selectedOrder.id, 'pricing_payment', e.target.value ? parseInt(e.target.value, 10) : null)}
-                      className="text-sm px-3 py-1.5 rounded-lg font-bold border-0 bg-surface focus:ring-2 focus:ring-primary/50 outline-none w-full text-foreground"
-                      placeholder="Contoh: 1500000"
-                    />
+                    <p className="text-xs text-on-surface-variant">Harga Langganan (Rp)</p>
+                    <p className="font-semibold text-foreground">
+                      {selectedOrder.pricing_payment ? `Rp ${Number(selectedOrder.pricing_payment).toLocaleString('id-ID')}` : '-'}
+                    </p>
                   </div>
                   {selectedOrder.subdomain && (
                     <div>
                       <p className="text-xs text-on-surface-variant">Subdomain Preferensi</p>
-                      <p className="font-medium text-foreground bg-surface/50 px-2 py-1 rounded inline-block mt-1">{selectedOrder.subdomain}.luvion.ai</p>
+                      <p className="font-medium text-foreground">
+                        {selectedOrder.subdomain.includes('.luvion.ai') 
+                          ? selectedOrder.subdomain.replace('.luvion.ai', '.luvion.my.id') 
+                          : (selectedOrder.subdomain.includes('.') ? selectedOrder.subdomain : `${selectedOrder.subdomain}.luvion.my.id`)}
+                      </p>
                     </div>
                   )}
                   {selectedOrder.theme_color && (
@@ -483,26 +481,26 @@ export default function OrdersDashboard() {
                 
                 {selectedOrder.purpose && (
                   <div>
-                    <p className="text-xs text-on-surface-variant mb-1">Tujuan Penggunaan Utama</p>
-                    <p className="text-sm bg-surface/30 p-3 rounded-lg border border-border/20">{selectedOrder.purpose}</p>
+                    <p className="text-xs text-on-surface-variant">Tujuan Penggunaan Utama</p>
+                    <p className="font-medium text-foreground">{selectedOrder.purpose}</p>
                   </div>
                 )}
                 {selectedOrder.integration_needs && (
                   <div>
-                    <p className="text-xs text-on-surface-variant mb-1">Kebutuhan Integrasi API</p>
-                    <p className="text-sm bg-surface/30 p-3 rounded-lg border border-border/20">{selectedOrder.integration_needs}</p>
+                    <p className="text-xs text-on-surface-variant">Kebutuhan Integrasi API</p>
+                    <p className="font-medium text-foreground">{selectedOrder.integration_needs}</p>
                   </div>
                 )}
                 {selectedOrder.notes && (
                   <div>
-                    <p className="text-xs text-on-surface-variant mb-1">Catatan Tambahan</p>
-                    <p className="text-sm bg-surface/30 p-3 rounded-lg border border-border/20">{selectedOrder.notes}</p>
+                    <p className="text-xs text-on-surface-variant">Catatan Tambahan</p>
+                    <p className="font-medium text-foreground">{selectedOrder.notes}</p>
                   </div>
                 )}
                 {selectedOrder.addons && (
                   <div>
-                    <p className="text-xs text-on-surface-variant mb-2">Modul Add-on Terpilih</p>
-                    <div className="flex flex-wrap gap-2">
+                    <p className="text-xs text-on-surface-variant mb-1">Modul Add-on Terpilih</p>
+                    <div className="flex flex-wrap gap-2 mt-1">
                       {typeof selectedOrder.addons === 'string' 
                         ? JSON.parse(selectedOrder.addons).map((addon: string, i: number) => (
                             <span key={i} className="text-xs font-medium bg-primary/20 text-primary px-3 py-1 rounded-full">{addon}</span>
@@ -518,14 +516,15 @@ export default function OrdersDashboard() {
                 {selectedOrder.logo_path && (
                   <div>
                     <p className="text-xs text-on-surface-variant mb-2">Logo Perusahaan</p>
-                    <div className="bg-white p-2 rounded-lg inline-block">
+                    <div className="bg-surface/50 p-2.5 rounded-xl border border-border/30 inline-block">
                       <img 
-                        src={`${STORAGE_BASE_URL}/${selectedOrder.logo_path}`} 
+                        src={selectedOrder.logo_path.startsWith('http') ? selectedOrder.logo_path : `${STORAGE_BASE_URL}/${selectedOrder.logo_path.replace(/^\//, '')}`} 
                         alt="Logo Klien" 
-                        className="h-16 w-auto object-contain"
+                        className="h-16 w-auto object-contain max-w-[200px]"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = 'https://via.placeholder.com/150?text=Error+Loading+Image';
+                          target.onerror = null;
+                          target.src = 'https://placehold.co/200x80/18181b/ffffff?text=Logo';
                         }}
                       />
                     </div>
@@ -543,7 +542,7 @@ export default function OrdersDashboard() {
                   <button
                     onClick={() => handleCreateInvoice(selectedOrder.id)}
                     disabled={isGeneratingInvoice || !selectedOrder.pricing_payment}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 text-sm"
+                    className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-xl font-extrabold transition-all shadow-md shadow-primary/20 disabled:opacity-50 text-sm"
                   >
                     {isGeneratingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Receipt className="w-4 h-4" />}
                     Buat Tagihan Baru
@@ -565,7 +564,7 @@ export default function OrdersDashboard() {
                     <tbody className="divide-y divide-border/20">
                       {orderInvoices.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="px-4 py-6 text-center text-on-surface-variant text-xs">Belum ada tagihan untuk pesanan ini.</td>
+                          <td colSpan={6} className="px-4 py-6 text-center text-on-surface-variant text-xs">Belum ada tagihan untuk pesanan ini.</td>
                         </tr>
                       ) : (
                         orderInvoices.map(inv => (
@@ -603,7 +602,7 @@ export default function OrdersDashboard() {
                                   <button
                                     onClick={() => handleCheckStatus(inv, selectedOrder)}
                                     disabled={isCheckingStatus === inv.id}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 hover:border-amber-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/40 hover:bg-amber-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
                                     title="Cek & Sinkronkan Status Pembayaran dari Midtrans"
                                   >
                                     {isCheckingStatus === inv.id ? (
@@ -622,7 +621,7 @@ export default function OrdersDashboard() {
                                 <button
                                   onClick={() => handleGenerateLink(inv, selectedOrder)}
                                   disabled={isSendingInvoice === inv.id}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
                                   title="Kirim atau Generate Link Pembayaran Midtrans"
                                 >
                                   {isSendingInvoice === inv.id ? (
@@ -641,7 +640,7 @@ export default function OrdersDashboard() {
                                   href={`/dashboard/invoices/${inv.id}/print`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 hover:border-blue-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/40 hover:bg-blue-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm"
                                   title="Cetak PDF Invoice"
                                 >
                                   <Printer className="w-3.5 h-3.5" />
@@ -661,13 +660,13 @@ export default function OrdersDashboard() {
             <div className="p-6 border-t border-border/40 flex justify-end gap-3 bg-surface/50 rounded-b-3xl">
               <button
                 onClick={() => handleDelete(selectedOrder.id)}
-                className="px-4 py-2 rounded-lg text-sm font-bold text-error hover:bg-error/10 transition-colors"
+                className="px-4 py-2 rounded-xl text-sm font-extrabold text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-colors"
               >
                 Hapus
               </button>
               <button
                 onClick={closeModal}
-                className="px-4 py-2 rounded-lg text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+                className="px-6 py-2.5 rounded-xl text-sm font-extrabold bg-primary hover:bg-primary/90 text-white transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
               >
                 Tutup
               </button>
@@ -714,41 +713,43 @@ export default function OrdersDashboard() {
                 </div>
               </div>
 
-              {/* Midtrans Link Box */}
+              {/* Midtrans & Public Invoice Link Box */}
               {invoiceModalData.invoice.payment_url && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-on-surface-variant">Link Pembayaran Midtrans:</span>
-                    {copiedLink && (
-                      <span className="text-emerald-500 font-bold text-xs flex items-center gap-1">
-                        <Check className="w-3.5 h-3.5" /> Tersalin!
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      readOnly
-                      value={invoiceModalData.invoice.payment_url}
-                      className="flex-1 bg-surface border border-border/50 rounded-xl px-3 py-2 text-xs font-mono text-foreground focus:outline-none select-all"
-                    />
-                    <button
-                      onClick={() => handleCopyLink(invoiceModalData.invoice.payment_url!)}
-                      className="px-3.5 py-2 bg-surface hover:bg-surface-variant text-foreground border border-border/50 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
-                      title="Salin Link"
-                    >
-                      {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copiedLink ? 'Tersalin' : 'Salin'}</span>
-                    </button>
-                    <a
-                      href={invoiceModalData.invoice.payment_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
-                      title="Buka Link"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-semibold text-on-surface-variant">Link Tampilan Invoice (Publik):</span>
+                      {copiedLink && (
+                        <span className="text-emerald-500 font-bold text-xs flex items-center gap-1">
+                          <Check className="w-3.5 h-3.5" /> Tersalin!
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        readOnly
+                        value={typeof window !== 'undefined' ? `${window.location.origin}/invoices/${invoiceModalData.invoice.id}` : `https://luvion.my.id/invoices/${invoiceModalData.invoice.id}`}
+                        className="flex-1 bg-surface border border-border/50 rounded-xl px-3 py-2 text-xs font-mono text-foreground focus:outline-none select-all"
+                      />
+                      <button
+                        onClick={() => handleCopyLink(typeof window !== 'undefined' ? `${window.location.origin}/invoices/${invoiceModalData.invoice.id}` : `https://luvion.my.id/invoices/${invoiceModalData.invoice.id}`)}
+                        className="px-3.5 py-2 bg-surface hover:bg-surface-variant text-foreground border border-border/50 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
+                        title="Salin Link Invoice"
+                      >
+                        {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                        <span>{copiedLink ? 'Tersalin' : 'Salin'}</span>
+                      </button>
+                      <a
+                        href={`/invoices/${invoiceModalData.invoice.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-3 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
+                        title="Buka Halaman Invoice"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
                   </div>
                 </div>
               )}
@@ -766,7 +767,7 @@ export default function OrdersDashboard() {
                   </button>
                   
                   <a 
-                    href={`mailto:${invoiceModalData.order.email}?subject=Tagihan Layanan Luvion SaaS - ${invoiceModalData.order.company_name}&body=${encodeURIComponent(`Halo ${invoiceModalData.order.full_name},\n\nBerikut adalah tagihan untuk layanan Luvion SaaS (${invoiceModalData.order.plan_name}).\n\nTotal: Rp ${new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}\nSilakan lakukan pembayaran melalui link berikut:\n${invoiceModalData.invoice.payment_url}\n\nTerima kasih,\nTim Luvion`)}`}
+                    href={`mailto:${invoiceModalData.order.email}?subject=Tagihan Layanan Luvion SaaS - ${invoiceModalData.order.company_name}&body=${encodeURIComponent(`Halo ${invoiceModalData.order.full_name},\n\nBerikut adalah tagihan untuk layanan Luvion SaaS (${invoiceModalData.order.plan_name}).\n\nTotal: Rp ${new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}\nSilakan lihat detail invoice & lakukan pembayaran melalui link berikut:\n${typeof window !== 'undefined' ? `${window.location.origin}/invoices/${invoiceModalData.invoice.id}` : `https://luvion.my.id/invoices/${invoiceModalData.invoice.id}`}\n\nTerima kasih,\nTim Luvion`)}`}
                     className="flex items-center justify-center gap-2.5 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
                   >
                     <Mail className="w-4 h-4" />
@@ -775,7 +776,7 @@ export default function OrdersDashboard() {
                 </div>
                 <div className="mt-2 text-center">
                   <a 
-                    href={`https://wa.me/${invoiceModalData.order.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Halo ${invoiceModalData.order.full_name},\n\nBerikut adalah tagihan untuk layanan Luvion SaaS (${invoiceModalData.order.plan_name}).\n\nTotal: Rp ${new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}\nSilakan lakukan pembayaran melalui link berikut:\n${invoiceModalData.invoice.payment_url}\n\nTerima kasih,\nTim Luvion`)}`}
+                    href={`https://wa.me/${invoiceModalData.order.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Halo ${invoiceModalData.order.full_name},\n\nBerikut adalah tagihan untuk layanan Luvion SaaS (${invoiceModalData.order.plan_name}).\n\nTotal: Rp ${new Intl.NumberFormat('id-ID').format(Number(invoiceModalData.invoice.amount || 0))}\nSilakan lihat detail invoice & lakukan pembayaran melalui link berikut:\n${typeof window !== 'undefined' ? `${window.location.origin}/invoices/${invoiceModalData.invoice.id}` : `https://luvion.my.id/invoices/${invoiceModalData.invoice.id}`}\n\nTerima kasih,\nTim Luvion`)}`}
                     target="_blank"
                     rel="noreferrer"
                     className="text-[11px] text-on-surface-variant hover:text-emerald-500 transition-colors inline-block"

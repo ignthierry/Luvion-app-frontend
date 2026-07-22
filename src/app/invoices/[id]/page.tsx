@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { fetchApi } from "@/lib/apiClient";
+import { fetchApi, API_BASE_URL } from "@/lib/apiClient";
 import { showSuccess, showError } from "@/lib/swal";
 import { format } from "date-fns";
 import { Loader2, Printer, ArrowLeft, CreditCard, ExternalLink, MessageSquare, Mail } from "lucide-react";
@@ -24,6 +24,7 @@ interface ClientOrder {
   payment_url?: string | null;
   created_at: string;
 }
+
 interface Invoice {
   id: number;
   client_order_id: number;
@@ -39,13 +40,17 @@ interface Invoice {
   client_order: ClientOrder;
 }
 
-export default function InvoicePage() {
+export default function PublicInvoicePage() {
   const { id } = useParams();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSendingWaha, setIsSendingWaha] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoggedIn(!!localStorage.getItem("auth_token"));
+    }
     if (id) {
       loadInvoice(id as string);
     }
@@ -53,7 +58,12 @@ export default function InvoicePage() {
 
   const loadInvoice = async (invoiceId: string) => {
     try {
-      const data = await fetchApi(`/invoices/${invoiceId}`);
+      // Use direct fetch so guests can view without auth errors
+      const res = await fetch(`${API_BASE_URL}/invoices/${invoiceId}`, {
+        headers: { Accept: "application/json" },
+      });
+      if (!res.ok) throw new Error("Invoice tidak ditemukan");
+      const data = await res.json();
       setInvoice(data);
     } catch (e) {
       console.error("Failed to load invoice", e);
@@ -92,7 +102,13 @@ export default function InvoicePage() {
   if (!invoice || !invoice.client_order) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-xl text-on-surface-variant">Invoice tidak ditemukan.</p>
+        <div className="text-center p-8 bg-surface rounded-2xl border border-border/40 max-w-md shadow-xl">
+          <p className="text-xl font-bold text-foreground mb-2">Invoice Tidak Ditemukan</p>
+          <p className="text-sm text-on-surface-variant mb-6">Invoice yang Anda cari tidak ditemukan atau telah dihapus.</p>
+          <Link href="/" className="px-6 py-2.5 bg-primary text-white rounded-xl font-bold text-sm inline-block">
+            Kembali ke Beranda
+          </Link>
+        </div>
       </div>
     );
   }
@@ -100,34 +116,46 @@ export default function InvoicePage() {
   const order = invoice.client_order;
   const invoiceNumber = invoice.invoice_number;
   const totalPricing = Number(invoice.amount || 0);
+  const publicInvoiceUrl = typeof window !== "undefined" ? window.location.href : `https://luvion.my.id/invoices/${invoice.id}`;
 
   return (
     <div className="min-h-screen bg-white text-zinc-900 print:bg-white p-4 sm:p-8 md:p-12 flex flex-col items-center">
       
       {/* Action Bar Header (Hidden on Print) */}
       <div className="w-full max-w-4xl flex flex-wrap items-center justify-between gap-4 mb-6 print:hidden">
-        <Link 
-          href="/dashboard/orders"
-          className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl transition-all font-semibold text-sm shadow-sm border border-zinc-200 hover:scale-[1.02] active:scale-[0.98]"
-        >
-          <ArrowLeft className="w-4 h-4" /> Kembali ke Pesanan
-        </Link>
+        {isLoggedIn ? (
+          <Link 
+            href="/dashboard/orders"
+            className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl transition-all font-semibold text-sm shadow-sm border border-zinc-200 hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <ArrowLeft className="w-4 h-4" /> Kembali ke Pesanan
+          </Link>
+        ) : (
+          <Link 
+            href="/"
+            className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl transition-all font-semibold text-sm shadow-sm border border-zinc-200 hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <ArrowLeft className="w-4 h-4" /> Beranda Luvion
+          </Link>
+        )}
 
         <div className="flex flex-wrap items-center gap-2.5">
-          {/* Kirim WAHA */}
-          <button
-            onClick={handleSendWaha}
-            disabled={isSendingWaha}
-            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all font-bold text-sm shadow-md shadow-emerald-600/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-            title="Kirim pesan invoice langsung via WAHA API ke nomor pelanggan"
-          >
-            {isSendingWaha ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
-            <span>{isSendingWaha ? 'Mengirim WA...' : 'Kirim WA (WAHA)'}</span>
-          </button>
+          {/* Kirim WAHA (jika admin) */}
+          {isLoggedIn && (
+            <button
+              onClick={handleSendWaha}
+              disabled={isSendingWaha}
+              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all font-bold text-sm shadow-md shadow-emerald-600/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+              title="Kirim pesan invoice langsung via WAHA API"
+            >
+              {isSendingWaha ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+              <span>{isSendingWaha ? 'Mengirim WA...' : 'Kirim WA (WAHA)'}</span>
+            </button>
+          )}
 
           {/* Kirim Email */}
           <a
-            href={`mailto:${order.email}?subject=Invoice Tagihan Luvion SaaS - ${order.company_name}&body=${encodeURIComponent(`Halo ${order.full_name},\n\nBerikut adalah tagihan invoice #${invoice.invoice_number} untuk layanan Luvion SaaS (${order.plan_name}).\n\nTotal Tagihan: Rp ${new Intl.NumberFormat('id-ID').format(totalPricing)}\nStatus: ${invoice.status.toUpperCase()}\n${invoice.payment_url ? `Link Pembayaran: ${invoice.payment_url}\n` : ''}\nTerima kasih,\nTim Luvion`)}`}
+            href={`mailto:${order.email}?subject=Invoice Tagihan Luvion SaaS - ${order.company_name}&body=${encodeURIComponent(`Halo ${order.full_name},\n\nBerikut adalah tagihan invoice #${invoice.invoice_number} untuk layanan Luvion SaaS (${order.plan_name}).\n\nTotal Tagihan: Rp ${new Intl.NumberFormat('id-ID').format(totalPricing)}\nStatus: ${invoice.status.toUpperCase()}\nLink Invoice: ${publicInvoiceUrl}\n\nTerima kasih,\nTim Luvion`)}`}
             className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all font-bold text-sm shadow-md shadow-blue-600/20 hover:scale-[1.02] active:scale-[0.98]"
             title="Kirim Invoice via Email"
           >
@@ -141,9 +169,9 @@ export default function InvoicePage() {
               href={invoice.payment_url}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all font-bold text-sm shadow-md shadow-teal-600/20 hover:scale-[1.02] active:scale-[0.98]"
+              className="flex items-center gap-2 px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all font-extrabold text-sm shadow-lg shadow-teal-600/30 hover:scale-[1.03] active:scale-[0.98]"
             >
-              <CreditCard className="w-4 h-4" /> Bayar Midtrans
+              <CreditCard className="w-4 h-4" /> Bayar via Midtrans
             </a>
           )}
 
@@ -160,7 +188,7 @@ export default function InvoicePage() {
       </div>
 
       {/* Invoice Container */}
-      <div className="w-full max-w-4xl bg-white">
+      <div className="w-full max-w-4xl bg-white border border-zinc-200 print:border-none rounded-2xl p-6 sm:p-10 shadow-sm print:shadow-none">
         
         {/* Header */}
         <div className="flex justify-between items-start border-b-2 border-zinc-200 pb-8 mb-8">
@@ -194,7 +222,7 @@ export default function InvoicePage() {
             <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider mb-2">Status Pembayaran:</p>
             {invoice.status === 'paid' ? (
               <div className="flex flex-col items-end gap-1">
-                <span className="inline-block px-4 py-1.5 rounded bg-green-100 text-green-700 font-bold text-sm">LUNAS</span>
+                <span className="inline-block px-4 py-1.5 rounded-lg bg-green-100 text-green-700 font-bold text-sm border border-green-300">LUNAS</span>
                 {invoice.paid_at && (
                   <span className="text-[11px] font-semibold text-green-700">
                     Pada {format(new Date(invoice.paid_at), "dd MMM yyyy, HH:mm")}
@@ -208,7 +236,7 @@ export default function InvoicePage() {
               </div>
             ) : (
               <div className="flex flex-col items-end gap-1">
-                <span className="inline-block px-4 py-1.5 rounded bg-red-100 text-red-700 font-bold text-sm">BELUM DIBAYAR</span>
+                <span className="inline-block px-4 py-1.5 rounded-lg bg-red-100 text-red-700 font-bold text-sm border border-red-300">BELUM DIBAYAR</span>
                 {invoice.due_date && (
                   <span className="text-[11px] text-red-600 font-medium">
                     Jatuh Tempo: {format(new Date(invoice.due_date), "dd MMM yyyy")}
@@ -275,13 +303,13 @@ export default function InvoicePage() {
                 href={invoice.payment_url} 
                 target="_blank" 
                 rel="noreferrer" 
-                className="print:hidden inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/20 transition-all hover:scale-105 text-sm"
+                className="print:hidden inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-extrabold rounded-xl shadow-lg shadow-teal-600/30 transition-all hover:scale-105 text-sm"
               >
-                <ExternalLink className="w-4 h-4" /> Bayar Sekarang
+                <ExternalLink className="w-4 h-4" /> Bayar Sekarang (Midtrans)
               </a>
             </div>
             <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-emerald-200/60 print:bg-transparent print:p-0 print:border-none">
-              <span className="text-xs font-semibold text-emerald-800 block mb-1">Link Pembayaran:</span>
+              <span className="text-xs font-semibold text-emerald-800 block mb-1">Link Pembayaran Langsung:</span>
               <a href={invoice.payment_url} target="_blank" rel="noreferrer" className="text-emerald-700 hover:underline font-mono text-xs break-all">
                 {invoice.payment_url}
               </a>
