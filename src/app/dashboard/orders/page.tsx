@@ -58,6 +58,15 @@ export default function OrdersDashboard() {
   const [invoiceModalData, setInvoiceModalData] = useState<{order: ClientOrder, invoice: Invoice} | null>(null);
   const [isSendingInvoice, setIsSendingInvoice] = useState<number | null>(null);
   const [isCheckingStatus, setIsCheckingStatus] = useState<number | null>(null);
+
+  // Dynamic Invoice Modal State
+  const [isCreateInvoiceModalOpen, setIsCreateInvoiceModalOpen] = useState(false);
+  const [newInvoiceData, setNewInvoiceData] = useState({
+    invoice_type: "subscription",
+    description: "",
+    amount: "",
+    due_date: "",
+  });
   const [isSendingWaha, setIsSendingWaha] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -151,19 +160,88 @@ export default function OrdersDashboard() {
     }
   };
 
-  const handleCreateInvoice = async (orderId: number) => {
+  const openCreateInvoiceModal = (order: ClientOrder) => {
+    const defaultAmount = order.pricing_payment ? String(order.pricing_payment) : "";
+    const defaultDesc = `Langganan Paket ${order.plan_name} (${order.billing_cycle})`;
+    const today = new Date();
+    today.setDate(today.getDate() + 7);
+    const defaultDueDate = today.toISOString().split('T')[0];
+
+    setNewInvoiceData({
+      invoice_type: "subscription",
+      description: defaultDesc,
+      amount: defaultAmount,
+      due_date: defaultDueDate,
+    });
+    setIsCreateInvoiceModalOpen(true);
+  };
+
+  const handleInvoiceTypeChange = (type: string) => {
+    if (!selectedOrder) return;
+    let desc = "";
+    let amt = "";
+
+    switch (type) {
+      case "subscription":
+        desc = `Langganan Paket ${selectedOrder.plan_name} (${selectedOrder.billing_cycle})`;
+        amt = selectedOrder.pricing_payment ? String(selectedOrder.pricing_payment) : "";
+        break;
+      case "addon":
+        desc = "Modul Add-on Fitur Tambahan";
+        amt = "500000";
+        break;
+      case "custom_feature":
+        desc = "Pengembangan Fitur Kustom Aplikasi";
+        amt = "1000000";
+        break;
+      case "extra_licenses":
+        desc = "Penambahan Kuota Lisensi User / Staf";
+        amt = "250000";
+        break;
+      default:
+        desc = "";
+        amt = "";
+    }
+
+    setNewInvoiceData(prev => ({
+      ...prev,
+      invoice_type: type,
+      description: desc,
+      amount: amt,
+    }));
+  };
+
+  const handleConfirmCreateInvoice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedOrder) return;
+
+    const amtNum = Number(newInvoiceData.amount);
+    if (!amtNum || amtNum <= 0) {
+      showError("Nominal Tidak Valid", "Harap masukkan nominal tagihan yang valid (minimal Rp 1.000).");
+      return;
+    }
+
     setIsGeneratingInvoice(true);
     try {
-      const res = await fetchApi(`/orders/${orderId}/invoices`, { method: "POST" });
+      const res = await fetchApi(`/orders/${selectedOrder.id}/invoices`, {
+        method: "POST",
+        body: JSON.stringify({
+          amount: amtNum,
+          description: newInvoiceData.description,
+          due_date: newInvoiceData.due_date,
+        }),
+      });
+
       if (res.status === 'success') {
-        const invoices = await fetchApi(`/orders/${orderId}/invoices`);
+        const invoices = await fetchApi(`/orders/${selectedOrder.id}/invoices`);
         setOrderInvoices(invoices);
-        showSuccess("Invoice Dibuat", "Tagihan invoice baru berhasil dibuat.");
+        setIsCreateInvoiceModalOpen(false);
+        showSuccess("Invoice Dibuat", `Invoice baru ("${newInvoiceData.description}") sebesar Rp ${amtNum.toLocaleString('id-ID')} berhasil dibuat.`);
       } else {
         showError("Gagal Buat Tagihan", res.message || 'Terjadi kesalahan');
       }
     } catch (e: any) {
-      showError("Gagal", e.message || "Terjadi kesalahan. Pastikan pesanan memiliki harga dasar.");
+      showError("Gagal", e.message || "Terjadi kesalahan saat membuat tagihan.");
     } finally {
       setIsGeneratingInvoice(false);
     }
@@ -369,17 +447,7 @@ export default function OrdersDashboard() {
               <div>
                 <h2 className="text-xl font-extrabold text-foreground">Detail Pesanan #{selectedOrder.id}</h2>
               </div>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => openEditModal(selectedOrder)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 hover:border-blue-500/50 transition-all"
-                  title="Edit Pesanan"
-                >
-                  <Edit2 className="w-3.5 h-3.5" />
-                  <span>Edit Pesanan</span>
-                </button>
-                <button onClick={closeModal} className="text-on-surface-variant hover:text-foreground transition-colors"><X className="w-5 h-5" /></button>
-              </div>
+              <button onClick={closeModal} className="text-on-surface-variant hover:text-foreground transition-colors"><X className="w-5 h-5" /></button>
             </div>
 
             <div className="p-6 space-y-8">
@@ -537,16 +605,25 @@ export default function OrdersDashboard() {
             {/* Tagihan Invoices Section (Inside Detail Modal) */}
             <div className="p-6 pt-0">
               <div className="space-y-4 pt-6 border-t border-border/40 mt-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-4">
                   <h3 className="text-lg font-bold text-primary">Daftar Tagihan (Invoices)</h3>
-                  <button
-                    onClick={() => handleCreateInvoice(selectedOrder.id)}
-                    disabled={isGeneratingInvoice || !selectedOrder.pricing_payment}
-                    className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-xl font-extrabold transition-all shadow-md shadow-primary/20 disabled:opacity-50 text-sm"
-                  >
-                    {isGeneratingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Receipt className="w-4 h-4" />}
-                    Buat Tagihan Baru
-                  </button>
+                  <div className="flex items-center gap-2.5">
+                    <button
+                      onClick={() => openEditModal(selectedOrder)}
+                      className="flex items-center gap-2 bg-surface hover:bg-surface-variant text-foreground border border-border/50 px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm text-sm hover:scale-[1.02] active:scale-[0.98]"
+                      title="Edit Pesanan"
+                    >
+                      <Edit2 className="w-4 h-4 text-blue-500" />
+                      <span>Edit Pesanan</span>
+                    </button>
+                    <button
+                      onClick={() => openCreateInvoiceModal(selectedOrder)}
+                      className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-xl font-extrabold transition-all shadow-md shadow-primary/20 text-sm hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <Receipt className="w-4 h-4" />
+                      Buat Tagihan Baru
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="bg-surface/30 rounded-xl overflow-hidden border border-border/20">
@@ -892,6 +969,94 @@ export default function OrdersDashboard() {
                   className="px-4 py-2 rounded-lg text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 disabled:opacity-50"
                 >
                   {isSavingEdit ? 'Menyimpan...' : 'Simpan Perubahan'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Buat Tagihan Baru (Dynamic Invoice Modal) */}
+      {isCreateInvoiceModalOpen && selectedOrder && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[1100] flex items-center justify-center p-4 overflow-y-auto">
+          <div className="glass-panel border-border/40 rounded-3xl w-full max-w-lg shadow-2xl p-6 relative">
+            <div className="flex items-center justify-between border-b border-border/40 pb-4 mb-4">
+              <div>
+                <h3 className="text-lg font-extrabold text-foreground flex items-center gap-2">
+                  <Receipt className="w-5 h-5 text-primary" />
+                  Buat Tagihan Baru (Dynamic Invoice)
+                </h3>
+                <p className="text-xs text-on-surface-variant">Buat invoice langganan, add-on, atau request fitur kustom untuk {selectedOrder.company_name}</p>
+              </div>
+              <button onClick={() => setIsCreateInvoiceModalOpen(false)} className="text-on-surface-variant hover:text-foreground"><X className="w-5 h-5" /></button>
+            </div>
+
+            <form onSubmit={handleConfirmCreateInvoice} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Tipe Tagihan</label>
+                <select
+                  value={newInvoiceData.invoice_type}
+                  onChange={(e) => handleInvoiceTypeChange(e.target.value)}
+                  className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                >
+                  <option value="subscription">Langganan Paket Utama ({selectedOrder.plan_name})</option>
+                  <option value="addon">Modul Add-on & Fitur Tambahan</option>
+                  <option value="custom_feature">Pengembangan Fitur Kustom</option>
+                  <option value="extra_licenses">Penambahan Kuota Lisensi User</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Keterangan / Deskripsi Layanan <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  required
+                  value={newInvoiceData.description}
+                  onChange={(e) => setNewInvoiceData({ ...newInvoiceData, description: e.target.value })}
+                  placeholder="Misal: Modul Integrasi Accurate POS"
+                  className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Nominal Tagihan (Rp) <span className="text-red-500">*</span></label>
+                <input
+                  type="number"
+                  required
+                  min="1000"
+                  value={newInvoiceData.amount}
+                  onChange={(e) => setNewInvoiceData({ ...newInvoiceData, amount: e.target.value })}
+                  placeholder="500000"
+                  className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">Tanggal Jatuh Tempo</label>
+                <input
+                  type="date"
+                  required
+                  value={newInvoiceData.due_date}
+                  onChange={(e) => setNewInvoiceData({ ...newInvoiceData, due_date: e.target.value })}
+                  className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                />
+              </div>
+
+              <div className="pt-4 border-t border-border/40 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateInvoiceModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-on-surface-variant hover:text-foreground hover:bg-white/5 transition-all"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isGeneratingInvoice}
+                  className="px-5 py-2.5 rounded-xl text-xs font-extrabold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all flex items-center gap-2 disabled:opacity-50"
+                >
+                  {isGeneratingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Receipt className="w-4 h-4" />}
+                  <span>{isGeneratingInvoice ? 'Membuat Invoice...' : 'Buat Invoice & Link Payment'}</span>
                 </button>
               </div>
             </form>

@@ -45,11 +45,11 @@ export default function PublicInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSendingWaha, setIsSendingWaha] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsLoggedIn(!!localStorage.getItem("auth_token"));
+      setUserRole(localStorage.getItem("user_role"));
     }
     if (id) {
       loadInvoice(id as string);
@@ -123,12 +123,19 @@ export default function PublicInvoicePage() {
       
       {/* Action Bar Header (Hidden on Print) */}
       <div className="w-full max-w-4xl flex flex-wrap items-center justify-between gap-4 mb-6 print:hidden">
-        {isLoggedIn ? (
+        {userRole === "admin" ? (
           <Link 
             href="/dashboard/orders"
             className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl transition-all font-semibold text-sm shadow-sm border border-zinc-200 hover:scale-[1.02] active:scale-[0.98]"
           >
-            <ArrowLeft className="w-4 h-4" /> Kembali ke Pesanan
+            <ArrowLeft className="w-4 h-4" /> Kembali ke Orders Admin
+          </Link>
+        ) : userRole === "customer" ? (
+          <Link 
+            href="/client/dashboard"
+            className="flex items-center gap-2 px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl transition-all font-semibold text-sm shadow-sm border border-zinc-200 hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <ArrowLeft className="w-4 h-4" /> Kembali ke Client Portal
           </Link>
         ) : (
           <Link 
@@ -140,8 +147,8 @@ export default function PublicInvoicePage() {
         )}
 
         <div className="flex flex-wrap items-center gap-2.5">
-          {/* Kirim WAHA (jika admin) */}
-          {isLoggedIn && (
+          {/* Kirim WAHA (khusus Admin) */}
+          {userRole === "admin" && (
             <button
               onClick={handleSendWaha}
               disabled={isSendingWaha}
@@ -153,15 +160,17 @@ export default function PublicInvoicePage() {
             </button>
           )}
 
-          {/* Kirim Email */}
-          <a
-            href={`mailto:${order.email}?subject=Invoice Tagihan Luvion SaaS - ${order.company_name}&body=${encodeURIComponent(`Halo ${order.full_name},\n\nBerikut adalah tagihan invoice #${invoice.invoice_number} untuk layanan Luvion SaaS (${order.plan_name}).\n\nTotal Tagihan: Rp ${new Intl.NumberFormat('id-ID').format(totalPricing)}\nStatus: ${invoice.status.toUpperCase()}\nLink Invoice: ${publicInvoiceUrl}\n\nTerima kasih,\nTim Luvion`)}`}
-            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all font-bold text-sm shadow-md shadow-blue-600/20 hover:scale-[1.02] active:scale-[0.98]"
-            title="Kirim Invoice via Email"
-          >
-            <Mail className="w-4 h-4" />
-            <span>Kirim Email</span>
-          </a>
+          {/* Kirim Email (khusus Admin) */}
+          {userRole === "admin" && (
+            <a
+              href={`mailto:${order.email}?subject=Invoice Tagihan Luvion SaaS - ${order.company_name}&body=${encodeURIComponent(`Halo ${order.full_name},\n\nBerikut adalah tagihan invoice #${invoice.invoice_number} untuk layanan Luvion SaaS (${order.plan_name}).\n\nTotal Tagihan: Rp ${new Intl.NumberFormat('id-ID').format(totalPricing)}\nStatus: ${invoice.status.toUpperCase()}\nLink Invoice: ${publicInvoiceUrl}\n\nTerima kasih,\nTim Luvion`)}`}
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all font-bold text-sm shadow-md shadow-blue-600/20 hover:scale-[1.02] active:scale-[0.98]"
+              title="Kirim Invoice via Email"
+            >
+              <Mail className="w-4 h-4" />
+              <span>Kirim Email</span>
+            </a>
+          )}
 
           {/* Bayar via Midtrans (jika belum lunas) */}
           {invoice.payment_url && invoice.status !== 'paid' && (
@@ -261,7 +270,7 @@ export default function PublicInvoicePage() {
             <tr className="border-b border-zinc-200">
               <td className="py-4 px-2 text-zinc-600">1</td>
               <td className="py-4 px-2">
-                <p className="font-bold text-zinc-800">Langganan {order.plan_name}</p>
+                <p className="font-bold text-zinc-800">{(invoice as any).description || `Langganan ${order.plan_name}`}</p>
                 <p className="text-sm text-zinc-500">Siklus: {order.billing_cycle}</p>
               </td>
               <td className="py-4 px-2 text-zinc-600">{order.users_count} Users</td>

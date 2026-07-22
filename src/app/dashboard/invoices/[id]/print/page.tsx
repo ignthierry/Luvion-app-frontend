@@ -233,7 +233,7 @@ export default function InvoicePage() {
             <tr className="border-b border-zinc-200">
               <td className="py-4 px-2 text-zinc-600">1</td>
               <td className="py-4 px-2">
-                <p className="font-bold text-zinc-800">Langganan {order.plan_name}</p>
+                <p className="font-bold text-zinc-800">{(invoice as any).description || `Langganan ${order.plan_name}`}</p>
                 <p className="text-sm text-zinc-500">Siklus: {order.billing_cycle}</p>
               </td>
               <td className="py-4 px-2 text-zinc-600">{order.users_count} Users</td>

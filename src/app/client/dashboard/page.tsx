@@ -523,6 +523,7 @@ export default function ClientDashboardPage() {
                   <option value="upgrade_plan">Upgrade Paket Langganan</option>
                   <option value="extra_licenses">Tambah Kuota User / Staf</option>
                   <option value="custom_feature">Fitur Kustom Aplikasi</option>
+                  <option value="bug_report">Report Bug / Kendala Aplikasi</option>
                 </select>
               </div>
 

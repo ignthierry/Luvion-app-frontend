@@ -14,7 +14,8 @@ import {
   CreditCard,
   Box,
   HelpCircle,
-  ShoppingCart
+  ShoppingCart,
+  Inbox
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -54,6 +55,7 @@ export default function DashboardLayout({
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
+    { name: "Requests", href: "/dashboard/requests", icon: Inbox },
     { name: "Users", href: "/dashboard/users", icon: Users },
     { name: "Modules", href: "/dashboard/modules", icon: Box },
     { name: "Pricing", href: "/dashboard/pricing", icon: CreditCard },
