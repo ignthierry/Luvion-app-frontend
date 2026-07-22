@@ -253,6 +253,7 @@ export default function UsersCMS() {
                     className="w-full bg-background border border-border/40 rounded-lg p-3 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
                   >
                     <option value="admin">Admin</option>
+                    <option value="customer">Customer (Klien)</option>
                     <option value="editor">Editor</option>
                     <option value="viewer">Viewer</option>
                   </select>

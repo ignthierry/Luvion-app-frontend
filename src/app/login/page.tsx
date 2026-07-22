@@ -28,7 +28,16 @@ export default function LoginPage() {
 
       if (response.access_token) {
         localStorage.setItem("auth_token", response.access_token);
-        router.push("/dashboard");
+        if (response.user) {
+          localStorage.setItem("user_role", response.user.role || "admin");
+          localStorage.setItem("user_name", response.user.name || "");
+          localStorage.setItem("user_email", response.user.email || "");
+        }
+        if (response.user?.role === "customer") {
+          router.push("/client/dashboard");
+        } else {
+          router.push("/dashboard");
+        }
       }
     } catch (err: any) {
       setError(err.message || "Gagal melakukan login. Silakan coba lagi.");
