@@ -199,7 +199,7 @@ export default function PublicInvoicePage() {
               className="h-14 w-auto object-contain mb-2"
             />
             <p className="text-xs font-semibold text-zinc-700">Perum. Shojiland Blok EJ.02 Candi Sidoarjo</p>
-            <p className="text-xs text-zinc-500">Telp/WA: 081357748559 | Email: admin@luvion.my.id</p>
+            <p className="text-xs text-zinc-500">Telp/WA: +628197965599 | Email: admin@luvion.my.id</p>
           </div>
           <div className="text-right">
             <h2 className="text-3xl font-bold text-zinc-300 uppercase tracking-widest mb-2">Invoice</h2>
@@ -320,7 +320,7 @@ export default function PublicInvoicePage() {
         {/* Footer */}
         <div className="border-t border-zinc-200 pt-8 text-center text-zinc-500 text-xs space-y-1">
           <p className="font-semibold text-zinc-700">Terima kasih telah berbisnis dengan Luvion.</p>
-          <p>Jika Anda memiliki pertanyaan mengenai invoice ini, silakan hubungi <a href="mailto:cs@luvion.my.id" className="text-primary hover:underline font-medium">cs@luvion.my.id</a> atau WhatsApp <span className="font-medium text-zinc-700">081357748559</span></p>
+          <p>Jika Anda memiliki pertanyaan mengenai invoice ini, silakan hubungi <a href="mailto:cs@luvion.my.id" className="text-primary hover:underline font-medium">cs@luvion.my.id</a> atau WhatsApp <span className="font-medium text-zinc-700">+628197965599</span></p>
         </div>
 
       </div>
