@@ -21,7 +21,8 @@ export async function POST(req: Request) {
     }
 
     // Send the message to n8n webhook
-    const n8nWebhookUrl = 'https://n8n.luvion.my.id/webhook/97d6eb68-bb95-4396-a0a6-42668e2d9d2a/chat';
+    // const n8nWebhookUrl = 'https://n8n.luvion.my.id/webhook/97d6eb68-bb95-4396-a0a6-42668e2d9d2a/chat';
+    const n8nWebhookUrl = 'https://n8n.luvion.my.id/webhook/073659fe-9b65-4703-bf28-04422bfa0146/chat';
     
     let textResponse = '';
     try {
