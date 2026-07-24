@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { fetchApi, STORAGE_BASE_URL } from "@/lib/apiClient";
 import { showSuccess, showError, showWarning, showConfirm } from "@/lib/swal";
-import { Loader2, Trash2, X, RefreshCw, Receipt, Copy, Edit2, Printer, Send, ExternalLink, Check, Mail, MessageSquare, CreditCard } from "lucide-react";
+import { Loader2, Trash2, X, RefreshCw, Receipt, Copy, Edit2, Printer, Send, ExternalLink, Check, Mail, MessageSquare, CreditCard, Plus } from "lucide-react";
 import { format } from "date-fns";
 
 interface ClientOrder {
@@ -69,6 +69,72 @@ export default function OrdersDashboard() {
   });
   const [isSendingWaha, setIsSendingWaha] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+
+  // Create New Order Modal State
+  const [isCreateOrderModalOpen, setIsCreateOrderModalOpen] = useState(false);
+  const [isSubmittingNewOrder, setIsSubmittingNewOrder] = useState(false);
+  const [newOrderForm, setNewOrderForm] = useState({
+    company_name: "",
+    full_name: "",
+    email: "",
+    phone: "",
+    plan_name: "Pro",
+    billing_cycle: "Bulanan",
+    users_count: 1,
+    pricing_payment: "",
+    status: "pending",
+    notes: "",
+  });
+
+  const openCreateOrderModal = () => {
+    setNewOrderForm({
+      company_name: "",
+      full_name: "",
+      email: "",
+      phone: "",
+      plan_name: "Pro",
+      billing_cycle: "Bulanan",
+      users_count: 1,
+      pricing_payment: "",
+      status: "pending",
+      notes: "",
+    });
+    setIsCreateOrderModalOpen(true);
+  };
+
+  const handleCreateOrderSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newOrderForm.company_name.trim() || !newOrderForm.full_name.trim() || !newOrderForm.email.trim() || !newOrderForm.phone.trim()) {
+      showError("Data Belum Lengkap", "Harap lengkapi Nama Perusahaan/Project, Nama Klien, Email, dan Telepon.");
+      return;
+    }
+
+    setIsSubmittingNewOrder(true);
+    try {
+      const payload: any = {
+        ...newOrderForm,
+        users_count: Number(newOrderForm.users_count) || 1,
+        pricing_payment: newOrderForm.pricing_payment ? Number(newOrderForm.pricing_payment) : null,
+      };
+
+      const res = await fetchApi("/orders", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      if (res.status === "success" || res.id || res.data) {
+        showSuccess("Pesanan Dibuat", `Pesanan baru untuk "${newOrderForm.company_name}" berhasil ditambahkan.`);
+        setIsCreateOrderModalOpen(false);
+        loadOrders();
+      } else {
+        showError("Gagal Buat Pesanan", res.message || "Terjadi kesalahan.");
+      }
+    } catch (err: any) {
+      showError("Gagal", err.message || "Gagal menambah pesanan baru.");
+    } finally {
+      setIsSubmittingNewOrder(false);
+    }
+  };
 
   const handleCopyLink = (url: string) => {
     navigator.clipboard.writeText(url);
@@ -346,12 +412,20 @@ export default function OrdersDashboard() {
           <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Kelola Pesanan SaaS</h1>
           <p className="text-on-surface-variant text-sm mt-1">Lihat dan kelola pesanan aplikasi Luvion dari klien.</p>
         </div>
-        <button
-          onClick={loadOrders}
-          className="flex items-center gap-2 bg-surface hover:bg-surface/80 text-foreground px-4 py-2 rounded-lg transition-colors text-sm font-medium border border-border/40"
-        >
-          <RefreshCw className="w-4 h-4" /> Segarkan
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={openCreateOrderModal}
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-all text-sm font-semibold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Plus className="w-4 h-4" /> Tambah Pesanan Baru
+          </button>
+          <button
+            onClick={loadOrders}
+            className="flex items-center gap-2 bg-surface hover:bg-surface/80 text-foreground px-4 py-2 rounded-lg transition-colors text-sm font-medium border border-border/40"
+          >
+            <RefreshCw className="w-4 h-4" /> Segarkan
+          </button>
+        </div>
       </div>
 
       <div className="glass-panel border-border/40 rounded-2xl overflow-hidden shadow-2xl">
@@ -1057,6 +1131,199 @@ export default function OrdersDashboard() {
                 >
                   {isGeneratingInvoice ? <Loader2 className="w-4 h-4 animate-spin" /> : <Receipt className="w-4 h-4" />}
                   <span>{isGeneratingInvoice ? 'Membuat Invoice...' : 'Buat Invoice & Link Payment'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create New Order Modal */}
+      {isCreateOrderModalOpen && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in">
+          <div className="glass-panel w-full max-w-2xl rounded-2xl border border-border/40 p-6 space-y-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-border/40 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                  <Plus className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-extrabold text-foreground">Tambah Pesanan Project Baru</h3>
+                  <p className="text-xs text-on-surface-variant">Buat pesanan aplikasi SaaS / Project kustom langsung dari admin.</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsCreateOrderModalOpen(false)}
+                className="p-2 text-on-surface-variant hover:text-foreground rounded-lg hover:bg-white/5 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateOrderSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">
+                    Nama Perusahaan / Project <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newOrderForm.company_name}
+                    onChange={(e) => setNewOrderForm({ ...newOrderForm, company_name: e.target.value })}
+                    placeholder="Contoh: PT Mencari Cinta Sejati"
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">
+                    Nama Lengkap Klien <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newOrderForm.full_name}
+                    onChange={(e) => setNewOrderForm({ ...newOrderForm, full_name: e.target.value })}
+                    placeholder="Contoh: Raihan Farras"
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">
+                    Email Klien <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={newOrderForm.email}
+                    onChange={(e) => setNewOrderForm({ ...newOrderForm, email: e.target.value })}
+                    placeholder="klien@gmail.com"
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">
+                    No. Telepon / WhatsApp <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newOrderForm.phone}
+                    onChange={(e) => setNewOrderForm({ ...newOrderForm, phone: e.target.value })}
+                    placeholder="081234567890"
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">
+                    Paket Aplikasi <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newOrderForm.plan_name}
+                    onChange={(e) => setNewOrderForm({ ...newOrderForm, plan_name: e.target.value })}
+                    placeholder="Starter / Pro / Enterprise / Kustom"
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">
+                    Siklus Tagihan <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={newOrderForm.billing_cycle}
+                    onChange={(e) => setNewOrderForm({ ...newOrderForm, billing_cycle: e.target.value })}
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  >
+                    <option value="Bulanan">Bulanan</option>
+                    <option value="Tahunan">Tahunan</option>
+                    <option value="One-Time Project">One-Time Project</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">
+                    Harga / Tagihan Paket (Rp)
+                  </label>
+                  <input
+                    type="number"
+                    value={newOrderForm.pricing_payment}
+                    onChange={(e) => setNewOrderForm({ ...newOrderForm, pricing_payment: e.target.value })}
+                    placeholder="Contoh: 1500000"
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">
+                    Jumlah User / Staf
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={newOrderForm.users_count}
+                    onChange={(e) => setNewOrderForm({ ...newOrderForm, users_count: Number(e.target.value) || 1 })}
+                    className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">
+                  Status Pesanan Project
+                </label>
+                <select
+                  value={newOrderForm.status}
+                  onChange={(e) => setNewOrderForm({ ...newOrderForm, status: e.target.value })}
+                  className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="processing">Processing</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1 block">
+                  Catatan / Deskripsi Kebutuhan Project
+                </label>
+                <textarea
+                  rows={3}
+                  value={newOrderForm.notes}
+                  onChange={(e) => setNewOrderForm({ ...newOrderForm, notes: e.target.value })}
+                  placeholder="Catatan tambahan spesifikasi project..."
+                  className="w-full bg-surface border border-border/50 rounded-xl px-3 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-primary/50 outline-none"
+                />
+              </div>
+
+              <div className="pt-4 border-t border-border/40 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateOrderModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-on-surface-variant hover:text-foreground hover:bg-white/5 transition-all"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingNewOrder}
+                  className="px-5 py-2.5 rounded-xl text-xs font-extrabold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all flex items-center gap-2 disabled:opacity-50"
+                >
+                  {isSubmittingNewOrder ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  <span>{isSubmittingNewOrder ? "Menyimpan..." : "Tambah Pesanan"}</span>
                 </button>
               </div>
             </form>
