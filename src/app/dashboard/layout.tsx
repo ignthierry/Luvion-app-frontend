@@ -15,7 +15,9 @@ import {
   Box,
   HelpCircle,
   ShoppingCart,
-  Inbox
+  Inbox,
+  Calendar,
+  MessageSquare
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -56,6 +58,8 @@ export default function DashboardLayout({
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
     { name: "Requests", href: "/dashboard/requests", icon: Inbox },
+    { name: "Appointments", href: "/dashboard/appointments", icon: Calendar },
+    { name: "Chat History", href: "/dashboard/chat-history", icon: MessageSquare },
     { name: "Users", href: "/dashboard/users", icon: Users },
     { name: "Modules", href: "/dashboard/modules", icon: Box },
     { name: "Pricing", href: "/dashboard/pricing", icon: CreditCard },
