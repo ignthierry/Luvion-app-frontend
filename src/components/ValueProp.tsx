@@ -1,7 +1,5 @@
-'use client';
-
 import React from 'react';
-import { Sparkles, Cloud, Lock, Server, BarChart2 } from 'lucide-react';
+import { Sparkles, Cloud, Lock, Server, BarChart2, Layers, Cpu, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -55,32 +53,73 @@ export default function ValueProp() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex-1 w-full relative overflow-hidden flex items-center justify-center rounded-[2rem] min-h-[400px] dotted-grid"
+            className="flex-1 w-full relative overflow-hidden flex items-center justify-center rounded-[2rem] min-h-[420px] dotted-grid py-8"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-surface-bright/50 to-tertiary/5 -z-10" />
-            <div className="w-[85%] glass-panel p-6 space-y-6">
-              <div className="flex items-center justify-between border-b border-border/10 pb-4">
+            
+            <div className="w-[90%] md:w-[88%] glass-panel p-5 md:p-6 space-y-4 shadow-2xl border border-white/20 dark:border-white/10 backdrop-blur-xl rounded-2xl bg-surface/80">
+              {/* Header Window Bar */}
+              <div className="flex items-center justify-between border-b border-border/15 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-3.5 h-3.5 rounded-full bg-red-400" />
-                  <div className="w-3.5 h-3.5 rounded-full bg-yellow-400" />
-                  <div className="w-3.5 h-3.5 rounded-full bg-green-400" />
+                  <div className="w-3 h-3 rounded-full bg-red-400/80" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-400/80" />
+                  <div className="w-3 h-3 rounded-full bg-green-400/80" />
+                  <span className="ml-2 text-[11px] font-mono font-medium text-on-surface-variant/70">app.luvion-workspace.com</span>
                 </div>
-                <span className="text-xs font-bold text-on-surface-variant/60">kasir-toko.luvion.site</span>
+                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  AI Engine Active
+                </div>
               </div>
-              <div className="space-y-4">
-                <div className="h-14 glass-panel flex items-center justify-between px-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">K</div>
-                    <span className="text-xs font-bold">Kasir Digital Aktif</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded">ONLINE</span>
+
+              {/* Simulated User Input */}
+              <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Sparkles className="h-4 w-4 text-primary shrink-0" />
+                  <span className="font-medium text-on-surface truncate">"{t('valueProp.f1SimPrompt')}"</span>
                 </div>
-                <div className="h-14 glass-panel flex items-center justify-between px-4">
+                <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md shrink-0 ml-2">PROMPTED</span>
+              </div>
+
+              {/* Generated General Enterprise Modules */}
+              <div className="space-y-2.5">
+                <div className="p-3 rounded-xl border border-border/20 bg-surface-bright/40 flex items-center justify-between transition-all hover:border-primary/30">
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded bg-tertiary/20 flex items-center justify-center text-tertiary text-xs font-bold">M</div>
-                    <span className="text-xs font-bold">Modul Pelacakan Kurir</span>
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">
+                      <Layers className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-on-surface">{t('valueProp.f1SimMod1Title')}</div>
+                      <div className="text-[10px] text-on-surface-variant/70">{t('valueProp.f1SimMod1Sub')}</div>
+                    </div>
                   </div>
-                  <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded">MENYINKRONKAN</span>
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">{t('valueProp.f1SimMod1Status')}</span>
+                </div>
+
+                <div className="p-3 rounded-xl border border-border/20 bg-surface-bright/40 flex items-center justify-between transition-all hover:border-primary/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-tertiary/10 text-tertiary flex items-center justify-center font-bold shrink-0">
+                      <Cpu className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-on-surface">{t('valueProp.f1SimMod2Title')}</div>
+                      <div className="text-[10px] text-on-surface-variant/70">{t('valueProp.f1SimMod2Sub')}</div>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">{t('valueProp.f1SimMod2Status')}</span>
+                </div>
+
+                <div className="p-3 rounded-xl border border-border/20 bg-surface-bright/40 flex items-center justify-between transition-all hover:border-primary/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold shrink-0">
+                      <Activity className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-on-surface">{t('valueProp.f1SimMod3Title')}</div>
+                      <div className="text-[10px] text-on-surface-variant/70">{t('valueProp.f1SimMod3Sub')}</div>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-md border border-blue-500/20">{t('valueProp.f1SimMod3Status')}</span>
                 </div>
               </div>
             </div>

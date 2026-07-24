@@ -236,25 +236,6 @@
   scrollbar-width: none;
 }
 
-/* Custom Cursor styling */
-#custom-cursor {
-  width: 16px;
-  height: 16px;
-  background-color: #0058bc; /* Primary color */
-  border-radius: 50%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  transition: transform 0.1s ease-out;
-  transform: translate(-50%, -50%);
-}
-
-.dark #custom-cursor {
-  background-color: #3b82f6;
-}
-
 @layer base {
   * {
     @apply border-border/40 outline-ring/50;
