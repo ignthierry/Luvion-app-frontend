@@ -48,7 +48,7 @@ export const id = {
     headerTitle: 'Keunggulan Utama',
     headerSubtitle: 'Digitalisasi Bisnis Tanpa Hambatan Teknis',
     f1Title: 'Jelaskan Ide Sistem Anda, Luvion yang Membangun',
-    f1Desc: 'Transformasikan alur kerja manual Anda menjadi sistem digital tanpa rumit. Luvion AI Engine mengonversi deskripsi kebutuhan Anda menjadi solusi operasional end-to-end yang siap diimplementasikan.',
+    f1Desc: 'Transformasikan alur kerja manual Anda menjadi sistem digital tanpa rumit. Luvion mengonversi deskripsi kebutuhan Anda menjadi solusi operasional end-to-end yang siap diimplementasikan.',
     f1Point1: 'Kustomisasi instan melalui perintah',
     f1Point2: 'Visualisasi waktu nyata',
     f1SimPrompt: 'Integrasikan alur kerja operasional, stok & laporan keuangan',
