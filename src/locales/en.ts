@@ -42,7 +42,8 @@ export const en = {
     aiName: 'Luvion AI',
     thinking: 'AI is thinking...',
     chatPlaceholder: 'Type your message here...',
-    reset: 'Reset'
+    reset: 'Reset',
+    newSession: 'New Session'
   },
   valueProp: {
     headerTitle: 'Key Advantages',

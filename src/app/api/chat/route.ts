@@ -3,7 +3,8 @@ import { createUIMessageStreamResponse } from 'ai';
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { messages, sessionId } = await req.json();
+    const activeSessionId = sessionId || `sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     const lastMsgObj = messages[messages.length - 1];
     
     let lastMessage = '';
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
           action: 'sendMessage',
           chatInput: lastMessage,
           messages: messages,
-          sessionId: 'luvion-chat-session'
+          sessionId: activeSessionId
         }),
       });
 

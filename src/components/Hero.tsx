@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp, Plus, ToggleLeft, ToggleRight, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import ParticleBackground from '@/components/ui/ParticleBackground';
+import MarkdownRenderer from '@/components/ui/MarkdownRenderer';
 
 interface HeroProps {
   onRecommendTier: (tier: string) => void;
@@ -14,10 +15,28 @@ export default function Hero({ onRecommendTier }: HeroProps) {
   const { t } = useLanguage();
   const [planEnabled, setPlanEnabled] = useState(true);
   const [input, setInput] = useState('');
+  const [sessionId, setSessionId] = useState<string>('');
   
   const [messages, setMessages] = useState<any[]>([]);
   const [status, setStatus] = useState('ready');
   const isLoading = status === 'submitted' || status === 'streaming';
+
+  useEffect(() => {
+    let currentId = sessionStorage.getItem('luvion_chat_session_id');
+    if (!currentId) {
+      currentId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionStorage.setItem('luvion_chat_session_id', currentId);
+    }
+    setSessionId(currentId);
+  }, []);
+
+  const handleNewSession = () => {
+    const newId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    sessionStorage.setItem('luvion_chat_session_id', newId);
+    setSessionId(newId);
+    setMessages([]);
+    setInput('');
+  };
 
   const sendMessage = async ({ text }: { text: string }) => {
     const newMessages = [...messages, { role: 'user', content: text }];
@@ -28,7 +47,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages, sessionId }),
       });
 
       setStatus('streaming');
@@ -232,7 +251,7 @@ export default function Hero({ onRecommendTier }: HeroProps) {
             className="w-full max-w-4xl mt-16"
           >
             <div className="relative rounded-[2rem] glass-panel overflow-hidden min-h-[400px] flex flex-col">
-              <div className="px-8 pt-6 pb-4 border-b border-white/20 dark:border-white/5">
+              <div className="px-8 pt-6 pb-4 border-b border-white/20 dark:border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/15 border border-primary/20 flex items-center justify-center">
                     <Sparkles className="h-4 w-4 text-primary" />
@@ -241,6 +260,16 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                     <span className="text-xs font-bold text-primary">{t('hero.workspaceTitle')}</span>
                   </div>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={handleNewSession}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary text-xs font-bold transition-all shadow-sm cursor-pointer hover:scale-105 active:scale-95"
+                  title={t('hero.newSession')}
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{t('hero.newSession')}</span>
+                </button>
               </div>
 
               <div className="p-8 flex-1 flex flex-col justify-start text-left max-h-[500px] overflow-y-auto hide-scrollbar">
@@ -271,8 +300,8 @@ export default function Hero({ onRecommendTier }: HeroProps) {
                           </div>
                           <div className="flex-1 flex flex-col items-start">
                             <span className="text-[10px] font-bold text-primary uppercase mb-1">{t('hero.aiName')}</span>
-                            <div className="bg-white/50 dark:bg-white/5 border border-white/60 dark:border-white/10 text-on-surface rounded-2xl rounded-tl-none p-4 max-w-[85%] text-left font-medium">
-                              {cleanMessageContent(text || m.content || JSON.stringify(m))}
+                            <div className="bg-white/50 dark:bg-white/5 border border-white/60 dark:border-white/10 text-on-surface rounded-2xl rounded-tl-none p-4 max-w-[85%] text-left font-medium w-full overflow-hidden">
+                              <MarkdownRenderer content={cleanMessageContent(text || m.content || JSON.stringify(m))} />
                             </div>
                           </div>
                         </div>

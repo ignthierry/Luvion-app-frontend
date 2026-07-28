@@ -42,7 +42,8 @@ export const id = {
     aiName: 'Luvion AI',
     thinking: 'AI sedang berpikir...',
     chatPlaceholder: 'Ketik pesan Anda di sini...',
-    reset: 'Ulangi'
+    reset: 'Ulangi',
+    newSession: 'Sesi Baru'
   },
   valueProp: {
     headerTitle: 'Keunggulan Utama',

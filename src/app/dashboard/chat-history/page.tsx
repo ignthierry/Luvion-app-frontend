@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { format, parseISO, isValid } from "date-fns";
 import { id } from "date-fns/locale";
+import MarkdownRenderer from "@/components/ui/MarkdownRenderer";
 
 interface ChatHistoryItem {
   id: number;
@@ -30,6 +31,7 @@ interface ChatHistoryItem {
   agent_response: string;
   agent_type: string;
   created_at: string;
+  summary?: string | null;
 }
 
 interface ChatSessionSummary {
@@ -38,6 +40,7 @@ interface ChatSessionSummary {
   last_activity: string;
   latest_intent: string | null;
   agent_type: string;
+  summary?: string | null;
 }
 
 export default function ChatHistoryPage() {
@@ -115,7 +118,8 @@ export default function ChatHistoryPage() {
     const matchesSearch = 
       (item.user_message?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
       (item.agent_response?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-      (item.session_id?.toLowerCase() || "").includes(searchQuery.toLowerCase());
+      (item.session_id?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+      (item.summary?.toLowerCase() || "").includes(searchQuery.toLowerCase());
 
     const matchesIntent = intentFilter === "all" || item.intent === intentFilter;
     const matchesAgent = agentFilter === "all" || item.agent_type === agentFilter;
@@ -280,6 +284,12 @@ export default function ChatHistoryPage() {
                         )}
                       </div>
 
+                      {sess.summary && (
+                        <p className="text-[11px] text-on-surface-variant/80 italic mt-1.5 line-clamp-2 border-l-2 border-primary/40 pl-2 bg-surface/40 py-1 rounded-r">
+                          {sess.summary}
+                        </p>
+                      )}
+
                       <div className="flex items-center gap-1 mt-2 text-[10px] text-on-surface-variant/70">
                         <Clock className="w-3 h-3" />
                         <span>{formatDate(sess.last_activity)}</span>
@@ -299,6 +309,11 @@ export default function ChatHistoryPage() {
                   <div>
                     <p className="text-xs font-semibold uppercase text-on-surface-variant">Sesi Aktif</p>
                     <p className="text-base font-extrabold text-foreground font-mono">{selectedSessionId}</p>
+                    {(sessionMessages.filter(m => m.summary && m.summary.trim() !== '').pop()?.summary || sessions.find(s => s.session_id === selectedSessionId)?.summary) && (
+                      <p className="text-xs text-primary font-medium mt-1 bg-primary/10 px-2.5 py-1 rounded-md border border-primary/20 inline-block">
+                        <span className="font-bold">Summary Terakhir:</span> {sessionMessages.filter(m => m.summary && m.summary.trim() !== '').pop()?.summary || sessions.find(s => s.session_id === selectedSessionId)?.summary}
+                      </p>
+                    )}
                   </div>
                   <button
                     onClick={() => handleDeleteSession(selectedSessionId)}
@@ -346,8 +361,8 @@ export default function ChatHistoryPage() {
                                 </span>
                               )}
                             </div>
-                            <div className="glass-panel p-4 rounded-2xl rounded-tl-none border border-border/50 text-foreground text-sm leading-relaxed whitespace-pre-wrap">
-                              {msg.agent_response}
+                            <div className="glass-panel p-4 rounded-2xl rounded-tl-none border border-border/50 text-foreground text-sm leading-relaxed overflow-hidden">
+                              <MarkdownRenderer content={msg.agent_response} />
                             </div>
                             <div className="flex items-center justify-between text-[10px] text-on-surface-variant/60 px-1">
                               <span>{formatDate(msg.created_at)}</span>
