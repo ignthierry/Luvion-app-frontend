@@ -70,6 +70,9 @@
 }
 
 :root {
+  --white: #ffffff;
+  --black: #000000;
+  --transparent: transparent;
   --background: #ffffff;
   --foreground: #1a1c1c;
   --on-background: #1a1c1c;
@@ -252,3 +255,15 @@
 }
 @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 .animate-gradient { animation: gradient 4s ease infinite; }
+
+@keyframes aurora {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
+  }
+}
+.animate-aurora {
+  animation: aurora 60s linear infinite;
+}

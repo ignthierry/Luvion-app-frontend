@@ -11,6 +11,7 @@
   "dependencies": {
     "@ai-sdk/react": "^3.0.199",
     "@base-ui/react": "^1.5.0",
+    "@number-flow/react": "^0.6.2",
     "@tanstack/react-query": "^5.101.0",
     "ai": "^6.0.197",
     "class-variance-authority": "^0.7.1",
@@ -18,6 +19,7 @@
     "date-fns": "^4.4.0",
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.25.0",
+    "motion": "^12.43.0",
     "next": "16.2.7",
     "react": "19.2.4",
     "react-dom": "19.2.4",
