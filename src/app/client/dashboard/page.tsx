@@ -488,7 +488,7 @@ export default function ClientDashboardPage() {
                   <Receipt className="w-5 h-5 text-emerald-500" />
                   Riwayat Tagihan & Pembayaran ({filteredInvoices.length})
                 </h2>
-                <p className="text-xs text-on-surface-variant">Daftar invoice dan status pembayaran Midtrans untuk seluruh proyek Anda</p>
+                <p className="text-xs text-on-surface-variant">Daftar invoice dan status pembayaran Xendit untuk seluruh proyek Anda</p>
               </div>
 
               {/* Invoice Filter Select */}
@@ -564,7 +564,7 @@ export default function ClientDashboardPage() {
                                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-extrabold bg-teal-600 hover:bg-teal-700 text-white shadow-sm transition-all"
                               >
                                 <CreditCard className="w-3.5 h-3.5" />
-                                <span>Bayar Midtrans</span>
+                                <span>Bayar Xendit</span>
                               </a>
                             )}
                             <a

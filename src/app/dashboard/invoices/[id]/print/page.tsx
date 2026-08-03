@@ -135,7 +135,7 @@ export default function InvoicePage() {
             <span>Kirim Email</span>
           </a>
 
-          {/* Bayar via Midtrans (jika belum lunas) */}
+          {/* Bayar via Xendit (jika belum lunas) */}
           {invoice.payment_url && invoice.status !== 'paid' && (
             <a
               href={invoice.payment_url}
@@ -143,7 +143,7 @@ export default function InvoicePage() {
               rel="noreferrer"
               className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all font-bold text-sm shadow-md shadow-teal-600/20 hover:scale-[1.02] active:scale-[0.98]"
             >
-              <CreditCard className="w-4 h-4" /> Bayar Midtrans
+              <CreditCard className="w-4 h-4" /> Bayar Xendit
             </a>
           )}
 
@@ -265,7 +265,7 @@ export default function InvoicePage() {
               <div>
                 <h3 className="font-bold text-emerald-950 text-base flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-emerald-600 print:hidden" />
-                  Pembayaran Online via Midtrans
+                  Pembayaran Online via Xendit
                 </h3>
                 <p className="text-xs text-emerald-700 mt-1">
                   Selesaikan pembayaran secara cepat dan aman melalui berbagai metode pembayaran (QRIS, Transfer Bank, E-Wallet, dll).

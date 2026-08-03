@@ -157,7 +157,7 @@ export default function OrdersDashboard() {
         showError("Gagal Sinkron", res.message || "Terjadi kesalahan");
       }
     } catch (err: any) {
-      showWarning("Status Pembayaran", err.message || "Gagal mengecek status pembayaran dari Midtrans.");
+      showWarning("Status Pembayaran", err.message || "Gagal mengecek status pembayaran dari Xendit.");
     } finally {
       setIsCheckingStatus(null);
     }
@@ -215,7 +215,7 @@ export default function OrdersDashboard() {
         setOrderInvoices(updatedInvoices);
         const freshInvoice = updatedInvoices.find((i: Invoice) => i.id === invoice.id) || { ...invoice, payment_url: res.payment_url, snap_token: res.snap_token };
         setInvoiceModalData({ order, invoice: freshInvoice });
-        showSuccess("Link Pembayaran Siap", "Link pembayaran Midtrans berhasil dibuat.");
+        showSuccess("Link Pembayaran Siap", "Link pembayaran Xendit berhasil dibuat.");
       } else {
         showError("Gagal Buat Link", res.message || 'Terjadi kesalahan');
       }
@@ -754,7 +754,7 @@ export default function OrdersDashboard() {
                                     onClick={() => handleCheckStatus(inv, selectedOrder)}
                                     disabled={isCheckingStatus === inv.id}
                                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/40 hover:bg-amber-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
-                                    title="Cek & Sinkronkan Status Pembayaran dari Midtrans"
+                                    title="Cek & Sinkronkan Status Pembayaran dari Xendit"
                                   >
                                     {isCheckingStatus === inv.id ? (
                                       <>
@@ -773,7 +773,7 @@ export default function OrdersDashboard() {
                                   onClick={() => handleGenerateLink(inv, selectedOrder)}
                                   disabled={isSendingInvoice === inv.id}
                                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
-                                  title="Kirim atau Generate Link Pembayaran Midtrans"
+                                  title="Kirim atau Generate Link Pembayaran Xendit"
                                 >
                                   {isSendingInvoice === inv.id ? (
                                     <>

@@ -172,7 +172,7 @@ export default function PublicInvoicePage() {
             </a>
           )}
 
-          {/* Bayar via Midtrans (jika belum lunas) */}
+          {/* Bayar via Xendit (jika belum lunas) */}
           {invoice.payment_url && invoice.status !== 'paid' && (
             <a
               href={invoice.payment_url}
@@ -180,7 +180,7 @@ export default function PublicInvoicePage() {
               rel="noreferrer"
               className="flex items-center gap-2 px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl transition-all font-extrabold text-sm shadow-lg shadow-teal-600/30 hover:scale-[1.03] active:scale-[0.98]"
             >
-              <CreditCard className="w-4 h-4" /> Bayar via Midtrans
+              <CreditCard className="w-4 h-4" /> Bayar via Xendit
             </a>
           )}
 
@@ -302,7 +302,7 @@ export default function PublicInvoicePage() {
               <div>
                 <h3 className="font-bold text-emerald-950 text-base flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-emerald-600 print:hidden" />
-                  Pembayaran Online via Midtrans
+                  Pembayaran Online via Xendit
                 </h3>
                 <p className="text-xs text-emerald-700 mt-1">
                   Selesaikan pembayaran secara cepat dan aman melalui berbagai metode pembayaran (QRIS, Transfer Bank, E-Wallet, dll).
@@ -314,7 +314,7 @@ export default function PublicInvoicePage() {
                 rel="noreferrer" 
                 className="print:hidden inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-extrabold rounded-xl shadow-lg shadow-teal-600/30 transition-all hover:scale-105 text-sm"
               >
-                <ExternalLink className="w-4 h-4" /> Bayar Sekarang (Midtrans)
+                <ExternalLink className="w-4 h-4" /> Bayar Sekarang (Xendit)
               </a>
             </div>
             <div className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-emerald-200/60 print:bg-transparent print:p-0 print:border-none">
