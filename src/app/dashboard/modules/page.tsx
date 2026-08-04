@@ -16,6 +16,7 @@ interface ModuleData {
   demo_type: string;
   demo_title: string;
   demo_link: string | null;
+  documentation?: string | null;
   is_hidden?: boolean;
 }
 
@@ -46,6 +47,8 @@ export default function ModulesCMS() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingModule, setEditingModule] = useState<ModuleData | null>(null);
   
+  const [activeDocTab, setActiveDocTab] = useState<'edit' | 'preview'>('edit');
+  
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -56,6 +59,7 @@ export default function ModulesCMS() {
     demo_type: "",
     demo_title: "",
     demo_link: "",
+    documentation: "",
   });
 
   const loadModules = async () => {
@@ -75,6 +79,7 @@ export default function ModulesCMS() {
   }, []);
 
   const openModal = (module: ModuleData | null = null) => {
+    setActiveDocTab('edit');
     if (module) {
       setEditingModule(module);
       setFormData({
@@ -87,6 +92,7 @@ export default function ModulesCMS() {
         demo_type: module.demo_type,
         demo_title: module.demo_title,
         demo_link: module.demo_link || "",
+        documentation: module.documentation || "",
       });
     } else {
       setEditingModule(null);
@@ -100,6 +106,7 @@ export default function ModulesCMS() {
         demo_type: "grid",
         demo_title: "",
         demo_link: "",
+        documentation: "",
       });
     }
     setIsModalOpen(true);
@@ -366,6 +373,58 @@ export default function ModulesCMS() {
                   placeholder="https://demo.luvion.ai/gym-pro"
                 />
                 <p className="text-[10px] text-on-surface-variant/80">Tautan ini dapat dihubungkan di landing page agar pengunjung dapat mencoba langsung aplikasi.</p>
+              </div>
+
+              {/* Editor Dokumentasi / Penjelasan Fitur */}
+              <div className="space-y-2 pt-4 border-t border-border/40">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-xs font-bold text-on-surface-variant">Penjelasan Fitur / Dokumentasi Modul (HTML)</label>
+                    <p className="text-[10px] text-on-surface-variant/70">Isikan kode HTML / konten penjelasan fitur yang akan ditampilkan ketika pengunjung mengklik tombol 'Penjelasan Fitur'.</p>
+                  </div>
+                  <div className="flex gap-1 bg-background p-1 rounded-lg border border-border/40">
+                    <button
+                      type="button"
+                      onClick={() => setActiveDocTab('edit')}
+                      className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${
+                        activeDocTab === 'edit'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-on-surface-variant hover:text-foreground'
+                      }`}
+                    >
+                      Edit Kode
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveDocTab('preview')}
+                      className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${
+                        activeDocTab === 'preview'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-on-surface-variant hover:text-foreground'
+                      }`}
+                    >
+                      Pratinjau
+                    </button>
+                  </div>
+                </div>
+
+                {activeDocTab === 'edit' ? (
+                  <textarea
+                    rows={10}
+                    value={formData.documentation}
+                    onChange={(e) => setFormData({...formData, documentation: e.target.value})}
+                    className="w-full bg-background font-mono text-xs border border-border/40 rounded-lg p-3 text-foreground focus:ring-2 focus:ring-primary focus:border-transparent outline-none leading-relaxed"
+                    placeholder="<h2>Judul Fitur</h2><p>Deskripsi fitur lengkap...</p>"
+                  />
+                ) : (
+                  <div className="w-full h-80 bg-white rounded-lg border border-border/40 overflow-hidden relative">
+                    <iframe
+                      srcDoc={formData.documentation || '<div style="padding:20px;color:#666;font-family:sans-serif;">Belum ada konten dokumentasi yang diisikan.</div>'}
+                      className="w-full h-full border-0"
+                      title="Preview Dokumentasi"
+                    />
+                  </div>
+                )}
               </div>
 
             </form>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EVERWIN WMS — Presentasi Client</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #090d16;
+    --card-bg: rgba(18, 24, 38, 0.7);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --primary: #38bdf8;
+    --primary-glow: rgba(56, 189, 248, 0.15);
+    --accent: #818cf8;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.75;
+    background-image: 
+      radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(129, 140, 248, 0.05) 0%, transparent 40%);
+    background-attachment: fixed;
+    padding-bottom: 60px;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #090d16; }
+  ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  h1 + p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 28px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 52px 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    items-center: center;
+    gap: 8px;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 32px 0 12px;
+  }
+
+  p { margin: 12px 0; color: #cbd5e1; font-size: 0.98rem; }
+  strong { color: #f8fafc; }
+
+  img {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    margin: 18px 0;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 20px var(--primary-glow);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  img:hover {
+    transform: translateY(-2px);
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+
+  blockquote {
+    border-left: 4px solid var(--primary);
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    padding: 16px 20px;
+    border-radius: 0 16px 16px 0;
+    margin: 24px 0;
+    border: 1px solid var(--border-color);
+    border-left-width: 4px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 24px 0;
+    font-size: 0.93rem;
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  th {
+    background: rgba(30, 41, 59, 0.8);
+    color: var(--primary);
+    font-weight: 700;
+    text-align: left;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: #e2e8f0;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(56, 189, 248, 0.04); }
+
+  code {
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: #7dd3fc;
+    font-family: monospace;
+    font-size: 0.88em;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  a:hover {
+    color: #7dd3fc;
+    text-decoration: underline;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 40px 0;
+  }
+
+  ul {
+    margin: 12px 0 12px 24px;
+    color: #cbd5e1;
+  }
+
+  li {
+    margin-bottom: 6px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--primary-glow);
+    color: var(--primary);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>EVERWIN — Warehouse Management System (WMS)</h1>
+  <p>Dokumentasi Presentasi Client</p>
+  
+  <blockquote>
+    <p><strong>Link Akses:</strong> <a href="https://wms.luvion.my.id" target="_blank">wms.luvion.my.id</a> &nbsp;&bull;&nbsp; 
+    <strong>Demo Login:</strong> <code>superadmin</code> / <code>password</code></p>
+  </blockquote>
+
+  <hr />
+
+  <h2>🏷️ Tentang Produk</h2>
+  <p><strong>EVERWIN WMS</strong> adalah sistem manajemen gudang (Warehouse Management System) berbasis web yang dirancang untuk mengelola seluruh alur operasional pergudangan — dari <strong>barang masuk, stok, hingga barang keluar &amp; pengiriman</strong> — dalam satu platform terintegrasi.</p>
+  <p>Dibangun dengan teknologi modern untuk keandalan dan skala tinggi:</p>
+  <ul>
+    <li><strong>Frontend:</strong> Next.js 16 + React 19 + TypeScript + Tailwind CSS</li>
+    <li><strong>Backend:</strong> Laravel (PHP) + MySQL — REST API dengan autentikasi Sanctum</li>
+    <li><strong>Keamanan:</strong> Token-based auth, log aktivitas lengkap</li>
+  </ul>
+
+  <hr />
+
+  <h2>🖥️ Tampilan Halaman</h2>
+  
+  <h3>Halaman Login</h3>
+  <img alt="Login" src="screenshots/00-login.png" />
+  <p>Pintu masuk aman dengan autentikasi berdasarkan peran (role-based). Sistem mendukung 4 peran: <strong>Super Admin, Warehouse Admin, Operator Field, dan Client (Forwarding)</strong>.</p>
+
+  <hr />
+
+  <h3>Dashboard Utama</h3>
+  <img alt="Dashboard" src="screenshots/01-dashboard.png" />
+  <p>Ringkasan operasional gudang dalam satu layar:</p>
+  <ul>
+    <li>📊 <strong>Kartu metrik:</strong> Inbound (ASN), Outbound (DR), Total Stock Qty, Jumlah Warehouse</li>
+    <li>📈 <strong>Grafik aktivitas</strong> Inbound &amp; Outbound (6 bulan terakhir)</li>
+    <li>🎯 <strong>Storage Occupancy</strong> — pemanfaatan kapasitas gudang (donut chart)</li>
+    <li>📑 <strong>Total dokumen</strong> Inbound &amp; Outbound</li>
+    <li>🚚 <strong>Statistik armada pengiriman</strong> yang sedang beroperasi</li>
+  </ul>
+
+  <hr />
+
+  <h2>📥 Modul Barang Masuk (Inbound)</h2>
+  
+  <h3>1. Rencana Barang Masuk (ASN — Advance Shipping Notice)</h3>
+  <img alt="Inbound ASN" src="screenshots/02-inbound-asn.png" />
+  <p>Manajemen <strong>Advance Shipping Notice</strong> — daftar barang yang direncanakan masuk, dengan:</p>
+  <ul>
+    <li>Pembuatan &amp; pengelolaan dokumen ASN</li>
+    <li>Detail item per ASN</li>
+    <li>Simpanan per item barang</li>
+  </ul>
+
+  <h3>2. Penerimaan Barang (Receiving)</h3>
+  <img alt="Inbound Receiving" src="screenshots/03-inbound-receiving.png" />
+  <p>Proses penerimaan fisik barang di gudang dengan catatan detail per item.</p>
+
+  <h3>3. Quality Control Masuk</h3>
+  <img alt="Inbound QC" src="screenshots/04-inbound-qc.png" />
+  <p>Pemeriksaan kualitas item sebelum disimpan (dengan dukungan <strong>foto bukti</strong> via SFTP).</p>
+
+  <hr />
+
+  <h2>📤 Fitur Barang Keluar (Outbound)</h2>
+  
+  <h3>1. Permintaan Barang Keluar (DR — Delivery Request)</h3>
+  <img alt="Outbound Request" src="screenshots/05-outbound-request.png" />
+  <p>Client/Porter mengajukan permintaan barang keluar dengan detail item per permintaan.</p>
+
+  <h3>2. Pengiriman &amp; Surat Jalan (Dispatch)</h3>
+  <img alt="Outbound Dispatch" src="screenshots/06-outbound-dispatch.png" />
+  <p>Proses dispatch barang keluar, dengan:</p>
+  <ul>
+    <li><strong>Daftar ready-to-dispatch</strong> — barang yang siap dikirim</li>
+    <li><strong>Generate Surat Jalan</strong> otomatis</li>
+    <li>Manajemen metadata logistik</li>
+  </ul>
+
+  <h3>3. Quality Control Barang Keluar</h3>
+  <img alt="Outbound QC" src="screenshots/07-outbound-qc.png" />
+  <p>Pemeriksaan akhir barang yang akan dikirim keluar.</p>
+
+  <hr />
+
+  <h2>📦 Manajemen Inventori</h2>
+  <img alt="Inventory Stock" src="screenshots/08-inventory-stock.png" />
+  <p>Pengelolaan stok lengkap:</p>
+  <ul>
+    <li><strong>Booking stok</strong> inventory barang beserta jumlah, lokasi, dan nilai</li>
+    <li><strong>Stock Transfers</strong> — perpindahan antar lokasi</li>
+    <li><strong>Stock Opname</strong> — perhitungan fisik stok + item opname</li>
+    <li><strong>QR code</strong> per item untuk identifikasi cepat</li>
+  </ul>
+
+  <hr />
+
+  <h2>🧑‍💼 Dashboard Admin &amp; Data Master</h2>
+  
+  <h3>Data Master — Consignee</h3>
+  <img alt="Master Consignee" src="screenshots/09-master-consignee.png" />
+  <p>Kelola data <strong>consignee</strong> (penerima barang) dan <strong>forwarding</strong> untuk keperluan dokumen &amp; invoice.</p>
+
+  <h3>Manajemen Pengguna (Users)</h3>
+  <img alt="Admin Users" src="screenshots/10-admin-users.png" />
+  <p>Kelola <strong>pengguna sistem</strong> dengan pembagian peran, status aktif, dan <strong>user logs</strong> (catatan aktivitas: login, IP, perangkat, browser).</p>
+
+  <h3>Manajemen Warehouse</h3>
+  <img alt="Admin Warehouse" src="screenshots/11-admin-warehouse.png" />
+  <p>Atur <strong>data warehouse (gudang)</strong> dan <strong>lokasi</strong> penyimpanan dalam sistem.</p>
+
+  <hr />
+
+  <h2>💰 Billing / Invoice</h2>
+  <img alt="Billing Invoice" src="screenshots/12-billing-invoice.png" />
+  <p>Perhitungan &amp; <strong>pembuatan invoice otomatis</strong> berdasarkan ASN dengan kalkulasi tarif.</p>
+
+  <hr />
+
+  <h2>🚚 Portal Tracking (Lacak Kargo)</h2>
+  <img alt="Tracking" src="screenshots/13-tracking.png" />
+  <p>Portal interaktif bagi client untuk melacak status pengiriman kargo secara real-time via nomor identitas — tanpa perlu login.</p>
+
+  <hr />
+
+  <h2>✨ Ringkasan Fitur Unggulan</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Modul</th>
+        <th>Fitur Utama</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Dashboard</strong></td>
+        <td>KPI real-time, grafik aktivitas, okupasi gudang, statistik armada</td>
+      </tr>
+      <tr>
+        <td><strong>Inbound</strong></td>
+        <td>ASN, Receiving, QC + foto, deviasi</td>
+      </tr>
+      <tr>
+        <td><strong>Outbound</strong></td>
+        <td>Delivery Request, Dispatch + Surat Jalan otomatis, QC</td>
+      </tr>
+      <tr>
+        <td><strong>Inventori</strong></td>
+        <td>Stok, transfer antar lokasi, stock opname, QR code</td>
+      </tr>
+      <tr>
+        <td><strong>Master Data</strong></td>
+        <td>Warehouse, lokasi, consignee, forwarding, tarif</td>
+      </tr>
+      <tr>
+        <td><strong>Admin</strong></td>
+        <td>Manajemen user &amp; peran, log aktivitas, konfigurasi</td>
+      </tr>
+      <tr>
+        <td><strong>Billing</strong></td>
+        <td>Kalkulasi &amp; pembuatan invoice otomatis</td>
+      </tr>
+      <tr>
+        <td><strong>Tracking</strong></td>
+        <td>Portal lacak publik real-time</td>
+      </tr>
+      <tr>
+        <td><strong>Keamanan</strong></td>
+        <td>Token auth (Sanctum), audit log per-user, foto bukti via SFTP</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>📊 Ringkasan Teknis</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Komponen</th>
+        <th>Teknologi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Frontend</td>
+        <td>Next.js 16, React 19, TypeScript, Tailwind CSS</td>
+      </tr>
+      <tr>
+        <td>Backend</td>
+        <td>Laravel, REST API, Sanctum Auth</td>
+      </tr>
+      <tr>
+        <td>Basis Data</td>
+        <td>MySQL</td>
+      </tr>
+      <tr>
+        <td>Storage Foto</td>
+        <td>SFTP server</td>
+      </tr>
+      <tr>
+        <td>QR Code</td>
+        <td>Per item (identifikasi cepat)</td>
+      </tr>
+      <tr>
+        <td>Tracking</td>
+        <td>Endpoint publik <code>tracking/cargo</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <p><em>Dokumentasi disusun untuk kebutuhan presentasi client. Semua screenshot diambil secara live dari aplikasi berjalan di wms.luvion.my.id.</em></p>
+</div>
+</body>
+</html>
