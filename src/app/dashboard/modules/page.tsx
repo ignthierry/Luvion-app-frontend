@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/apiClient";
 import { showSuccess, showError, showConfirm } from "@/lib/swal";
-import { Loader2, Plus, Edit2, Trash2, X } from "lucide-react";
+import { Loader2, Plus, Edit2, Trash2, X, Eye, EyeOff } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
 interface ModuleData {
@@ -16,6 +16,7 @@ interface ModuleData {
   demo_type: string;
   demo_title: string;
   demo_link: string | null;
+  is_hidden?: boolean;
 }
 
 const COLOR_THEMES = [
@@ -60,7 +61,7 @@ export default function ModulesCMS() {
   const loadModules = async () => {
     setIsLoading(true);
     try {
-      const data = await fetchApi("/modules");
+      const data = await fetchApi("/modules?all=true");
       setModules(data);
     } catch (e) {
       console.error(e);
@@ -144,6 +145,19 @@ export default function ModulesCMS() {
     }
   };
 
+  const toggleHide = async (module: ModuleData) => {
+    try {
+      await fetchApi(`/modules/${module.id}`, {
+        method: "PUT",
+        body: JSON.stringify({ is_hidden: !module.is_hidden }),
+      });
+      loadModules();
+      showSuccess("Berhasil", `Modul berhasil ${module.is_hidden ? 'ditampilkan' : 'disembunyikan'}.`);
+    } catch (err: any) {
+      showError("Gagal", err.message || "Terjadi kesalahan.");
+    }
+  };
+
   if (isLoading) {
     return <div className="flex justify-center items-center h-full"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   }
@@ -174,11 +188,21 @@ export default function ModulesCMS() {
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-bold text-foreground">{module.name}</h3>
+                  <h3 className="font-bold text-foreground flex items-center gap-2">
+                    {module.name}
+                    {module.is_hidden && (
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                        Hidden
+                      </span>
+                    )}
+                  </h3>
                   <p className="text-xs text-on-surface-variant/70">{module.id}</p>
                 </div>
               </div>
               <div className="flex gap-2">
+                <button onClick={() => toggleHide(module)} className="text-zinc-400 hover:text-zinc-200 transition-colors p-1" title={module.is_hidden ? "Tampilkan Modul" : "Sembunyikan Modul"}>
+                  {module.is_hidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
                 <button onClick={() => openModal(module)} className="text-primary hover:text-primary/80 transition-colors p-1"><Edit2 className="w-4 h-4" /></button>
                 <button onClick={() => handleDelete(module.id)} className="text-error hover:text-error/80 transition-colors p-1"><Trash2 className="w-4 h-4" /></button>
               </div>
