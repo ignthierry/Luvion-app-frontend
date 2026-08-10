@@ -18,7 +18,8 @@ import {
   Inbox,
   Calendar,
   MessageSquare,
-  Activity
+  Activity,
+  Wallet
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -66,6 +67,7 @@ export default function DashboardLayout({
     { name: "Modules", href: "/dashboard/modules", icon: Box },
     { name: "Pricing", href: "/dashboard/pricing", icon: CreditCard },
     { name: "FAQ", href: "/dashboard/faq", icon: HelpCircle },
+    { name: "Accounting", href: "/dashboard/accounting", icon: Wallet },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 

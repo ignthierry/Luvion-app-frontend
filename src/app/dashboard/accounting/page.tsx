@@ -1,0 +1,713 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { fetchApi } from "@/lib/apiClient";
+import { 
+  Wallet, BookOpen, FileText, Plus, Save, Trash2, Edit3, 
+  ArrowRight, ArrowLeft, RefreshCw, AlertCircle, CheckCircle2 
+} from "lucide-react";
+
+export default function AccountingDashboard() {
+  const [activeTab, setActiveTab] = useState<"coa" | "journals" | "input" | "reports">("coa");
+  
+  // States for COA
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+  const [editingAccount, setEditingAccount] = useState<any>(null);
+  
+  // States for Journals
+  const [journals, setJournals] = useState<any[]>([]);
+  
+  // States for Input Journal
+  const [journalForm, setJournalForm] = useState({
+    date: new Date().toISOString().split('T')[0],
+    reference: `JNL-${Date.now().toString().slice(-6)}`,
+    description: "",
+    details: [
+      { account_id: "", debit: 0, credit: 0, description: "" },
+      { account_id: "", debit: 0, credit: 0, description: "" }
+    ]
+  });
+
+  // States for Reports
+  const [balanceSheet, setBalanceSheet] = useState<any>(null);
+  const [incomeStatement, setIncomeStatement] = useState<any>(null);
+  const [reportDate, setReportDate] = useState(new Date().toISOString().split('T')[0]);
+  
+  // UI States
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchAccounts();
+    if (activeTab === "journals") fetchJournals();
+    if (activeTab === "reports") fetchReports();
+  }, [activeTab]);
+
+  const showSuccess = (msg: string) => {
+    setSuccess(msg);
+    setTimeout(() => setSuccess(null), 3000);
+  };
+
+  const showError = (msg: string) => {
+    setError(msg);
+    setTimeout(() => setError(null), 5000);
+  };
+
+  // --- API Calls ---
+  const fetchAccounts = async () => {
+    try {
+      const data = await fetchApi("/accounting/accounts");
+      setAccounts(data || []);
+    } catch (e: any) {
+      showError(e.message || "Gagal memuat daftar akun");
+    }
+  };
+
+  const fetchJournals = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchApi("/accounting/journals");
+      setJournals(data || []);
+    } catch (e: any) {
+      showError(e.message || "Gagal memuat jurnal");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      const [bs, is] = await Promise.all([
+        fetchApi(`/accounting/reports/balance-sheet?end_date=${reportDate}`),
+        fetchApi(`/accounting/reports/income-statement?end_date=${reportDate}`)
+      ]);
+      setBalanceSheet(bs);
+      setIncomeStatement(is);
+    } catch (e: any) {
+      showError(e.message || "Gagal memuat laporan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- COA Handlers ---
+  const handleSaveAccount = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const payload = {
+      code: formData.get("code"),
+      name: formData.get("name"),
+      type: formData.get("type"),
+      description: formData.get("description"),
+      is_active: formData.get("is_active") === "true"
+    };
+
+    try {
+      if (editingAccount) {
+        await fetchApi(`/accounting/accounts/${editingAccount.id}`, { method: "PUT", body: JSON.stringify(payload) });
+        showSuccess("Akun berhasil diperbarui");
+      } else {
+        await fetchApi("/accounting/accounts", { method: "POST", body: JSON.stringify(payload) });
+        showSuccess("Akun berhasil ditambahkan");
+      }
+      setIsAccountModalOpen(false);
+      fetchAccounts();
+    } catch (e: any) {
+      showError(e.message || "Gagal menyimpan akun");
+    }
+  };
+
+  const handleDeleteAccount = async (id: number) => {
+    if (!confirm("Yakin ingin menghapus akun ini?")) return;
+    try {
+      await fetchApi(`/accounting/accounts/${id}`, { method: "DELETE" });
+      showSuccess("Akun berhasil dihapus");
+      fetchAccounts();
+    } catch (e: any) {
+      showError(e.message || "Gagal menghapus akun (mungkin sedang digunakan)");
+    }
+  };
+
+  // --- Journal Input Handlers ---
+  const handleAddJournalDetail = () => {
+    setJournalForm({
+      ...journalForm,
+      details: [...journalForm.details, { account_id: "", debit: 0, credit: 0, description: "" }]
+    });
+  };
+
+  const handleRemoveJournalDetail = (index: number) => {
+    const newDetails = [...journalForm.details];
+    newDetails.splice(index, 1);
+    setJournalForm({ ...journalForm, details: newDetails });
+  };
+
+  const handleDetailChange = (index: number, field: string, value: any) => {
+    const newDetails = [...journalForm.details];
+    (newDetails[index] as any)[field] = value;
+    setJournalForm({ ...journalForm, details: newDetails });
+  };
+
+  const handleSubmitJournal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validation
+    const totalDebit = journalForm.details.reduce((sum, d) => sum + Number(d.debit), 0);
+    const totalCredit = journalForm.details.reduce((sum, d) => sum + Number(d.credit), 0);
+    
+    if (Math.abs(totalDebit - totalCredit) > 0.01) {
+      showError(`Jurnal tidak balance! Debit: ${totalDebit}, Kredit: ${totalCredit}`);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await fetchApi("/accounting/journals", { 
+        method: "POST", 
+        body: JSON.stringify(journalForm) 
+      });
+      showSuccess("Jurnal berhasil disimpan");
+      setJournalForm({
+        date: new Date().toISOString().split('T')[0],
+        reference: `JNL-${Date.now().toString().slice(-6)}`,
+        description: "",
+        details: [
+          { account_id: "", debit: 0, credit: 0, description: "" },
+          { account_id: "", debit: 0, credit: 0, description: "" }
+        ]
+      });
+      setActiveTab("journals");
+    } catch (e: any) {
+      showError(e.message || "Gagal menyimpan jurnal");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-extrabold text-foreground tracking-tight flex items-center gap-3">
+          <Wallet className="w-8 h-8 text-primary" />
+          Accounting & Tax
+        </h1>
+        <p className="text-on-surface-variant mt-2 text-sm max-w-2xl">
+          Kelola Chart of Accounts, catat jurnal transaksi harian, dan pantau laporan keuangan Luvion secara real-time.
+        </p>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex flex-wrap gap-2 border-b border-border/40 pb-2">
+        {[
+          { id: "coa", label: "Master COA", icon: BookOpen },
+          { id: "journals", label: "Jurnal Umum", icon: FileText },
+          { id: "input", label: "Input Jurnal", icon: Plus },
+          { id: "reports", label: "Laporan Keuangan", icon: Wallet },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              activeTab === tab.id 
+                ? "bg-primary text-white shadow-lg shadow-primary/30" 
+                : "text-on-surface-variant hover:bg-surface/50 hover:text-foreground"
+            }`}
+          >
+            <tab.icon className="w-4 h-4" />
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Alerts */}
+      <AnimatePresence>
+        {error && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="p-4 bg-error/10 text-error border border-error/20 rounded-xl flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <p className="font-semibold text-sm">{error}</p>
+          </motion.div>
+        )}
+        {success && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="p-4 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-xl flex items-center gap-3">
+            <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+            <p className="font-semibold text-sm">{success}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Tab Contents */}
+      <div className="min-h-[500px]">
+        
+        {/* COA TAB */}
+        {activeTab === "coa" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-foreground">Daftar Akun (Chart of Accounts)</h2>
+              <button 
+                onClick={() => { setEditingAccount(null); setIsAccountModalOpen(true); }}
+                className="btn-primary"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Tambah Akun
+              </button>
+            </div>
+            
+            <div className="glass-panel rounded-2xl overflow-hidden border border-border/40">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                  <thead className="text-xs uppercase bg-surface/50 text-on-surface-variant">
+                    <tr>
+                      <th className="px-6 py-4 font-bold">Kode</th>
+                      <th className="px-6 py-4 font-bold">Nama Akun</th>
+                      <th className="px-6 py-4 font-bold">Tipe</th>
+                      <th className="px-6 py-4 font-bold">Status</th>
+                      <th className="px-6 py-4 font-bold text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40">
+                    {accounts.length === 0 ? (
+                      <tr><td colSpan={5} className="px-6 py-8 text-center text-on-surface-variant">Belum ada akun.</td></tr>
+                    ) : (
+                      accounts.map((acc) => (
+                        <tr key={acc.id} className="hover:bg-surface/30 transition-colors">
+                          <td className="px-6 py-4 font-medium text-foreground">{acc.code}</td>
+                          <td className="px-6 py-4">{acc.name}</td>
+                          <td className="px-6 py-4">
+                            <span className="px-2.5 py-1 bg-surface/80 rounded-full text-xs font-semibold border border-border/50 text-primary">
+                              {acc.type}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            {acc.is_active ? (
+                              <span className="text-emerald-500 font-semibold text-xs flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> Aktif</span>
+                            ) : (
+                              <span className="text-error font-semibold text-xs flex items-center gap-1"><AlertCircle className="w-3 h-3"/> Nonaktif</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button 
+                                onClick={() => { setEditingAccount(acc); setIsAccountModalOpen(true); }}
+                                className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </button>
+                              <button 
+                                onClick={() => handleDeleteAccount(acc.id)}
+                                className="p-2 text-error hover:bg-error/10 rounded-lg transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* JOURNALS TAB */}
+        {activeTab === "journals" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-foreground">Jurnal Umum</h2>
+              <button onClick={fetchJournals} className="btn-secondary">
+                <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              {journals.length === 0 && !loading && (
+                <div className="glass-panel p-8 text-center text-on-surface-variant rounded-2xl border border-border/40">
+                  Belum ada transaksi jurnal.
+                </div>
+              )}
+              
+              {journals.map((journal) => (
+                <div key={journal.id} className="glass-panel rounded-2xl border border-border/40 overflow-hidden">
+                  <div className="bg-surface/50 px-6 py-4 border-b border-border/40 flex justify-between items-center">
+                    <div>
+                      <div className="font-bold text-foreground flex items-center gap-2">
+                        {journal.reference}
+                        <span className="text-xs font-normal text-on-surface-variant bg-surface/50 px-2 py-0.5 rounded-full border border-border/30">
+                          {journal.date}
+                        </span>
+                      </div>
+                      <div className="text-sm text-on-surface-variant mt-1">{journal.description}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Amount</div>
+                      <div className="font-bold text-lg text-primary">
+                        Rp {Number(journal.total_amount).toLocaleString('id-ID')}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="px-6 py-4">
+                    <table className="w-full text-sm text-left">
+                      <thead className="text-xs uppercase text-on-surface-variant border-b border-border/40">
+                        <tr>
+                          <th className="pb-2 font-bold">Akun</th>
+                          <th className="pb-2 font-bold">Deskripsi</th>
+                          <th className="pb-2 font-bold text-right">Debit</th>
+                          <th className="pb-2 font-bold text-right">Kredit</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/20">
+                        {journal.details.map((detail: any) => (
+                          <tr key={detail.id}>
+                            <td className="py-3 font-medium text-foreground">
+                              {detail.account?.code} - {detail.account?.name}
+                            </td>
+                            <td className="py-3 text-on-surface-variant">{detail.description || '-'}</td>
+                            <td className="py-3 text-right text-emerald-500 font-medium">
+                              {Number(detail.debit) > 0 ? `Rp ${Number(detail.debit).toLocaleString('id-ID')}` : '-'}
+                            </td>
+                            <td className="py-3 text-right text-error font-medium">
+                              {Number(detail.credit) > 0 ? `Rp ${Number(detail.credit).toLocaleString('id-ID')}` : '-'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* INPUT JOURNAL TAB */}
+        {activeTab === "input" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 max-w-4xl mx-auto">
+            <h2 className="text-xl font-bold text-foreground">Input Jurnal Transaksi</h2>
+            <form onSubmit={handleSubmitJournal} className="glass-panel p-6 rounded-2xl border border-border/40 space-y-6">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Tanggal</label>
+                  <input 
+                    type="date" 
+                    value={journalForm.date}
+                    onChange={e => setJournalForm({...journalForm, date: e.target.value})}
+                    className="input-field" 
+                    required 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">No Referensi</label>
+                  <input 
+                    type="text" 
+                    value={journalForm.reference}
+                    onChange={e => setJournalForm({...journalForm, reference: e.target.value})}
+                    className="input-field" 
+                    required 
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Deskripsi Transaksi</label>
+                  <input 
+                    type="text" 
+                    value={journalForm.description}
+                    onChange={e => setJournalForm({...journalForm, description: e.target.value})}
+                    placeholder="Contoh: Setoran Modal Awal"
+                    className="input-field" 
+                    required 
+                  />
+                </div>
+              </div>
+
+              <div className="border border-border/40 rounded-xl overflow-hidden">
+                <table className="w-full text-sm text-left">
+                  <thead className="text-xs uppercase bg-surface/50 text-on-surface-variant">
+                    <tr>
+                      <th className="px-4 py-3 font-bold">Akun</th>
+                      <th className="px-4 py-3 font-bold">Debit (Rp)</th>
+                      <th className="px-4 py-3 font-bold">Kredit (Rp)</th>
+                      <th className="px-4 py-3 font-bold text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40">
+                    {journalForm.details.map((detail, idx) => (
+                      <tr key={idx} className="bg-surface/20">
+                        <td className="p-2">
+                          <select 
+                            value={detail.account_id}
+                            onChange={(e) => handleDetailChange(idx, 'account_id', e.target.value)}
+                            className="input-field py-2"
+                            required
+                          >
+                            <option value="">-- Pilih Akun --</option>
+                            {accounts.filter(a => a.is_active).map(a => (
+                              <option key={a.id} value={a.id}>{a.code} - {a.name}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="p-2 w-48">
+                          <input 
+                            type="number" 
+                            min="0" step="1"
+                            value={detail.debit || ''}
+                            onChange={(e) => handleDetailChange(idx, 'debit', e.target.value)}
+                            className="input-field py-2 text-right text-emerald-500 font-semibold bg-surface/30"
+                          />
+                        </td>
+                        <td className="p-2 w-48">
+                          <input 
+                            type="number" 
+                            min="0" step="1"
+                            value={detail.credit || ''}
+                            onChange={(e) => handleDetailChange(idx, 'credit', e.target.value)}
+                            className="input-field py-2 text-right text-error font-semibold bg-surface/30"
+                          />
+                        </td>
+                        <td className="p-2 text-center w-16">
+                          {journalForm.details.length > 2 && (
+                            <button 
+                              type="button"
+                              onClick={() => handleRemoveJournalDetail(idx)}
+                              className="p-1.5 text-error hover:bg-error/10 rounded-lg transition-colors mx-auto"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot className="bg-surface/50 border-t border-border/40">
+                    <tr>
+                      <td className="px-4 py-3 font-bold text-right text-foreground">Total</td>
+                      <td className="px-4 py-3 font-bold text-right text-emerald-500">
+                        {journalForm.details.reduce((s,d) => s + Number(d.debit), 0).toLocaleString('id-ID')}
+                      </td>
+                      <td className="px-4 py-3 font-bold text-right text-error">
+                        {journalForm.details.reduce((s,d) => s + Number(d.credit), 0).toLocaleString('id-ID')}
+                      </td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <button type="button" onClick={handleAddJournalDetail} className="btn-secondary py-2 text-sm">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Tambah Baris
+                </button>
+                
+                <button type="submit" disabled={loading} className="btn-primary py-2 px-6">
+                  {loading ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                  Simpan Jurnal
+                </button>
+              </div>
+
+            </form>
+          </motion.div>
+        )}
+
+        {/* REPORTS TAB */}
+        {activeTab === "reports" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface/40 p-4 rounded-xl border border-border/40">
+              <div>
+                <h2 className="text-xl font-bold text-foreground">Laporan Keuangan</h2>
+                <p className="text-sm text-on-surface-variant">Neraca dan Laba Rugi terhitung hingga tanggal akhir.</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <input 
+                  type="date" 
+                  value={reportDate}
+                  onChange={e => setReportDate(e.target.value)}
+                  className="input-field py-2 w-auto"
+                />
+                <button onClick={fetchReports} className="btn-primary py-2">
+                  <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                  Generate
+                </button>
+              </div>
+            </div>
+
+            {loading ? (
+              <div className="py-12 text-center text-primary"><RefreshCw className="w-8 h-8 mx-auto animate-spin" /></div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* BALANCE SHEET */}
+                <div className="glass-panel p-6 rounded-2xl border border-border/40">
+                  <h3 className="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5" /> Balance Sheet (Neraca)
+                  </h3>
+                  
+                  {balanceSheet && (
+                    <div className="space-y-6 text-sm">
+                      {/* Assets */}
+                      <div>
+                        <h4 className="font-bold uppercase tracking-wider text-on-surface-variant mb-2">Aset (Aktiva)</h4>
+                        <div className="space-y-1">
+                          {balanceSheet.assets.map((item:any, i:number) => (
+                            <div key={i} className="flex justify-between py-1 border-b border-border/20">
+                              <span>{item.code} - {item.name}</span>
+                              <span className="font-semibold">Rp {Number(item.balance).toLocaleString('id-ID')}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-between py-2 mt-2 font-bold text-primary border-t border-border/40">
+                          <span>TOTAL ASET</span>
+                          <span>Rp {Number(balanceSheet.total_assets).toLocaleString('id-ID')}</span>
+                        </div>
+                      </div>
+
+                      {/* Liabilities & Equity */}
+                      <div>
+                        <h4 className="font-bold uppercase tracking-wider text-on-surface-variant mb-2">Kewajiban & Modal (Pasiva)</h4>
+                        
+                        <div className="mb-1 font-semibold text-foreground">Kewajiban</div>
+                        <div className="space-y-1 pl-2 mb-3">
+                          {balanceSheet.liabilities.map((item:any, i:number) => (
+                            <div key={i} className="flex justify-between py-1 border-b border-border/20">
+                              <span>{item.code} - {item.name}</span>
+                              <span className="font-semibold">Rp {Number(item.balance).toLocaleString('id-ID')}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="mb-1 font-semibold text-foreground">Modal (Ekuitas)</div>
+                        <div className="space-y-1 pl-2">
+                          {balanceSheet.equity.map((item:any, i:number) => (
+                            <div key={i} className="flex justify-between py-1 border-b border-border/20">
+                              <span>{item.code} - {item.name}</span>
+                              <span className="font-semibold">Rp {Number(item.balance).toLocaleString('id-ID')}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="flex justify-between py-2 mt-4 font-bold text-primary border-t border-border/40">
+                          <span>TOTAL PASIVA</span>
+                          <span>Rp {Number(balanceSheet.total_liabilities + balanceSheet.total_equity).toLocaleString('id-ID')}</span>
+                        </div>
+                      </div>
+
+                      {/* Balance Status */}
+                      <div className={`p-3 rounded-lg text-center font-bold border ${balanceSheet.is_balanced ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-error/10 text-error border-error/20'}`}>
+                        {balanceSheet.is_balanced ? 'SEIMBANG (BALANCED)' : 'TIDAK SEIMBANG (UNBALANCED)'}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* INCOME STATEMENT */}
+                <div className="glass-panel p-6 rounded-2xl border border-border/40">
+                  <h3 className="text-lg font-bold text-purple-500 mb-4 flex items-center gap-2">
+                    <FileText className="w-5 h-5" /> Income Statement (Laba/Rugi)
+                  </h3>
+
+                  {incomeStatement && (
+                    <div className="space-y-6 text-sm">
+                      {/* Revenue */}
+                      <div>
+                        <h4 className="font-bold uppercase tracking-wider text-on-surface-variant mb-2">Pendapatan</h4>
+                        <div className="space-y-1">
+                          {incomeStatement.revenues.map((item:any, i:number) => (
+                            <div key={i} className="flex justify-between py-1 border-b border-border/20">
+                              <span>{item.code} - {item.name}</span>
+                              <span className="font-semibold text-emerald-500">Rp {Number(item.balance).toLocaleString('id-ID')}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-between py-2 mt-2 font-bold text-emerald-500 border-t border-border/40">
+                          <span>TOTAL PENDAPATAN</span>
+                          <span>Rp {Number(incomeStatement.total_revenue).toLocaleString('id-ID')}</span>
+                        </div>
+                      </div>
+
+                      {/* Expenses */}
+                      <div>
+                        <h4 className="font-bold uppercase tracking-wider text-on-surface-variant mb-2">Beban Operasional</h4>
+                        <div className="space-y-1">
+                          {incomeStatement.expenses.map((item:any, i:number) => (
+                            <div key={i} className="flex justify-between py-1 border-b border-border/20">
+                              <span>{item.code} - {item.name}</span>
+                              <span className="font-semibold text-error">Rp {Number(item.balance).toLocaleString('id-ID')}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-between py-2 mt-2 font-bold text-error border-t border-border/40">
+                          <span>TOTAL BEBAN</span>
+                          <span>Rp {Number(incomeStatement.total_expense).toLocaleString('id-ID')}</span>
+                        </div>
+                      </div>
+
+                      {/* Net Income */}
+                      <div className={`flex justify-between p-4 mt-6 rounded-xl font-bold border ${incomeStatement.net_income >= 0 ? 'bg-primary/10 text-primary border-primary/20' : 'bg-error/10 text-error border-error/20'}`}>
+                        <span className="text-base uppercase">{incomeStatement.net_income >= 0 ? 'Laba Bersih' : 'Rugi Bersih'}</span>
+                        <span className="text-lg">Rp {Number(incomeStatement.net_income).toLocaleString('id-ID')}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            )}
+          </motion.div>
+        )}
+
+      </div>
+
+      {/* COA Modal */}
+      <AnimatePresence>
+        {isAccountModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsAccountModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative glass-panel border border-border/40 p-6 rounded-2xl w-full max-w-md shadow-2xl">
+              <h3 className="text-xl font-bold text-foreground mb-6">
+                {editingAccount ? "Edit Akun" : "Tambah Akun Baru"}
+              </h3>
+              <form onSubmit={handleSaveAccount} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Kode Akun</label>
+                  <input name="code" type="text" defaultValue={editingAccount?.code} className="input-field" required placeholder="Contoh: 101" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Nama Akun</label>
+                  <input name="name" type="text" defaultValue={editingAccount?.name} className="input-field" required placeholder="Contoh: Kas Kecil" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Tipe Akun</label>
+                  <select name="type" defaultValue={editingAccount?.type || "Asset"} className="input-field" required>
+                    <option value="Asset">Aset (Aktiva)</option>
+                    <option value="Liability">Kewajiban (Pasiva)</option>
+                    <option value="Equity">Ekuitas (Modal)</option>
+                    <option value="Revenue">Pendapatan</option>
+                    <option value="Expense">Beban</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Status</label>
+                  <select name="is_active" defaultValue={editingAccount ? String(editingAccount.is_active) : "true"} className="input-field" required>
+                    <option value="true">Aktif</option>
+                    <option value="false">Nonaktif</option>
+                  </select>
+                </div>
+                <div className="pt-4 flex justify-end gap-3 border-t border-border/40">
+                  <button type="button" onClick={() => setIsAccountModalOpen(false)} className="btn-secondary">Batal</button>
+                  <button type="submit" className="btn-primary">Simpan</button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+    </div>
+  );
+}
