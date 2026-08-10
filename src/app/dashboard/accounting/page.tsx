@@ -208,8 +208,16 @@ export default function AccountingDashboard() {
     { value: "software", label: "Langganan Software" },
     { value: "utilities", label: "Internet & Listrik" },
     { value: "marketing", label: "Pemasaran" },
-    { value: "gaji", label: "Gaji" },
+    { value: "gaji", label: "Gaji Karyawan" },
     { value: "transport", label: "Transportasi" },
+    { value: "sewa", label: "Sewa" },
+    { value: "bahan_baku", label: "Bahan Baku" },
+    { value: "lisensi", label: "Lisensi & Legalitas" },
+    { value: "konsumsi", label: "Konsumsi" },
+    { value: "pelatihan", label: "Pendidikan & Pelatihan" },
+    { value: "komunikasi", label: "Komunikasi" },
+    { value: "perawatan", label: "Perawatan & Reparasi" },
+    { value: "operasional", label: "Operasional Lainnya" },
     { value: "lainnya", label: "Lainnya" },
   ];
 
