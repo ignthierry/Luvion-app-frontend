@@ -32,6 +32,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMenuDrawerOpen, setIsMenuDrawerOpen] = useState(false);
   const [user, setUser] = useState<{name: string, email: string} | null>(null);
 
   useEffect(() => {
@@ -70,6 +71,17 @@ export default function DashboardLayout({
     { name: "Accounting", href: "/dashboard/accounting", icon: Wallet },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
+
+  // Bottom nav (mobile): top-5 items + "Menu" opens the rest
+  const bottomNavItems = [
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Pesanan", href: "/dashboard/orders", icon: ShoppingCart },
+    { name: "Akuntansi", href: "/dashboard/accounting", icon: Wallet },
+    { name: "Chat", href: "/dashboard/chat-history", icon: MessageSquare },
+  ];
+  const drawerItems = navItems.filter(
+    (item) => !bottomNavItems.some((b) => b.href === item.href)
+  );
 
   if (isCheckingAuth) {
     return <div className="min-h-screen bg-background flex items-center justify-center text-foreground">Loading...</div>;
@@ -171,10 +183,104 @@ export default function DashboardLayout({
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+        <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
           {children}
         </div>
       </main>
+
+      {/* ─── Mobile Bottom Navigation ─── */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-50 glass-panel border-t border-border/40 backdrop-blur-xl">
+        <div className="grid grid-cols-5 items-stretch">
+          {bottomNavItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-semibold transition-all ${
+                  isActive ? "text-primary" : "text-on-surface-variant"
+                }`}
+              >
+                <span className={`relative p-1.5 rounded-xl transition-all ${
+                  isActive ? "bg-primary/15 scale-110" : ""
+                }`}>
+                  <item.icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
+                </span>
+                {item.name}
+              </Link>
+            );
+          })}
+          <button
+            onClick={() => setIsMenuDrawerOpen(true)}
+            className="flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-semibold text-on-surface-variant"
+          >
+            <span className="p-1.5 rounded-xl">
+              <Menu className="w-5 h-5" />
+            </span>
+            Menu
+          </button>
+        </div>
+      </nav>
+
+      {/* ─── Mobile Menu Drawer (bottom sheet) ─── */}
+      <AnimatePresence>
+        {isMenuDrawerOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 z-50 lg:hidden backdrop-blur-sm"
+              onClick={() => setIsMenuDrawerOpen(false)}
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 260 }}
+              className="fixed bottom-0 inset-x-0 z-[60] lg:hidden glass-panel border-t border-border/40 rounded-t-3xl"
+            >
+              <div className="mx-auto mt-3 h-1 w-10 rounded-full bg-border/60" />
+              <div className="flex items-center justify-between px-5 py-4">
+                <h3 className="font-bold text-foreground">Menu Lainnya</h3>
+                <button
+                  onClick={() => setIsMenuDrawerOpen(false)}
+                  className="p-2 text-zinc-400 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="grid grid-cols-3 gap-1 px-4 pb-6 max-h-[55vh] overflow-y-auto">
+                {drawerItems.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsMenuDrawerOpen(false)}
+                      className={`flex flex-col items-center gap-2 py-4 rounded-2xl transition-all text-[11px] font-semibold ${
+                        isActive
+                          ? "bg-primary/15 text-primary"
+                          : "text-on-surface-variant hover:bg-surface/60"
+                      }`}
+                    >
+                      <item.icon className="w-6 h-6" strokeWidth={isActive ? 2.5 : 2} />
+                      {item.name}
+                    </Link>
+                  );
+                })}
+                <button
+                  onClick={handleLogout}
+                  className="flex flex-col items-center gap-2 py-4 rounded-2xl transition-all text-[11px] font-semibold text-error hover:bg-error/10"
+                >
+                  <LogOut className="w-6 h-6" />
+                  Keluar
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
