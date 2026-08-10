@@ -5,11 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { fetchApi } from "@/lib/apiClient";
 import { 
   Wallet, BookOpen, FileText, Plus, Save, Trash2, Edit3, 
-  ArrowRight, ArrowLeft, RefreshCw, AlertCircle, CheckCircle2 
+  ArrowRight, ArrowLeft, RefreshCw, AlertCircle, CheckCircle2,
+  HandCoins, TrendingDown
 } from "lucide-react";
 
 export default function AccountingDashboard() {
-  const [activeTab, setActiveTab] = useState<"coa" | "journals" | "input" | "reports">("coa");
+  const [activeTab, setActiveTab] = useState<"coa" | "journals" | "input" | "reports" | "expenses">("coa");
   
   // States for COA
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -35,6 +36,18 @@ export default function AccountingDashboard() {
   const [incomeStatement, setIncomeStatement] = useState<any>(null);
   const [reportDate, setReportDate] = useState(new Date().toISOString().split('T')[0]);
   
+  // States for Pembiayaan (Expenses)
+  const [expenses, setExpenses] = useState<any[]>([]);
+  const [expenseStats, setExpenseStats] = useState<any>(null);
+  const [expenseForm, setExpenseForm] = useState({
+    date: new Date().toISOString().split('T')[0],
+    category: "server",
+    description: "",
+    amount: "",
+    payment_method: "cash",
+    account_id: "",
+  });
+  
   // UI States
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +57,7 @@ export default function AccountingDashboard() {
     fetchAccounts();
     if (activeTab === "journals") fetchJournals();
     if (activeTab === "reports") fetchReports();
+    if (activeTab === "expenses") fetchExpenses();
   }, [activeTab]);
 
   const showSuccess = (msg: string) => {
@@ -188,6 +202,79 @@ export default function AccountingDashboard() {
     }
   };
 
+  // --- Pembiayaan (Expense) Handlers ---
+  const EXPENSE_CATEGORIES = [
+    { value: "server", label: "Server / Cloud" },
+    { value: "software", label: "Langganan Software" },
+    { value: "utilities", label: "Internet & Listrik" },
+    { value: "marketing", label: "Pemasaran" },
+    { value: "gaji", label: "Gaji" },
+    { value: "transport", label: "Transportasi" },
+    { value: "lainnya", label: "Lainnya" },
+  ];
+
+  const fetchExpenses = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchApi("/expenses?per_page=50");
+      const list = data.data || data || [];
+      setExpenses(Array.isArray(list) ? list : (list.data || []));
+      const stats = await fetchApi("/expenses/stats");
+      setExpenseStats(stats);
+    } catch (e: any) {
+      showError(e.message || "Gagal memuat pembiayaan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmitExpense = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!expenseForm.amount || Number(expenseForm.amount) <= 0) {
+      showError("Nominal biaya harus diisi dan lebih dari 0");
+      return;
+    }
+    try {
+      setLoading(true);
+      await fetchApi("/expenses", {
+        method: "POST",
+        body: JSON.stringify({
+          date: expenseForm.date,
+          category: expenseForm.category,
+          description: expenseForm.description,
+          amount: Number(expenseForm.amount),
+          payment_method: expenseForm.payment_method,
+          account_id: expenseForm.account_id || undefined,
+        }),
+      });
+      showSuccess("Pembiayaan tercatat! Jurnal otomatis: Debit Biaya, Kredit Kas.");
+      setExpenseForm({
+        date: new Date().toISOString().split('T')[0],
+        category: "server",
+        description: "",
+        amount: "",
+        payment_method: "cash",
+        account_id: "",
+      });
+      fetchExpenses();
+    } catch (e: any) {
+      showError(e.message || "Gagal menyimpan pembiayaan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteExpense = async (id: number) => {
+    if (!confirm("Hapus pembiayaan ini beserta jurnalnya?")) return;
+    try {
+      await fetchApi(`/expenses/${id}`, { method: "DELETE" });
+      showSuccess("Pembiayaan dihapus");
+      fetchExpenses();
+    } catch (e: any) {
+      showError(e.message || "Gagal menghapus pembiayaan");
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -207,6 +294,7 @@ export default function AccountingDashboard() {
           { id: "coa", label: "Master COA", icon: BookOpen },
           { id: "journals", label: "Jurnal Umum", icon: FileText },
           { id: "input", label: "Input Jurnal", icon: Plus },
+          { id: "expenses", label: "Pembiayaan", icon: HandCoins },
           { id: "reports", label: "Laporan Keuangan", icon: Wallet },
         ].map((tab) => (
           <button
@@ -658,6 +746,147 @@ export default function AccountingDashboard() {
 
               </div>
             )}
+          </motion.div>
+        )}
+
+        {/* PEMBIAYAAN (EXPENSES) TAB */}
+        {activeTab === "expenses" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+            {/* Stats row */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="glass-panel rounded-2xl border border-border/40 p-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-error/10 text-error flex items-center justify-center">
+                    <TrendingDown className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Total Pembiayaan</div>
+                    <div className="text-xl font-extrabold text-foreground">
+                      Rp {Number(expenseStats?.total_amount || 0).toLocaleString('id-ID')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="glass-panel rounded-2xl border border-border/40 p-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                    <HandCoins className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Transaksi</div>
+                    <div className="text-xl font-extrabold text-foreground">{expenseStats?.total_expenses || 0} biaya</div>
+                  </div>
+                </div>
+              </div>
+              <div className="glass-panel rounded-2xl border border-border/40 p-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                    <Wallet className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-xs uppercase tracking-wider text-on-surface-variant font-semibold">Bulan Ini</div>
+                    <div className="text-xl font-extrabold text-foreground">
+                      Rp {Number(expenseStats?.this_month || 0).toLocaleString('id-ID')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Form + List */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Form */}
+              <form onSubmit={handleSubmitExpense} className="glass-panel p-6 rounded-2xl border border-border/40 space-y-5 lg:sticky lg:top-6 self-start">
+                <div className="flex items-center gap-2">
+                  <HandCoins className="w-5 h-5 text-primary" />
+                  <h3 className="text-lg font-bold text-foreground">Catat Pembiayaan Baru</h3>
+                </div>
+                <p className="text-xs text-on-surface-variant -mt-3">
+                  Jurnal otomatis dibuat: <span className="text-error font-semibold">Debit Biaya</span> & <span className="text-emerald-500 font-semibold">Kredit Kas</span>
+                </p>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Tanggal</label>
+                    <input type="date" required value={expenseForm.date} onChange={e => setExpenseForm({ ...expenseForm, date: e.target.value })} className="input-field" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Metode Bayar</label>
+                    <select value={expenseForm.payment_method} onChange={e => setExpenseForm({ ...expenseForm, payment_method: e.target.value })} className="input-field">
+                      <option value="cash">Kas Tunai</option>
+                      <option value="bank">Transfer Bank</option>
+                      <option value="qris">QRIS</option>
+                      <option value="card">Kartu</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Kategori Biaya</label>
+                  <select value={expenseForm.category} onChange={e => setExpenseForm({ ...expenseForm, category: e.target.value })} className="input-field" required>
+                    {EXPENSE_CATEGORIES.map(cat => (
+                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Deskripsi</label>
+                  <input type="text" value={expenseForm.description} onChange={e => setExpenseForm({ ...expenseForm, description: e.target.value })} placeholder="Contoh: Biaya server Vercel bulanan" className="input-field" />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Nominal (Rp)</label>
+                  <input type="number" min="1" step="any" required value={expenseForm.amount} onChange={e => setExpenseForm({ ...expenseForm, amount: e.target.value })} placeholder="0" className="input-field" />
+                </div>
+
+                <button type="submit" disabled={loading} className="btn-primary w-full justify-center">
+                  {loading ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                  Simpan Pembiayaan
+                </button>
+              </form>
+
+              {/* List */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-bold text-foreground">Riwayat Pembiayaan</h3>
+                  <button onClick={fetchExpenses} className="btn-secondary">
+                    <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </button>
+                </div>
+
+                {expenses.length === 0 && !loading && (
+                  <div className="glass-panel p-8 text-center text-on-surface-variant rounded-2xl border border-border/40">
+                    Belum ada pembiayaan tercatat.
+                  </div>
+                )}
+
+                {expenses.map((exp) => (
+                  <div key={exp.id} className="glass-panel rounded-2xl border border-border/40 p-5 flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-foreground">{exp.reference}</span>
+                        <span className="text-xs bg-error/10 text-error px-2 py-0.5 rounded-full font-semibold uppercase">{exp.category}</span>
+                        {exp.journal && (
+                          <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded-full font-semibold">Jurnal: {exp.journal.reference}</span>
+                        )}
+                      </div>
+                      <div className="text-sm text-on-surface-variant mt-1 truncate">{exp.description || exp.category}</div>
+                      <div className="text-xs text-on-surface-variant mt-1">
+                        {exp.date} • {exp.payment_method || 'cash'} • {exp.account?.code ? `${exp.account.code} - ${exp.account.name}` : 'Kas Tunai'}
+                      </div>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <div className="font-extrabold text-error">- Rp {Number(exp.amount).toLocaleString('id-ID')}</div>
+                      <button onClick={() => handleDeleteExpense(exp.id)} className="text-on-surface-variant hover:text-error transition-colors mt-2">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </motion.div>
         )}
 
