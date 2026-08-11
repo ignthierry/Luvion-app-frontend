@@ -715,6 +715,13 @@ export default function AccountingDashboard() {
                 >
                   <FileText className="w-4 h-4 mr-1" /> LabaRugi XLSX
                 </a>
+                <a
+                  href={`${API_BASE_URL}/accounting/export/spt/pdf?year=${reportDate.slice(0, 4)}`}
+                  className="btn-primary py-2 text-xs"
+                  onClick={(e) => downloadExport(e, `/accounting/export/spt/pdf?year=${reportDate.slice(0, 4)}`)}
+                >
+                  <FileText className="w-4 h-4 mr-1" /> SPT 1771 PDF
+                </a>
               </div>
             </div>
 
