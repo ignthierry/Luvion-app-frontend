@@ -6,11 +6,11 @@ import { fetchApi } from "@/lib/apiClient";
 import { 
   Wallet, BookOpen, FileText, Plus, Save, Trash2, Edit3, 
   ArrowRight, ArrowLeft, RefreshCw, AlertCircle, CheckCircle2,
-  HandCoins, TrendingDown
+  HandCoins, TrendingDown, BookMarked
 } from "lucide-react";
 
 export default function AccountingDashboard() {
-  const [activeTab, setActiveTab] = useState<"coa" | "journals" | "input" | "reports" | "expenses">("coa");
+  const [activeTab, setActiveTab] = useState<"coa" | "journals" | "input" | "reports" | "ledger" | "expenses">("coa");
   
   // States for COA
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -35,6 +35,15 @@ export default function AccountingDashboard() {
   const [balanceSheet, setBalanceSheet] = useState<any>(null);
   const [incomeStatement, setIncomeStatement] = useState<any>(null);
   const [reportDate, setReportDate] = useState(new Date().toISOString().split('T')[0]);
+
+  // States for Buku Besar (Ledger)
+  const [ledgerData, setLedgerData] = useState<any[]>([]);
+  const [ledgerFilter, setLedgerFilter] = useState({
+    account_id: "",
+    start_date: "",
+    end_date: new Date().toISOString().split('T')[0],
+    type: "",
+  });
   
   // States for Pembiayaan (Expenses)
   const [expenses, setExpenses] = useState<any[]>([]);
@@ -57,6 +66,7 @@ export default function AccountingDashboard() {
     fetchAccounts();
     if (activeTab === "journals") fetchJournals();
     if (activeTab === "reports") fetchReports();
+    if (activeTab === "ledger") fetchLedger();
     if (activeTab === "expenses") fetchExpenses();
   }, [activeTab]);
 
@@ -283,6 +293,27 @@ export default function AccountingDashboard() {
     }
   };
 
+  // --- Buku Besar (Ledger) Handlers ---
+  const fetchLedger = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (ledgerFilter.account_id) params.set("account_id", ledgerFilter.account_id);
+      if (ledgerFilter.start_date) params.set("start_date", ledgerFilter.start_date);
+      if (ledgerFilter.end_date) params.set("end_date", ledgerFilter.end_date);
+      if (ledgerFilter.type) params.set("type", ledgerFilter.type);
+      const qs = params.toString();
+      const data = await fetchApi(`/accounting/ledger${qs ? `?${qs}` : ""}`);
+      setLedgerData(data.accounts || []);
+    } catch (e: any) {
+      showError(e.message || "Gagal memuat buku besar");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fmtRp = (n: any) => `Rp ${Number(n || 0).toLocaleString("id-ID")}`;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -302,6 +333,7 @@ export default function AccountingDashboard() {
           { id: "coa", label: "Master COA", icon: BookOpen },
           { id: "journals", label: "Jurnal Umum", icon: FileText },
           { id: "input", label: "Input Jurnal", icon: Plus },
+          { id: "ledger", label: "Buku Besar", icon: BookOpen },
           { id: "expenses", label: "Pembiayaan", icon: HandCoins },
           { id: "reports", label: "Laporan Keuangan", icon: Wallet },
         ].map((tab) => (
@@ -754,6 +786,154 @@ export default function AccountingDashboard() {
 
               </div>
             )}
+          </motion.div>
+        )}
+
+        {/* BUKU BESAR (LEDGER) TAB */}
+        {activeTab === "ledger" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+            {/* Filter bar */}
+            <div className="glass-panel rounded-2xl border border-border/40 p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <BookMarked className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-bold text-foreground">Filter Buku Besar</h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Akun</label>
+                  <select
+                    value={ledgerFilter.account_id}
+                    onChange={e => setLedgerFilter({ ...ledgerFilter, account_id: e.target.value })}
+                    className="input-field"
+                  >
+                    <option value="">Semua Akun</option>
+                    {accounts.map((acc: any) => (
+                      <option key={acc.id} value={acc.id}>{acc.code} - {acc.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Tipe</label>
+                  <select
+                    value={ledgerFilter.type}
+                    onChange={e => setLedgerFilter({ ...ledgerFilter, type: e.target.value })}
+                    className="input-field"
+                  >
+                    <option value="">Semua Tipe</option>
+                    <option value="Asset">Aset</option>
+                    <option value="Liability">Kewajiban</option>
+                    <option value="Equity">Ekuitas</option>
+                    <option value="Revenue">Pendapatan</option>
+                    <option value="Expense">Beban</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Dari Tanggal</label>
+                  <input
+                    type="date"
+                    value={ledgerFilter.start_date}
+                    onChange={e => setLedgerFilter({ ...ledgerFilter, start_date: e.target.value })}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Sampai Tanggal</label>
+                  <input
+                    type="date"
+                    value={ledgerFilter.end_date}
+                    onChange={e => setLedgerFilter({ ...ledgerFilter, end_date: e.target.value })}
+                    className="input-field"
+                  />
+                </div>
+                <div className="flex items-end">
+                  <button onClick={fetchLedger} disabled={loading} className="btn-primary w-full justify-center">
+                    {loading ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <BookMarked className="w-4 h-4 mr-2" />}
+                    Tampilkan
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Ledger cards per account */}
+            {ledgerData.length === 0 && !loading && (
+              <div className="glass-panel p-8 text-center text-on-surface-variant rounded-2xl border border-border/40">
+                Belum ada data buku besar. Pilih filter lalu klik Tampilkan.
+              </div>
+            )}
+
+            {ledgerData.map((ledger: any) => (
+              <div key={ledger.account.id} className="glass-panel rounded-2xl border border-border/40 overflow-hidden">
+                {/* Account header */}
+                <div className="bg-surface/50 px-6 py-4 border-b border-border/40 flex flex-wrap justify-between items-center gap-3">
+                  <div>
+                    <div className="font-bold text-foreground flex items-center gap-2">
+                      <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-md text-xs font-extrabold">{ledger.account.code}</span>
+                      {ledger.account.name}
+                      <span className="text-xs font-normal text-on-surface-variant bg-surface/50 px-2 py-0.5 rounded-full border border-border/30">
+                        {ledger.account.type}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-6 text-right">
+                    <div>
+                      <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Saldo Awal</div>
+                      <div className="font-bold">{fmtRp(ledger.opening_balance)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Debit</div>
+                      <div className="font-bold text-emerald-500">{fmtRp(ledger.total_debit)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Kredit</div>
+                      <div className="font-bold text-error">{fmtRp(ledger.total_credit)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Saldo Akhir</div>
+                      <div className="font-bold text-lg text-primary">{fmtRp(ledger.closing_balance)}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mutations table */}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs uppercase text-on-surface-variant border-b border-border/40 bg-surface/30">
+                      <tr>
+                        <th className="px-6 py-3 font-bold">Tanggal</th>
+                        <th className="px-6 py-3 font-bold">Referensi</th>
+                        <th className="px-6 py-3 font-bold">Keterangan</th>
+                        <th className="px-6 py-3 font-bold text-right">Debit</th>
+                        <th className="px-6 py-3 font-bold text-right">Kredit</th>
+                        <th className="px-6 py-3 font-bold text-right">Saldo</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/20">
+                      {ledger.mutations.length === 0 && (
+                        <tr>
+                          <td colSpan={6} className="px-6 py-6 text-center text-on-surface-variant">
+                            Tidak ada mutasi pada rentang ini.
+                          </td>
+                        </tr>
+                      )}
+                      {ledger.mutations.map((m: any) => (
+                        <tr key={m.id} className="hover:bg-surface/40 transition-colors">
+                          <td className="px-6 py-3 text-on-surface-variant whitespace-nowrap">{m.date}</td>
+                          <td className="px-6 py-3 font-semibold text-foreground whitespace-nowrap">{m.journal_reference}</td>
+                          <td className="px-6 py-3 text-on-surface-variant max-w-xs truncate">{m.journal_description}</td>
+                          <td className="px-6 py-3 text-right text-emerald-500 font-medium">
+                            {Number(m.debit) > 0 ? fmtRp(m.debit) : '-'}
+                          </td>
+                          <td className="px-6 py-3 text-right text-error font-medium">
+                            {Number(m.credit) > 0 ? fmtRp(m.credit) : '-'}
+                          </td>
+                          <td className="px-6 py-3 text-right font-bold text-foreground">{fmtRp(m.balance)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ))}
           </motion.div>
         )}
 
