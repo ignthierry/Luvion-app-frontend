@@ -69,6 +69,9 @@ export default function AccountingDashboard() {
     end_date: new Date().toISOString().split('T')[0],
     type: "",
   });
+
+  // Export dropdown (Neraca / Laba Rugi)
+  const [openExportMenu, setOpenExportMenu] = useState<string | null>(null);
   
   // States for Pembiayaan (Expenses)
   const [expenses, setExpenses] = useState<any[]>([]);
@@ -687,34 +690,62 @@ export default function AccountingDashboard() {
                   <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                   Generate
                 </button>
-                <a
-                  href={`${API_BASE_URL}/accounting/export/balance/pdf?end_date=${reportDate}`}
-                  className="btn-secondary py-2 text-xs"
-                  onClick={(e) => downloadExport(e, `/accounting/export/balance/pdf?end_date=${reportDate}`)}
-                >
-                  <FileText className="w-4 h-4 mr-1" /> Neraca PDF
-                </a>
-                <a
-                  href={`${API_BASE_URL}/accounting/export/income/pdf?end_date=${reportDate}`}
-                  className="btn-secondary py-2 text-xs"
-                  onClick={(e) => downloadExport(e, `/accounting/export/income/pdf?end_date=${reportDate}`)}
-                >
-                  <FileText className="w-4 h-4 mr-1" /> LabaRugi PDF
-                </a>
-                <a
-                  href={`${API_BASE_URL}/accounting/export/balance/excel?end_date=${reportDate}`}
-                  className="btn-secondary py-2 text-xs"
-                  onClick={(e) => downloadExport(e, `/accounting/export/balance/excel?end_date=${reportDate}`)}
-                >
-                  <FileText className="w-4 h-4 mr-1" /> Neraca XLSX
-                </a>
-                <a
-                  href={`${API_BASE_URL}/accounting/export/income/excel?end_date=${reportDate}`}
-                  className="btn-secondary py-2 text-xs"
-                  onClick={(e) => downloadExport(e, `/accounting/export/income/excel?end_date=${reportDate}`)}
-                >
-                  <FileText className="w-4 h-4 mr-1" /> LabaRugi XLSX
-                </a>
+
+                {/* Export dropdown: Neraca */}
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenExportMenu(openExportMenu === "balance" ? null : "balance")}
+                    className="btn-secondary py-2 text-xs"
+                  >
+                    <BookOpen className="w-4 h-4 mr-1" /> Neraca
+                    <span className="ml-1 text-[9px]">▼</span>
+                  </button>
+                  {openExportMenu === "balance" && (
+                    <div className="absolute right-0 mt-1 z-20 bg-surface rounded-xl border border-border/40 shadow-xl overflow-hidden min-w-[130px]">
+                      <button
+                        onClick={(e) => { setOpenExportMenu(null); downloadExport(e, `/accounting/export/balance/pdf?end_date=${reportDate}`); }}
+                        className="w-full text-left px-4 py-2.5 text-xs hover:bg-primary/10 flex items-center gap-2"
+                      >
+                        <FileText className="w-4 h-4 text-error" /> PDF
+                      </button>
+                      <button
+                        onClick={(e) => { setOpenExportMenu(null); downloadExport(e, `/accounting/export/balance/excel?end_date=${reportDate}`); }}
+                        className="w-full text-left px-4 py-2.5 text-xs hover:bg-primary/10 flex items-center gap-2 border-t border-border/20"
+                      >
+                        <FileText className="w-4 h-4 text-emerald-500" /> Excel
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Export dropdown: Laba Rugi */}
+                <div className="relative">
+                  <button
+                    onClick={() => setOpenExportMenu(openExportMenu === "income" ? null : "income")}
+                    className="btn-secondary py-2 text-xs"
+                  >
+                    <FileText className="w-4 h-4 mr-1" /> Laba Rugi
+                    <span className="ml-1 text-[9px]">▼</span>
+                  </button>
+                  {openExportMenu === "income" && (
+                    <div className="absolute right-0 mt-1 z-20 bg-surface rounded-xl border border-border/40 shadow-xl overflow-hidden min-w-[130px]">
+                      <button
+                        onClick={(e) => { setOpenExportMenu(null); downloadExport(e, `/accounting/export/income/pdf?end_date=${reportDate}`); }}
+                        className="w-full text-left px-4 py-2.5 text-xs hover:bg-primary/10 flex items-center gap-2"
+                      >
+                        <FileText className="w-4 h-4 text-error" /> PDF
+                      </button>
+                      <button
+                        onClick={(e) => { setOpenExportMenu(null); downloadExport(e, `/accounting/export/income/excel?end_date=${reportDate}`); }}
+                        className="w-full text-left px-4 py-2.5 text-xs hover:bg-primary/10 flex items-center gap-2 border-t border-border/20"
+                      >
+                        <FileText className="w-4 h-4 text-emerald-500" /> Excel
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* SPT */}
                 <a
                   href={`${API_BASE_URL}/accounting/export/spt/pdf?year=${reportDate.slice(0, 4)}`}
                   className="btn-primary py-2 text-xs"
