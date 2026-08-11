@@ -2,12 +2,37 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchApi } from "@/lib/apiClient";
+import { fetchApi, API_BASE_URL } from "@/lib/apiClient";
 import { 
   Wallet, BookOpen, FileText, Plus, Save, Trash2, Edit3, 
   ArrowRight, ArrowLeft, RefreshCw, AlertCircle, CheckCircle2,
   HandCoins, TrendingDown, BookMarked
 } from "lucide-react";
+
+// Download file dari API (auth via Authorization header)
+const downloadExport = async (e: any, path: string) => {
+  e.preventDefault();
+  try {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
+    const res = await fetch(`${API_BASE_URL}${path}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!res.ok) throw new Error(`Gagal export (${res.status})`);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const cd = res.headers.get("Content-Disposition") || "";
+    const m = cd.match(/filename="?([^";]+)"?/);
+    a.download = m ? m[1] : "laporan.pdf";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (err: any) {
+    alert(`Export gagal: ${err.message}`);
+  }
+};
 
 export default function AccountingDashboard() {
   const [activeTab, setActiveTab] = useState<"coa" | "journals" | "input" | "reports" | "ledger" | "expenses">("coa");
@@ -651,7 +676,7 @@ export default function AccountingDashboard() {
                 <h2 className="text-xl font-bold text-foreground">Laporan Keuangan</h2>
                 <p className="text-sm text-on-surface-variant">Neraca dan Laba Rugi terhitung hingga tanggal akhir.</p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <input 
                   type="date" 
                   value={reportDate}
@@ -662,6 +687,34 @@ export default function AccountingDashboard() {
                   <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                   Generate
                 </button>
+                <a
+                  href={`${API_BASE_URL}/accounting/export/balance/pdf?end_date=${reportDate}`}
+                  className="btn-secondary py-2 text-xs"
+                  onClick={(e) => downloadExport(e, `/accounting/export/balance/pdf?end_date=${reportDate}`)}
+                >
+                  <FileText className="w-4 h-4 mr-1" /> Neraca PDF
+                </a>
+                <a
+                  href={`${API_BASE_URL}/accounting/export/income/pdf?end_date=${reportDate}`}
+                  className="btn-secondary py-2 text-xs"
+                  onClick={(e) => downloadExport(e, `/accounting/export/income/pdf?end_date=${reportDate}`)}
+                >
+                  <FileText className="w-4 h-4 mr-1" /> LabaRugi PDF
+                </a>
+                <a
+                  href={`${API_BASE_URL}/accounting/export/balance/excel?end_date=${reportDate}`}
+                  className="btn-secondary py-2 text-xs"
+                  onClick={(e) => downloadExport(e, `/accounting/export/balance/excel?end_date=${reportDate}`)}
+                >
+                  <FileText className="w-4 h-4 mr-1" /> Neraca XLSX
+                </a>
+                <a
+                  href={`${API_BASE_URL}/accounting/export/income/excel?end_date=${reportDate}`}
+                  className="btn-secondary py-2 text-xs"
+                  onClick={(e) => downloadExport(e, `/accounting/export/income/excel?end_date=${reportDate}`)}
+                >
+                  <FileText className="w-4 h-4 mr-1" /> LabaRugi XLSX
+                </a>
               </div>
             </div>
 
@@ -850,6 +903,48 @@ export default function AccountingDashboard() {
                     {loading ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <BookMarked className="w-4 h-4 mr-2" />}
                     Tampilkan
                   </button>
+                </div>
+                <div className="flex items-end gap-2">
+                  <a
+                    href={`${API_BASE_URL}/accounting/export/ledger/pdf?${new URLSearchParams({
+                      account_id: ledgerFilter.account_id,
+                      start_date: ledgerFilter.start_date,
+                      end_date: ledgerFilter.end_date,
+                      type: ledgerFilter.type,
+                    }).toString()}`}
+                    className="btn-secondary py-2 text-xs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      downloadExport(e, `/accounting/export/ledger/pdf?${new URLSearchParams({
+                        account_id: ledgerFilter.account_id,
+                        start_date: ledgerFilter.start_date,
+                        end_date: ledgerFilter.end_date,
+                        type: ledgerFilter.type,
+                      }).toString()}`);
+                    }}
+                  >
+                    <FileText className="w-4 h-4 mr-1" /> PDF
+                  </a>
+                  <a
+                    href={`${API_BASE_URL}/accounting/export/ledger/excel?${new URLSearchParams({
+                      account_id: ledgerFilter.account_id,
+                      start_date: ledgerFilter.start_date,
+                      end_date: ledgerFilter.end_date,
+                      type: ledgerFilter.type,
+                    }).toString()}`}
+                    className="btn-secondary py-2 text-xs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      downloadExport(e, `/accounting/export/ledger/excel?${new URLSearchParams({
+                        account_id: ledgerFilter.account_id,
+                        start_date: ledgerFilter.start_date,
+                        end_date: ledgerFilter.end_date,
+                        type: ledgerFilter.type,
+                      }).toString()}`);
+                    }}
+                  >
+                    <FileText className="w-4 h-4 mr-1" /> Excel
+                  </a>
                 </div>
               </div>
             </div>
