@@ -176,16 +176,22 @@
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(226, 226, 226, 0.5); /* using high contrast light gray */
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.03); /* very light airy shadow */
+  border: 1px solid rgba(200, 200, 205, 0.65); /* clearer border */
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 8px 24px -6px rgba(0, 0, 0, 0.12),
+    0 24px 48px -12px rgba(0, 0, 0, 0.14); /* layered depth shadow */
 }
 
 .dark .glass-panel {
   background: rgba(26, 28, 28, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 8px 24px -6px rgba(0, 0, 0, 0.45),
+    0 24px 48px -12px rgba(0, 0, 0, 0.5);
 }
 
 /* Sunset & Electric Gradients */
