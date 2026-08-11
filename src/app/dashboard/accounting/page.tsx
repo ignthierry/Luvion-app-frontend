@@ -416,15 +416,15 @@ export default function AccountingDashboard() {
             <div className="glass-panel rounded-2xl overflow-hidden border border-border/40">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
-                  <thead className="text-xs uppercase bg-surface/50 text-on-surface-variant">
-                    <tr>
-                      <th className="px-6 py-4 font-bold">Kode</th>
-                      <th className="px-6 py-4 font-bold">Nama Akun</th>
-                      <th className="px-6 py-4 font-bold">Tipe</th>
-                      <th className="px-6 py-4 font-bold">Status</th>
-                      <th className="px-6 py-4 font-bold text-right">Aksi</th>
-                    </tr>
-                  </thead>
+                  <thead className="text-xs uppercase text-on-surface-variant border-b border-border/40">
+                      <tr>
+                        <th className="px-6 py-4 font-bold">Kode</th>
+                        <th className="px-6 py-4 font-bold">Nama Akun</th>
+                        <th className="px-6 py-4 font-bold">Tipe</th>
+                        <th className="px-6 py-4 font-bold">Status</th>
+                        <th className="px-6 py-4 font-bold text-right">Aksi</th>
+                      </tr>
+                    </thead>
                   <tbody className="divide-y divide-border/40">
                     {accounts.length === 0 ? (
                       <tr><td colSpan={5} className="px-6 py-8 text-center text-on-surface-variant">Belum ada akun.</td></tr>
@@ -512,10 +512,10 @@ export default function AccountingDashboard() {
                     <table className="w-full text-sm text-left">
                       <thead className="text-xs uppercase text-on-surface-variant border-b border-border/40">
                         <tr>
-                          <th className="pb-2 font-bold">Akun</th>
-                          <th className="pb-2 font-bold">Deskripsi</th>
-                          <th className="pb-2 font-bold text-right">Debit</th>
-                          <th className="pb-2 font-bold text-right">Kredit</th>
+                          <th className="px-6 py-3 font-bold">Akun</th>
+                          <th className="px-6 py-3 font-bold">Deskripsi</th>
+                          <th className="px-6 py-3 font-bold text-right">Debit</th>
+                          <th className="px-6 py-3 font-bold text-right">Kredit</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border/20">
@@ -584,14 +584,14 @@ export default function AccountingDashboard() {
 
               <div className="border border-border/40 rounded-xl overflow-hidden">
                 <table className="w-full text-sm text-left">
-                  <thead className="text-xs uppercase bg-surface/50 text-on-surface-variant">
-                    <tr>
-                      <th className="px-4 py-3 font-bold">Akun</th>
-                      <th className="px-4 py-3 font-bold">Debit (Rp)</th>
-                      <th className="px-4 py-3 font-bold">Kredit (Rp)</th>
-                      <th className="px-4 py-3 font-bold text-center">Aksi</th>
-                    </tr>
-                  </thead>
+                  <thead className="text-xs uppercase text-on-surface-variant border-b border-border/40">
+                      <tr>
+                        <th className="px-4 py-3 font-bold">Akun</th>
+                        <th className="px-4 py-3 font-bold">Debit (Rp)</th>
+                        <th className="px-4 py-3 font-bold">Kredit (Rp)</th>
+                        <th className="px-4 py-3 font-bold text-center">Aksi</th>
+                      </tr>
+                    </thead>
                   <tbody className="divide-y divide-border/40">
                     {journalForm.details.map((detail, idx) => (
                       <tr key={idx} className="bg-surface/20">
@@ -1030,7 +1030,7 @@ export default function AccountingDashboard() {
                 {/* Mutations table */}
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
-                    <thead className="text-xs uppercase text-on-surface-variant border-b border-border/40 bg-surface/30">
+                    <thead className="text-xs uppercase text-on-surface-variant border-b border-border/40">
                       <tr>
                         <th className="px-6 py-3 font-bold">Tanggal</th>
                         <th className="px-6 py-3 font-bold">Referensi</th>

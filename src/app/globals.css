@@ -194,16 +194,16 @@
     0 24px 48px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* Table header styling — darker, more contrast vs body rows */
+/* Table header styling — consistent across light & dark mode */
 thead th {
-  background: rgba(0, 0, 0, 0.12);
-  color: #111;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.18);
+  background: rgba(120, 120, 135, 0.08);
+  color: #333;
+  border-bottom: 1px solid rgba(120, 120, 135, 0.18);
 }
 .dark thead th {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e5e5e5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* Sunset & Electric Gradients */
