@@ -13,7 +13,7 @@ import {
 const downloadExport = async (e: any, path: string) => {
   e.preventDefault();
   try {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
+    const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") || "" : "";
     const res = await fetch(`${API_BASE_URL}${path}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
