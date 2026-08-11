@@ -194,6 +194,18 @@
     0 24px 48px -12px rgba(0, 0, 0, 0.5);
 }
 
+/* Table header styling — darker, more contrast vs body rows */
+thead th {
+  background: rgba(0, 0, 0, 0.12);
+  color: #111;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.18);
+}
+.dark thead th {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.18);
+}
+
 /* Sunset & Electric Gradients */
 .sunset-gradient {
   background: linear-gradient(135deg, #fe5d39 0%, #b42907 100%);
