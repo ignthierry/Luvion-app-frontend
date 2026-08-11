@@ -44,6 +44,7 @@ export default function AccountingDashboard() {
   
   // States for Journals
   const [journals, setJournals] = useState<any[]>([]);
+  const [editingJournalId, setEditingJournalId] = useState<number | null>(null);
   
   // States for Input Journal
   const [journalForm, setJournalForm] = useState({
@@ -218,26 +219,74 @@ export default function AccountingDashboard() {
 
     try {
       setLoading(true);
-      await fetchApi("/accounting/journals", { 
-        method: "POST", 
-        body: JSON.stringify(journalForm) 
-      });
-      showSuccess("Jurnal berhasil disimpan");
-      setJournalForm({
-        date: new Date().toISOString().split('T')[0],
-        reference: `JNL-${Date.now().toString().slice(-6)}`,
-        description: "",
-        details: [
-          { account_id: "", debit: 0, credit: 0, description: "" },
-          { account_id: "", debit: 0, credit: 0, description: "" }
-        ]
-      });
+      if (editingJournalId) {
+        await fetchApi(`/accounting/journals/${editingJournalId}`, { 
+          method: "PUT", 
+          body: JSON.stringify(journalForm) 
+        });
+        showSuccess("Jurnal berhasil diperbarui");
+      } else {
+        await fetchApi("/accounting/journals", { 
+          method: "POST", 
+          body: JSON.stringify(journalForm) 
+        });
+        showSuccess("Jurnal berhasil disimpan");
+      }
+      resetJournalForm();
       setActiveTab("journals");
     } catch (e: any) {
       showError(e.message || "Gagal menyimpan jurnal");
     } finally {
       setLoading(false);
     }
+  };
+
+  // Mulai edit jurnal — isi form dengan data jurnal terpilih
+  const handleEditJournal = (journal: any) => {
+    setJournalForm({
+      date: journal.date?.slice(0, 10) || new Date().toISOString().split('T')[0],
+      reference: journal.reference,
+      description: journal.description || "",
+      details: journal.details?.length
+        ? journal.details.map((d: any) => ({
+            account_id: d.account_id,
+            debit: Number(d.debit),
+            credit: Number(d.credit),
+            description: d.description || "",
+          }))
+        : [{ account_id: "", debit: 0, credit: 0, description: "" }, { account_id: "", debit: 0, credit: 0, description: "" }]
+    });
+    setEditingJournalId(journal.id);
+    setActiveTab("input");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Hapus jurnal dengan konfirmasi
+  const handleDeleteJournal = async (journal: any) => {
+    if (!window.confirm(`Hapus jurnal ${journal.reference}? Tindakan ini tidak bisa dibatalkan.`)) return;
+    try {
+      setLoading(true);
+      await fetchApi(`/accounting/journals/${journal.id}`, { method: "DELETE" });
+      showSuccess("Jurnal berhasil dihapus");
+      fetchJournals();
+    } catch (e: any) {
+      showError(e.message || "Gagal menghapus jurnal");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetJournalForm = () => {
+    setJournalForm({
+      date: new Date().toISOString().split('T')[0],
+      reference: `JNL-${Date.now().toString().slice(-6)}`,
+      description: "",
+      details: [
+        { account_id: "", debit: 0, credit: 0, description: "" },
+        { account_id: "", debit: 0, credit: 0, description: "" }
+      ]
+    });
+    setEditingJournalId(null);
   };
 
   // --- Pembiayaan (Expense) Handlers ---
@@ -501,10 +550,30 @@ export default function AccountingDashboard() {
                       </div>
                       <div className="text-sm text-on-surface-variant mt-1">{journal.description}</div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Amount</div>
-                      <div className="font-bold text-lg text-primary">
-                        Rp {Number(journal.total_amount).toLocaleString('id-ID')}
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Amount</div>
+                        <div className="font-bold text-lg text-primary">
+                          Rp {Number(journal.total_amount).toLocaleString('id-ID')}
+                        </div>
+                      </div>
+                      <div className="flex gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleEditJournal(journal)}
+                          title="Edit jurnal"
+                          className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteJournal(journal)}
+                          title="Hapus jurnal"
+                          className="p-2 text-error hover:bg-error/10 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -545,7 +614,9 @@ export default function AccountingDashboard() {
         {/* INPUT JOURNAL TAB */}
         {activeTab === "input" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 max-w-4xl mx-auto">
-            <h2 className="text-xl font-bold text-foreground">Input Jurnal Transaksi</h2>
+            <h2 className="text-xl font-bold text-foreground">
+              {editingJournalId ? "Edit Jurnal Transaksi" : "Input Jurnal Transaksi"}
+            </h2>
             <form onSubmit={handleSubmitJournal} className="glass-panel p-6 rounded-2xl border border-border/40 space-y-6">
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -661,10 +732,17 @@ export default function AccountingDashboard() {
                   Tambah Baris
                 </button>
                 
-                <button type="submit" disabled={loading} className="btn-primary py-2 px-6">
-                  {loading ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                  Simpan Jurnal
-                </button>
+                <div className="flex gap-2">
+                  {editingJournalId && (
+                    <button type="button" onClick={resetJournalForm} className="btn-secondary py-2 px-4">
+                      Batal
+                    </button>
+                  )}
+                  <button type="submit" disabled={loading} className="btn-primary py-2 px-6">
+                    {loading ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                    {editingJournalId ? "Perbarui Jurnal" : "Simpan Jurnal"}
+                  </button>
+                </div>
               </div>
 
             </form>
