@@ -15,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Luvion - Platform Scale Up Berbasis AI",
+  title: "PT Luvion Solusi Digital - Scale Up Bisnis dengan Teknologi Digital",
   description: "Luvion membantu bisnis berkembang (scale up) melalui integrasi sistem digital, rekomendasi modul AI, dan harga modular yang transparan.",
   keywords: ["SaaS", "Bisnis", "Scale Up", "Integrasi AI", "Platform Digital"],
   authors: [{ name: "Thierry (Founder)" }],

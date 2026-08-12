@@ -201,7 +201,7 @@ export default function PublicInvoicePage() {
                   className="h-10 sm:h-16 print:h-16 w-auto object-contain shrink-0"
                 />
                 <div className="hidden sm:block print:block">
-                  <p className="text-[13px] font-bold text-slate-800 leading-snug">Luvion — Platform Scale Up Berbasis AI</p>
+                  <p className="text-[13px] font-bold text-slate-800 leading-snug">PT Luvion Solusi Digital</p>
                   <p className="text-[11px] text-slate-500 leading-relaxed mt-0.5">
                     Perum. Shojiland Blok EJ.02, Candi, Sidoarjo
                     <br />

@@ -173,7 +173,7 @@ export default function DashboardLayout({
             <div className="flex items-center gap-4">
               <div className="hidden sm:block text-right">
                 <p className="text-sm font-bold text-foreground">Admin Luvion</p>
-                <p className="text-xs text-on-surface-variant">admin@luvion.ai</p>
+                <p className="text-xs text-on-surface-variant">admin@luvion.my.id</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-purple-500 flex items-center justify-center shadow-lg shadow-primary/20">
                 <span className="text-sm font-bold text-white">AL</span>

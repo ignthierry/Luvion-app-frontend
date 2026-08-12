@@ -104,7 +104,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="block w-full pl-10 pr-3 py-3 border border-border/40 rounded-xl bg-surface/50 text-foreground placeholder-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all backdrop-blur-sm"
-                  placeholder="admin@luvion.ai"
+                  placeholder="admin@luvion.my.id"
                   required
                 />
               </div>
