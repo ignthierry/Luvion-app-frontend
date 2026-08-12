@@ -225,29 +225,8 @@ export default function PublicInvoicePage() {
               </div>
             </div>
 
-            {/* Meta strip */}
-            <div className="mt-6 sm:mt-8 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 print:gap-4">
-              <div className="bg-slate-50 border border-slate-100 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3">
-                <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400">No. Invoice</p>
-                <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5 font-mono break-all">#{invoiceNumber}</p>
-              </div>
-              <div className="bg-slate-50 border border-slate-100 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3">
-                <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400">Tgl Dibuat</p>
-                <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">{fmtDate(invoice.created_at)}</p>
-              </div>
-              <div className="bg-slate-50 border border-slate-100 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3">
-                <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400">Jatuh Tempo</p>
-                <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">{fmtDate(invoice.due_date)}</p>
-              </div>
-              <div className="bg-slate-50 border border-slate-100 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3">
-                <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400">Siklus</p>
-                <p className="text-xs sm:text-sm font-bold text-slate-800 mt-0.5 capitalize">{order.billing_cycle || "Bulanan"}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Bill To + Status */}
-          <div className="px-5 sm:px-12 mt-8 sm:mt-10 print:mt-8">
+            {/* Bill To + Status */}
+            <div className="px-5 sm:px-12 mt-8 sm:mt-10 print:mt-8">
             <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
               <div className="w-full sm:w-auto sm:min-w-[240px]">
                 <div className="flex items-center gap-2 mb-2.5">
