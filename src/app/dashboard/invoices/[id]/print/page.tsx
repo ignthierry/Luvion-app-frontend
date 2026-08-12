@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 export default async function DashboardInvoicePrintPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  redirect(`/invoices/${params.id}`);
+  const { id } = await params;
+  redirect(`/invoices/${id}`);
 }
