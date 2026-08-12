@@ -192,17 +192,17 @@ export default function PublicInvoicePage() {
 
           {/* Header */}
           <div className="px-5 sm:px-12 pt-8 sm:pt-12 print:pt-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-5">
+            <div className="flex flex-row justify-between items-start gap-4 sm:gap-8">
               {/* Company */}
-              <div className="flex items-start gap-3 w-full sm:w-auto">
+              <div className="flex flex-col items-start gap-2 sm:gap-3 flex-1 min-w-0">
                 <img
                   src="/Banner.png"
                   alt="Luvion"
-                  className="h-12 sm:h-16 w-auto object-contain"
+                  className="h-10 sm:h-16 print:h-16 w-auto object-contain shrink-0"
                 />
-                <div className="border-l border-slate-200 pl-3 hidden sm:block">
+                <div className="hidden sm:block print:block">
                   <p className="text-[13px] font-bold text-slate-800 leading-snug">Luvion — Platform Scale Up Berbasis AI</p>
-                  <p className="text-[11px] text-slate-500 leading-relaxed mt-1">
+                  <p className="text-[11px] text-slate-500 leading-relaxed mt-0.5">
                     Perum. Shojiland Blok EJ.02, Candi, Sidoarjo
                     <br />
                     Telp/WA: +628197965599 | Email: admin@luvion.my.id
@@ -211,15 +211,15 @@ export default function PublicInvoicePage() {
               </div>
 
               {/* Invoice title */}
-              <div className="sm:text-right w-full sm:w-auto">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg mb-2">
-                  <ShieldCheck className="w-4 h-4 text-[#0058bc]" />
-                  <span className="text-[10px] sm:text-xs font-extrabold tracking-widest text-slate-700 uppercase">Invoice</span>
+              <div className="text-right shrink-0">
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-slate-100 rounded-lg mb-1 sm:mb-2">
+                  <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0058bc]" />
+                  <span className="text-[9px] sm:text-xs font-extrabold tracking-widest text-slate-700 uppercase">Invoice</span>
                 </div>
-                <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight break-all sm:break-normal">
+                <h2 className="text-sm sm:text-3xl font-extrabold text-slate-900 tracking-tight sm:whitespace-nowrap break-all sm:break-normal">
                   {invoiceNumber}
                 </h2>
-                <p className="text-[10px] sm:text-xs font-semibold text-[#0058bc] mt-0.5 uppercase tracking-wider">
+                <p className="text-[8px] sm:text-xs font-semibold text-[#0058bc] mt-0.5 uppercase tracking-wider">
                   Dokumen Resmi Tagihan
                 </p>
               </div>
@@ -227,49 +227,49 @@ export default function PublicInvoicePage() {
           </div>
 
           {/* Bill To + Status */}
-          <div className="px-5 sm:px-12 mt-8 sm:mt-10 print:mt-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
-              <div className="w-full sm:w-auto sm:min-w-[240px]">
+          <div className="px-5 sm:px-12 mt-6 sm:mt-10 print:mt-8">
+            <div className="flex flex-row justify-between items-start gap-4 sm:gap-6">
+              <div className="flex-1 min-w-0 sm:min-w-[240px]">
                 <div className="flex items-center gap-2 mb-2.5">
-                  <Building2 className="w-4 h-4 text-[#0058bc]" />
-                  <p className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wider text-slate-500">Ditagihkan Kepada</p>
+                  <Building2 className="w-3.5 h-3.5 sm:w-4 h-4 text-[#0058bc]" />
+                  <p className="text-[9px] sm:text-xs font-extrabold uppercase tracking-wider text-slate-500">Ditagihkan Kepada</p>
                 </div>
-                <div className="border-l-[3px] border-[#0058bc] pl-3.5">
-                  <p className="font-bold text-base sm:text-lg text-slate-900">{order.company_name || "—"}</p>
-                  <p className="text-sm text-slate-600 mt-1">{order.full_name}</p>
-                  <p className="text-sm text-slate-500 break-all">{order.email}</p>
-                  {order.phone && <p className="text-sm text-slate-500">{order.phone}</p>}
+                <div className="border-l-[3px] border-[#0058bc] pl-2.5 sm:pl-3.5">
+                  <p className="font-bold text-sm sm:text-lg text-slate-900 truncate">{order.company_name || "—"}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 mt-1 truncate">{order.full_name}</p>
+                  <p className="text-[11px] sm:text-sm text-slate-500 truncate">{order.email}</p>
+                  {order.phone && <p className="text-[11px] sm:text-sm text-slate-500 truncate">{order.phone}</p>}
                 </div>
               </div>
 
               {/* Payment status */}
-              <div className="sm:text-right w-full sm:w-auto">
-                <div className="flex items-center gap-2 mb-2.5 sm:justify-end">
-                  <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wider text-slate-500">Status Pembayaran</span>
+              <div className="text-right shrink-0">
+                <div className="flex items-center gap-2 mb-2.5 justify-end">
+                  <span className="text-[9px] sm:text-xs font-extrabold uppercase tracking-wider text-slate-500">Status Pembayaran</span>
                 </div>
                 {isPaid ? (
-                  <div className="inline-flex flex-col items-start sm:items-end gap-1 bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-3">
+                  <div className="inline-flex flex-col items-end gap-1 bg-emerald-50 border border-emerald-200 rounded-2xl px-3 sm:px-4 py-2 sm:py-3">
                     <span className="inline-flex items-center gap-1.5 text-emerald-700 font-extrabold text-xs sm:text-sm uppercase tracking-wide">
-                      <CheckCircle2 className="w-4 h-4" /> LUNAS
+                      <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> LUNAS
                     </span>
                     {invoice.paid_at && (
-                      <span className="text-[10px] sm:text-[11px] font-semibold text-emerald-700">
+                      <span className="text-[9px] sm:text-[11px] font-semibold text-emerald-700 text-right">
                         Pada {format(new Date(invoice.paid_at), "dd MMM yyyy, HH:mm", { locale: idLocale })}
                       </span>
                     )}
                     {paymentType && (
-                      <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
-                        <Landmark className="w-3.5 h-3.5" /> Via {paymentType}
+                      <span className="inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
+                        <Landmark className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Via {paymentType}
                       </span>
                     )}
                   </div>
                 ) : (
-                  <div className="inline-flex flex-col items-start sm:items-end gap-1 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3">
+                  <div className="inline-flex flex-col items-end gap-1 bg-amber-50 border border-amber-200 rounded-2xl px-3 sm:px-4 py-2 sm:py-3">
                     <span className="inline-flex items-center gap-1.5 text-amber-700 font-extrabold text-xs sm:text-sm uppercase tracking-wide">
-                      <Clock className="w-4 h-4" /> Belum Dibayar
+                      <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Belum Dibayar
                     </span>
                     {invoice.due_date && (
-                      <span className="text-[10px] sm:text-[11px] font-semibold text-amber-700">
+                      <span className="text-[9px] sm:text-[11px] font-semibold text-amber-700 text-right">
                         Jatuh tempo: {fmtDate(invoice.due_date)}
                       </span>
                     )}
@@ -283,11 +283,11 @@ export default function PublicInvoicePage() {
           <div className="px-5 sm:px-12 mt-8 sm:mt-10 print:mt-8">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#0058bc] text-white">
-                  <th className="py-3 px-2 sm:px-4 font-bold text-[10px] sm:text-xs uppercase tracking-wider rounded-l-lg w-8 sm:w-12 text-center">No</th>
-                  <th className="py-3 px-2 sm:px-4 font-bold text-[10px] sm:text-xs uppercase tracking-wider">Deskripsi Layanan</th>
-                  <th className="py-3 px-2 sm:px-4 font-bold text-[10px] sm:text-xs uppercase tracking-wider">Lisensi</th>
-                  <th className="py-3 px-2 sm:px-4 font-bold text-[10px] sm:text-xs uppercase tracking-wider text-right rounded-r-lg">Jumlah</th>
+                <tr className="bg-[#0058bc]">
+                  <th className="py-3 px-2 sm:px-4 font-bold !text-white text-[10px] sm:text-xs uppercase tracking-wider rounded-l-lg w-8 sm:w-12 text-center">No</th>
+                  <th className="py-3 px-2 sm:px-4 font-bold !text-white text-[10px] sm:text-xs uppercase tracking-wider">Deskripsi Layanan</th>
+                  <th className="py-3 px-2 sm:px-4 font-bold !text-white text-[10px] sm:text-xs uppercase tracking-wider">Lisensi</th>
+                  <th className="py-3 px-2 sm:px-4 font-bold !text-white text-[10px] sm:text-xs uppercase tracking-wider text-right rounded-r-lg">Jumlah</th>
                 </tr>
               </thead>
               <tbody>
