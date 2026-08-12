@@ -224,9 +224,10 @@ export default function PublicInvoicePage() {
                 </p>
               </div>
             </div>
+          </div>
 
-            {/* Bill To + Status */}
-            <div className="px-5 sm:px-12 mt-8 sm:mt-10 print:mt-8">
+          {/* Bill To + Status */}
+          <div className="px-5 sm:px-12 mt-8 sm:mt-10 print:mt-8">
             <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
               <div className="w-full sm:w-auto sm:min-w-[240px]">
                 <div className="flex items-center gap-2 mb-2.5">
