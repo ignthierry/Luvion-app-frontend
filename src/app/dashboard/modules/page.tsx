@@ -343,11 +343,14 @@ export default function ModulesCMS() {
                     onChange={(e) => setFormData({...formData, demo_type: e.target.value})}
                     className="w-full bg-background border border-border/40 rounded-lg p-2.5 text-foreground text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   >
-                    <option value="chart">Chart / Grafik</option>
-                    <option value="list">List / Daftar</option>
-                    <option value="grid">Grid / Kartu</option>
-                    <option value="travel">Travel Card</option>
-                    <option value="wms">WMS / Inventaris</option>
+                    <option value="chart">Akuntansi & Keuangan (Accurix / Chart)</option>
+                    <option value="shoecare">Shoe Care & Laundry (ShoePro)</option>
+                    <option value="storefront">Storefront / E-Commerce SaaS</option>
+                    <option value="wms">WMS / Inventaris Gudang</option>
+                    <option value="travel">Travel & Rute Logistik</option>
+                    <option value="list">POS / Kasir & Order Stream</option>
+                    <option value="gym">Gym Pro & Membership</option>
+                    <option value="grid">Grid / Kartu Fitur</option>
                   </select>
                 </div>
                 <div className="space-y-1 col-span-2">
