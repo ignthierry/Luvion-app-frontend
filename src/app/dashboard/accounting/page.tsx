@@ -1406,13 +1406,20 @@ export default function AccountingDashboard() {
                     <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Tanggal</label>
                     <input type="date" required value={expenseForm.date} onChange={e => setExpenseForm({ ...expenseForm, date: e.target.value })} className="input-field" />
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Metode Bayar</label>
-                    <select value={expenseForm.payment_method} onChange={e => setExpenseForm({ ...expenseForm, payment_method: e.target.value })} className="input-field">
-                      <option value="cash">Kas Tunai</option>
-                      <option value="bank">Transfer Bank</option>
-                      <option value="qris">QRIS</option>
-                      <option value="card">Kartu</option>
+                  <div className="space-y-4">
+                    <label className="text-sm font-semibold text-on-surface-variant">Akun Pembayaran</label>
+                    <select 
+                      value={expenseForm.account_id} 
+                      onChange={e => setExpenseForm({ ...expenseForm, account_id: e.target.value })} 
+                      className="input-field w-full"
+                    >
+                      <option value="">Pilih Kas/Bank</option>
+                      {accounts
+                        .filter(a => a.type.toLowerCase().includes('kas') || a.type.toLowerCase().includes('bank'))
+                        .map(a => (
+                          <option key={a.id} value={a.id}>{a.code} - {a.name}</option>
+                        ))
+                      }
                     </select>
                   </div>
                 </div>
