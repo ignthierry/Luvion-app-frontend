@@ -338,8 +338,8 @@ export default function AccountingDashboard() {
           category: expenseForm.category,
           description: expenseForm.description,
           amount: Number(expenseForm.amount),
-          payment_method: expenseForm.payment_method,
-          account_id: expenseForm.account_id || undefined,
+          payment_method: undefined,
+          account_id: expenseForm.account_id,
         }),
       });
       showSuccess("Pembiayaan tercatat! Jurnal otomatis: Debit Biaya, Kredit Kas.");
@@ -1477,7 +1477,7 @@ export default function AccountingDashboard() {
                       </div>
                       <div className="text-sm text-on-surface-variant mt-1 truncate">{exp.description || exp.category}</div>
                       <div className="text-xs text-on-surface-variant mt-1">
-                        {exp.date} • {exp.payment_method || 'cash'} • {exp.account?.code ? `${exp.account.code} - ${exp.account.name}` : 'Kas Tunai'}
+                        {exp.date} • {exp.account?.name || 'Kas Tunai'}
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
