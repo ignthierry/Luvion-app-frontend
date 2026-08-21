@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Accurix Luvion — Presentasi Client</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0b1120;color:#e2e8f0;line-height:1.7}
+.wrap{max-width:900px;margin:0 auto;padding:40px 24px}
+h1{font-size:2.4rem;color:#fff;margin-bottom:8px;background:linear-gradient(90deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h1+p{color:#94a3b8;font-size:1.05rem;margin-bottom:32px}
+h2{font-size:1.5rem;color:#38bdf8;margin:48px 0 16px;padding-bottom:8px;border-bottom:2px solid #1e293b}
+h3{font-size:1.15rem;color:#e2e8f0;margin:24px 0 8px}
+p{margin:8px 0}
+img{width:100%;border-radius:12px;border:1px solid #1e293b;margin:12px 0;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.95rem}
+th{background:#1e293b;color:#38bdf8;text-align:left;padding:10px 12px}
+td{padding:10px 12px;border-bottom:1px solid #1e293b}
+tr:hover td{background:#111a2e}
+code{background:#1e293b;padding:2px 8px;border-radius:6px;color:#93c5fd;font-size:.9em}
+blockquote{border-left:4px solid #38bdf8;background:#111a2e;padding:12px 16px;border-radius:8px;margin:16px 0}
+a{color:#38bdf8}
+hr{border:none;border-top:1px solid #1e293b;margin:32px 0}
+em{color:#94a3b8}
+</style>
+</head>
+<body>
+<div class="wrap"><h1>Accurix Luvion — Aplikasi Akuntansi UMKM</h1>
+<p><strong>Dokumentasi Presentasi Client</strong></p>
+<blockquote>
+<p><strong>Link Akses:</strong> <a href="https://accurix.luvion.my.id">accurix.luvion.my.id</a>
+<strong>Demo Login:</strong> <code>budi@tokosejahtera.com</code> / <code>password123</code></p>
+</blockquote>
+<hr />
+<h2>🏷️ Tentang Produk</h2>
+<p><strong>Accurix Luvion</strong> adalah aplikasi akuntansi &amp; pembukuan berbasis web untuk UMKM, mengacu standar <strong>PSAK EMKM</strong>. Mencakup pencatatan kas &amp; bank, piutang/invoice, stok &amp; HPP, jurnal umum double-entry, hingga laporan keuangan dan kewajiban pajak — dalam satu platform terintegrasi.</p>
+<p>Dibangun dengan teknologi modern untuk keandalan dan skala:
+- <strong>Frontend:</strong> Next.js 15 + React 19 + TypeScript + Tailwind CSS
+- <strong>Backend:</strong> Laravel (PHP) + MySQL — REST API dengan autentikasi Sanctum
+- <strong>Akuntansi:</strong> Double-entry engine, jurnal otomatis &amp; validation balance (debit = kredit)
+- <strong>Keamanan:</strong> Token-based auth, data per-perusahaan (multi-tenant)</p>
+<hr />
+<h2>🖥️ Tampilan Halaman</h2>
+<h3>Halaman Login</h3>
+<p><img alt="Login" src="accurix/00-login.png" /></p>
+<p>Pintu masuk aman dengan autentikasi berbasis email &amp; token (Sanctum). Terdapat akun demo cepat untuk mencoba aplikasi; registrasi usaha baru juga tersedia langsung dari halaman login.</p>
+<h3>Dashboard Keuangan</h3>
+<p><img alt="Dashboard" src="accurix/01-dashboard.png" /></p>
+<p>Pusat kendali kondisi finansial waktu nyata: saldo kas &amp; bank, pendapatan bulan berjalan, beban operasional, piutang belum lunas, estimasi laba bersih, distribusi kas per rekening, peringatan stok menipis, serta aksi cepat (catat kas masuk, beban, beli stok, jurnal).</p>
+<hr />
+<h2>💵 Modul Kas &amp; Bank</h2>
+<p><img alt="Kas & Bank" src="accurix/02-kas-bank.png" /></p>
+<p>Pencatatan arus kas masuk, pengeluaran operasional, dan transfer antar rekening:
+- Multi akun kas/bank (Kas Tunai, rekening bank operasional)
+- Riwayat mutasi transaksi lengkap + pencarian
+- <strong>Ekspor Excel / CSV</strong> &amp; kaitannya otomatis ke jurnal umum</p>
+<h3>Pembiayaan &amp; Beban Usaha</h3>
+<p><img alt="Pembiayaan" src="accurix/03-pembiayaan.png" /></p>
+<p>Pencatatan beban operasional harian (gaji, sewa, listrik, ATK, pemasaran, pembiayaan terjadwal) dengan filter kategori, rekapitulasi biaya bulanan, dan laporan ekspor.</p>
+<hr />
+<h2>📄 Invoice &amp; Piutang</h2>
+<p><img alt="Invoice" src="accurix/04-invoice.png" /></p>
+<p>Penerbitan tagihan profesional, <strong>pemotongan stok otomatis</strong>, dan monitoring umur piutang:
+- Total piutang belum lunas &amp; tagihan jatuh tempo kritis
+- Pencatatan pembayaran (lunas / sebagian) langsung dari daftar
+- Filter status: Semua, Belum Lunas, Jatuh Tempo, Lunas
+- Jurnal piutang &amp; HPP dibuat otomatis saat invoice terbit</p>
+<hr />
+<h2>📦 Stok Barang &amp; HPP</h2>
+<p><img alt="Stok" src="accurix/05-stok.png" /></p>
+<p>Manajemen inventaris dengan metode <strong>Moving Average HPP</strong>:
+- Total nilai inventaris otomatis (kuantitas × HPP rata-rata)
+- Peringatan stok menipis &amp; stok habis (min-stock alert)
+- <strong>Beli stok</strong> (restock) &amp; tambah produk; setiap pembelian tercatat ke jurnal persediaan
+- Pengurangan stok otomatis saat invoice diterbitkan</p>
+<hr />
+<h2>👥 Kontak &amp; Mitra</h2>
+<p><img alt="Kontak" src="accurix/06-kontak.png" /></p>
+<p>Direktori pelanggan &amp; pemasok dengan statistik mitra, saldo piutang per kontak, riwayat transaksi invoice, dan integrasi <strong>WhatsApp</strong> untuk follow-up penagihan.</p>
+<hr />
+<h2>📚 Buku Besar &amp; Akuntansi</h2>
+<h3>Master Chart of Accounts (COA)</h3>
+<p><img alt="COA" src="accurix/07-coa.png" /></p>
+<p>Bagan akun standar <strong>PSAK EMKM</strong> (Aset, Liabilitas, Ekuitas, Pendapatan, Beban &amp; HPP) — lengkap dengan saldo buku besar per akun, posisi debit/kredit, dan mutasi.</p>
+<h3>Jurnal Umum (Double-Entry)</h3>
+<p><img alt="Jurnal" src="accurix/08-jurnal.png" /></p>
+<p>Pencatatan pembukuan berpasangan:
+- <strong>Mesin double-entry</strong>: validasi otomatis debit = kredit, self-balancing 100%
+- Entri jurnal manual &amp; jurnal otomatis dari tiap modul (kas, invoice, stok, beban)
+- Riwayat jurnal terurut waktu dengan rincian akun per baris</p>
+<h3>Buku Besar (General Ledger)</h3>
+<p><img alt="Buku Besar" src="accurix/09-buku-besar.png" /></p>
+<p>Rekam jejak mutasi debit, kredit, dan saldo berjalan per akun per periode — filter akun, rentang tanggal, dan pencarian keterangan. Saldo awal/akhir dihitung otomatis.</p>
+<hr />
+<h2>📊 Modul Laporan Keuangan</h2>
+<h3>Laporan Laba Rugi Komprehensif</h3>
+<p><img alt="Laba Rugi" src="accurix/10-laba-rugi.png" /></p>
+<p>Pendapatan, HPP, beban operasional, laba kotor, dan laba bersih (margin otomatis) — format <strong>PSAK EMKM</strong> siap cetak untuk direksi.</p>
+<h3>Laporan Posisi Keuangan (Neraca)</h3>
+<p><img alt="Neraca" src="accurix/11-neraca.png" /></p>
+<p>Aset lancar, aset tetap, liabilitas &amp; ekuitas dengan indikator <strong>Seimbang (Balanced)</strong>. Otomatis menjaga persamaan akuntansi (Aset = Liabilitas + Ekuitas).</p>
+<h3>Laporan Arus Kas</h3>
+<p><img alt="Arus Kas" src="accurix/12-arus-kas.png" /></p>
+<p>Arus kas dari aktivitas operasi, investasi, dan pendanaan (metode langsung) + rekonsiliasi saldo kas &amp; bank akhir periode.</p>
+<hr />
+<h2>🧾 Modul Pajak &amp; SPT PPh Final</h2>
+<p><img alt="SPT" src="accurix/13-spt.png" /></p>
+<p>Rekapitulasi omset &amp; kalkulasi <strong>PPh Final UMKM 0,5%</strong> (PP No. 55/2022):
+- Tabel peredaran bruto per bulan + kumulatif tahunan
+- Perhitungan PPh terutang &amp; batas waktu setor (tgl 15 bulan berikutnya)
+- Kode setor DJP (KAP 411128 / KJS 420)
+- Cetak dokumen lampiran SPT Tahunan (1770/1771)</p>
+<hr />
+<h2>✨ Ringkasan Fitur Unggulan</h2>
+<table>
+<thead>
+<tr>
+<th>Modul</th>
+<th>Fitur Utama</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dashboard</strong></td>
+<td>Saldo kas, pendapatan, beban, piutang, estimasi laba, peringatan stok, aksi cepat</td>
+</tr>
+<tr>
+<td><strong>Kas &amp; Bank</strong></td>
+<td>Mutasi kas, transfer antar rekening, beban harian, ekspor Excel</td>
+</tr>
+<tr>
+<td><strong>Invoice &amp; Piutang</strong></td>
+<td>Terbit invoice, potong stok otomatis, bayar/lunas, aging piutang, follow-up WA</td>
+</tr>
+<tr>
+<td><strong>Stok &amp; HPP</strong></td>
+<td>Moving Average HPP, restock, min-stock alert, nilai inventaris otomatis</td>
+</tr>
+<tr>
+<td><strong>Kontak &amp; Mitra</strong></td>
+<td>Pelanggan &amp; vendor, piutang per kontak, riwayat transaksi, WhatsApp</td>
+</tr>
+<tr>
+<td><strong>COA &amp; Jurnal</strong></td>
+<td>Bagan akun PSAK EMKM, jurnal double-entry, validasi balance, edit/hapus jurnal manual</td>
+</tr>
+<tr>
+<td><strong>Buku Besar</strong></td>
+<td>Mutasi debit/kredit per akun, saldo berjalan, filter periode &amp; akun</td>
+</tr>
+<tr>
+<td><strong>Laporan</strong></td>
+<td>Laba rugi, neraca (balanced), arus kas — format direksi, ekspor Excel &amp; PDF</td>
+</tr>
+<tr>
+<td><strong>Pajak</strong></td>
+<td>PPh Final 0,5% PP 55/2022, rekap omset bulanan, lampiran SPT 1770/1771</td>
+</tr>
+<tr>
+<td><strong>Keamanan</strong></td>
+<td>Token auth (Sanctum), multi-tenant per perusahaan, integritas double-entry</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🔐 Login / Akun Demo</h2>
+<table>
+<thead>
+<tr>
+<th>Peran</th>
+<th>Email</th>
+<th>Password</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Owner / Pemilik</td>
+<td><code>budi@tokosejahtera.com</code></td>
+<td><code>password123</code></td>
+</tr>
+<tr>
+<td>Staff / Karyawan</td>
+<td><code>siti@tokosejahtera.com</code></td>
+<td><code>password123</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📊 Data Demo (Realistis)</h2>
+<p>Database telah diisi <strong>data dummy yang realistis</strong> untuk presentasi — Toko Sejahtera, toko sembako yang sudah berjalan:</p>
+<table>
+<thead>
+<tr>
+<th>Modul</th>
+<th>Jumlah</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Perusahaan</strong></td>
+<td>1</td>
+<td>Toko Sejahtera (PSAK EMKM, Jakarta Selatan)</td>
+</tr>
+<tr>
+<td><strong>Pengguna</strong></td>
+<td>2</td>
+<td>Owner &amp; Staff</td>
+</tr>
+<tr>
+<td><strong>Bagan Akun (COA)</strong></td>
+<td>21</td>
+<td>Aset, liabilitas, ekuitas, pendapatan, beban &amp; HPP</td>
+</tr>
+<tr>
+<td><strong>Kas &amp; Bank</strong></td>
+<td>2</td>
+<td>Kas Tunai Rp 12,9 jt + Bank BCA Rp 8,09 jt</td>
+</tr>
+<tr>
+<td><strong>Kontak</strong></td>
+<td>5</td>
+<td>3 pelanggan (PT Maju Bersama, CV Abadi Makmur, Resto) + 2 vendor</td>
+</tr>
+<tr>
+<td><strong>Produk</strong></td>
+<td>4</td>
+<td>Beras, minyak goreng, gula, tepung — 338 unit awal</td>
+</tr>
+<tr>
+<td><strong>Invoice</strong></td>
+<td>4</td>
+<td>2 lunas, 1 belum lunas, 1 jatuh tempo</td>
+</tr>
+<tr>
+<td><strong>Transaksi Kas</strong></td>
+<td>5</td>
+<td>Modal, peralatan, sewa, listrik, gaji, ATK</td>
+</tr>
+<tr>
+<td><strong>Jurnal</strong></td>
+<td>13</td>
+<td>Otomatis dari tiap modul + manual, semuanya balance</td>
+</tr>
+<tr>
+<td><strong>Pergerakan Stok</strong></td>
+<td>9</td>
+<td>4 pembelian + 5 penjualan (stok sinkron dgn jurnal)</td>
+</tr>
+</tbody>
+</table>
+<p>Contoh alur lengkap: Setoran modal Rp 45 jt → beli peralatan &amp; stok awal Rp 15,64 jt → invoice penjualan 4 pelanggan (13,695 jt) → pelunasan 2 invoice (7,83 jt) → beban operasional (9,8 jt). Neraca tetap <strong>seimbang</strong>: Aset = 36.915.000 = Liabilitas + Ekuitas.</p>
+<hr />
+<h2>📊 Ringkasan Teknis</h2>
+<table>
+<thead>
+<tr>
+<th>Komponen</th>
+<th>Teknologi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td>Next.js 15, React 19, TypeScript, Tailwind CSS</td>
+</tr>
+<tr>
+<td>Backend</td>
+<td>Laravel 10, REST API, Sanctum Auth</td>
+</tr>
+<tr>
+<td>Basis Data</td>
+<td>MySQL</td>
+</tr>
+<tr>
+<td>Standar Akuntansi</td>
+<td>PSAK EMKM (UMKM)</td>
+</tr>
+<tr>
+<td>Metode Persediaan</td>
+<td>Moving Average HPP</td>
+</tr>
+<tr>
+<td>Double-Entry</td>
+<td>Validasi balance debit = kredit, jurnal otomatis multi-modul</td>
+</tr>
+<tr>
+<td>Pajak</td>
+<td>PPh Final UMKM 0,5% (PP 55/2022), lampiran SPT</td>
+</tr>
+<tr>
+<td>Export</td>
+<td>Excel / CSV &amp; Cetak PDF dokumen direksi</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Dokumentasi disusun untuk kebutuhan presentasi client. Semua screenshot diambil secara live dari aplikasi berjalan di accurix.luvion.my.id.</em></p></div>
+</body>
+</html>
