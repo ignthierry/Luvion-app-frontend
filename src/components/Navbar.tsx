@@ -29,9 +29,9 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl glass-panel rounded-full z-50 flex justify-between items-center py-3 px-6">
-      <a className="font-sans font-extrabold tracking-tighter text-primary flex items-center gap-2 text-xl" href="#">
-        <img src="/favicon-96x96.png" alt="Luvion Logo" className="h-8 w-auto object-contain" />
+    <nav className="fixed top-3 sm:top-6 left-1/2 -translate-x-1/2 w-[96%] max-w-7xl glass-panel rounded-full z-50 flex justify-between items-center py-2 sm:py-3 px-3 sm:px-6">
+      <a className="font-sans font-extrabold tracking-tighter text-primary flex items-center gap-1.5 sm:gap-2 text-base sm:text-xl shrink-0" href="#">
+        <img src="/favicon-96x96.png" alt="Luvion Logo" className="h-6 sm:h-8 w-auto object-contain shrink-0" />
         <span className="text-foreground font-extrabold tracking-tight uppercase">Luvion</span>
       </a>
       <div className="hidden md:flex items-center gap-8">
@@ -41,15 +41,15 @@ export default function Navbar() {
         <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm" href="#pricing">{t('navbar.pricing')}</a>
         <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm" href="#pricing">{t('navbar.enterprise')}</a>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
         
         {/* Language Switcher */}
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative shrink-0" ref={dropdownRef}>
           <button 
             onClick={() => setIsLangOpen(!isLangOpen)}
-            className={`text-on-surface-variant hover:text-primary transition-all duration-300 flex items-center justify-center gap-1 p-1.5 px-3 rounded-full hover:bg-white/40 dark:hover:bg-white/10 ${isLangOpen ? 'bg-white/40 dark:bg-white/10 text-primary' : ''}`}
+            className={`text-on-surface-variant hover:text-primary transition-all duration-300 flex items-center justify-center gap-1 py-1 px-2 sm:p-1.5 sm:px-3 rounded-full hover:bg-white/40 dark:hover:bg-white/10 ${isLangOpen ? 'bg-white/40 dark:bg-white/10 text-primary' : ''}`}
           >
-            <Globe className="h-4 w-4" />
+            <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="text-xs font-bold">{lang}</span>
             <ChevronDown className={`h-3 w-3 transition-transform ${isLangOpen ? 'rotate-180' : ''}`} />
           </button>
@@ -61,7 +61,7 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 mt-2 w-40 glass-panel rounded-2xl shadow-xl overflow-hidden py-2 border border-surface-container/50"
+                className="absolute right-0 mt-2 w-40 glass-panel rounded-2xl shadow-xl overflow-hidden py-2 border border-surface-container/50 z-50"
               >
                 {languages.map((l) => (
                   <button
@@ -83,10 +83,10 @@ export default function Navbar() {
           </AnimatePresence>
         </div>
 
-        <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-sm mr-2" href="/login">
+        <a className="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 text-xs sm:text-sm px-1 sm:px-2 shrink-0" href="/login">
           {t('navbar.login')}
         </a>
-        <a className="electric-gradient font-semibold px-5 py-2 rounded-full text-sm hover:scale-[1.03] active:scale-[0.97]" href="#pricing">
+        <a className="electric-gradient font-semibold px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm whitespace-nowrap shrink-0 hover:scale-[1.03] active:scale-[0.97]" href="#pricing">
           {t('navbar.startBuilding')}
         </a>
       </div>

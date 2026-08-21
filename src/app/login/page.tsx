@@ -130,20 +130,28 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button
+            <motion.button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed group shadow-lg shadow-primary/20"
+              whileHover={{ scale: isLoading ? 1 : 1.02 }}
+              whileTap={{ scale: isLoading ? 1 : 0.98 }}
+              className="relative w-full overflow-hidden flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-bold text-white text-base shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer transition-all duration-300 group bg-gradient-to-r from-blue-600 via-primary to-blue-700 hover:from-blue-500 hover:to-primary active:scale-[0.99]"
             >
+              {/* Shimmer Sweep Animation Overlay on hover */}
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+
               {isLoading ? (
-                <Loader2 className="animate-spin h-5 w-5" />
+                <div className="flex items-center gap-2">
+                  <Loader2 className="animate-spin h-5 w-5 text-white" />
+                  <span className="text-white font-bold tracking-wide">Memproses Masuk...</span>
+                </div>
               ) : (
                 <>
-                  Masuk Sekarang
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  <span className="text-white font-bold tracking-wide">Masuk Sekarang</span>
+                  <ArrowRight className="h-5 w-5 text-white transition-transform duration-300 group-hover:translate-x-1.5" />
                 </>
               )}
-            </button>
+            </motion.button>
           </form>
 
           <div className="mt-8 text-center">

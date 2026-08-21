@@ -405,7 +405,7 @@ export default function AccountingDashboard() {
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-border/40 pb-2">
+      <div className="flex items-center gap-2 border-b border-border/40 pb-2 overflow-x-auto no-scrollbar scrollbar-none">
         {[
           { id: "coa", label: "Master COA", icon: BookOpen },
           { id: "journals", label: "Jurnal Umum", icon: FileText },
@@ -417,7 +417,7 @@ export default function AccountingDashboard() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+            className={`flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap shrink-0 transition-all ${
               activeTab === tab.id 
                 ? "bg-primary text-white shadow-lg shadow-primary/30" 
                 : "text-on-surface-variant hover:bg-surface/50 hover:text-foreground"
@@ -524,14 +524,14 @@ export default function AccountingDashboard() {
         {activeTab === "journals" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold text-foreground">Jurnal Umum</h2>
-              <button onClick={fetchJournals} className="btn-secondary">
-                <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              <h2 className="text-lg sm:text-xl font-bold text-foreground">Jurnal Umum</h2>
+              <button onClick={fetchJournals} className="btn-secondary py-1.5 px-3 sm:py-2 sm:px-4 text-xs sm:text-sm">
+                <RefreshCw className={`w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 ${loading ? 'animate-spin' : ''}`} />
                 Refresh
               </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {journals.length === 0 && !loading && (
                 <div className="glass-panel p-8 text-center text-on-surface-variant rounded-2xl border border-border/40">
                   Belum ada transaksi jurnal.
@@ -539,30 +539,61 @@ export default function AccountingDashboard() {
               )}
               
               {journals.map((journal) => (
-                <div key={journal.id} className="glass-panel rounded-2xl border border-border/40 overflow-hidden">
-                  <div className="bg-surface/50 px-6 py-4 border-b border-border/40 flex justify-between items-center">
-                    <div>
-                      <div className="font-bold text-foreground flex items-center gap-2">
-                        {journal.reference}
-                        <span className="text-xs font-normal text-on-surface-variant bg-surface/50 px-2 py-0.5 rounded-full border border-border/30">
-                          {journal.date}
-                        </span>
+                <div key={journal.id} className="glass-panel rounded-2xl border border-border/40 overflow-hidden shadow-sm">
+                  {/* Card Header */}
+                  <div className="bg-surface/60 p-4 sm:px-6 sm:py-4 border-b border-border/40">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-bold text-base sm:text-lg text-foreground tracking-tight">
+                            {journal.reference}
+                          </span>
+                          <span className="text-[11px] sm:text-xs font-medium text-on-surface-variant bg-surface px-2.5 py-0.5 rounded-full border border-border/40 whitespace-nowrap">
+                            {journal.date}
+                          </span>
+                        </div>
+                        {journal.description && (
+                          <div className="text-xs sm:text-sm text-on-surface-variant mt-1">
+                            {journal.description}
+                          </div>
+                        )}
                       </div>
-                      <div className="text-sm text-on-surface-variant mt-1">{journal.description}</div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-right">
-                        <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Amount</div>
-                        <div className="font-bold text-lg text-primary">
-                          Rp {Number(journal.total_amount).toLocaleString('id-ID')}
+
+                      {/* Desktop Total Amount & Actions */}
+                      <div className="hidden sm:flex items-center gap-4">
+                        <div className="text-right">
+                          <div className="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Total Amount</div>
+                          <div className="font-bold text-base sm:text-lg text-primary">
+                            Rp {Number(journal.total_amount).toLocaleString('id-ID')}
+                          </div>
+                        </div>
+                        <div className="flex gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleEditJournal(journal)}
+                            title="Edit jurnal"
+                            className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteJournal(journal)}
+                            title="Hapus jurnal"
+                            className="p-2 text-error hover:bg-error/10 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       </div>
-                      <div className="flex gap-1.5">
+
+                      {/* Mobile Actions (Top Right) */}
+                      <div className="flex sm:hidden items-center gap-1 shrink-0">
                         <button
                           type="button"
                           onClick={() => handleEditJournal(journal)}
                           title="Edit jurnal"
-                          className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          className="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
                         >
                           <Edit3 className="w-4 h-4" />
                         </button>
@@ -570,16 +601,70 @@ export default function AccountingDashboard() {
                           type="button"
                           onClick={() => handleDeleteJournal(journal)}
                           title="Hapus jurnal"
-                          className="p-2 text-error hover:bg-error/10 rounded-lg transition-colors"
+                          className="p-1.5 text-error hover:bg-error/10 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
+
+                    {/* Mobile Total Amount Bar */}
+                    <div className="sm:hidden mt-3 pt-2.5 border-t border-border/20 flex items-center justify-between">
+                      <span className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">Total Amount</span>
+                      <span className="font-extrabold text-sm text-primary">
+                        Rp {Number(journal.total_amount).toLocaleString('id-ID')}
+                      </span>
+                    </div>
                   </div>
-                  <div className="px-6 py-4">
+
+                  {/* Mobile Detail List View (sm:hidden) */}
+                  <div className="sm:hidden divide-y divide-border/20">
+                    {journal.details.map((detail: any) => {
+                      const debitNum = Number(detail.debit || 0);
+                      const creditNum = Number(detail.credit || 0);
+                      return (
+                        <div key={detail.id} className="p-3.5 space-y-1.5 hover:bg-surface/20 transition-colors">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface/80 border border-border/40 text-primary shrink-0">
+                                  {detail.account?.code}
+                                </span>
+                                <span className="font-semibold text-xs text-foreground">
+                                  {detail.account?.name}
+                                </span>
+                              </div>
+                              {detail.description && detail.description !== '-' && (
+                                <p className="text-[11px] text-on-surface-variant mt-1 pl-0.5 italic">
+                                  {detail.description}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="text-right shrink-0">
+                              {debitNum > 0 && (
+                                <div className="text-xs font-bold text-emerald-500 whitespace-nowrap">
+                                  <span className="text-[10px] font-normal uppercase text-emerald-600/80 mr-1">D:</span>
+                                  Rp {debitNum.toLocaleString('id-ID')}
+                                </div>
+                              )}
+                              {creditNum > 0 && (
+                                <div className="text-xs font-bold text-error whitespace-nowrap">
+                                  <span className="text-[10px] font-normal uppercase text-red-500/80 mr-1">K:</span>
+                                  Rp {creditNum.toLocaleString('id-ID')}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Desktop Table View (hidden sm:block) */}
+                  <div className="hidden sm:block overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                      <thead className="text-xs uppercase text-on-surface-variant border-b border-border/40">
+                      <thead className="text-xs uppercase text-on-surface-variant bg-surface/30 border-b border-border/40">
                         <tr>
                           <th className="px-6 py-3 font-bold">Akun</th>
                           <th className="px-6 py-3 font-bold">Deskripsi</th>
@@ -589,15 +674,16 @@ export default function AccountingDashboard() {
                       </thead>
                       <tbody className="divide-y divide-border/20">
                         {journal.details.map((detail: any) => (
-                          <tr key={detail.id}>
-                            <td className="py-3 font-medium text-foreground">
-                              {detail.account?.code} - {detail.account?.name}
+                          <tr key={detail.id} className="hover:bg-surface/20 transition-colors">
+                            <td className="px-6 py-3 font-medium text-foreground">
+                              <span className="font-mono text-xs text-primary mr-2 font-bold">{detail.account?.code}</span>
+                              {detail.account?.name}
                             </td>
-                            <td className="py-3 text-on-surface-variant">{detail.description || '-'}</td>
-                            <td className="py-3 text-right text-emerald-500 font-medium">
+                            <td className="px-6 py-3 text-on-surface-variant">{detail.description || '-'}</td>
+                            <td className="px-6 py-3 text-right text-emerald-500 font-medium">
                               {Number(detail.debit) > 0 ? `Rp ${Number(detail.debit).toLocaleString('id-ID')}` : '-'}
                             </td>
-                            <td className="py-3 text-right text-error font-medium">
+                            <td className="px-6 py-3 text-right text-error font-medium">
                               {Number(detail.credit) > 0 ? `Rp ${Number(detail.credit).toLocaleString('id-ID')}` : '-'}
                             </td>
                           </tr>
@@ -614,10 +700,10 @@ export default function AccountingDashboard() {
         {/* INPUT JOURNAL TAB */}
         {activeTab === "input" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 max-w-4xl mx-auto">
-            <h2 className="text-xl font-bold text-foreground">
+            <h2 className="text-lg sm:text-xl font-bold text-foreground">
               {editingJournalId ? "Edit Jurnal Transaksi" : "Input Jurnal Transaksi"}
             </h2>
-            <form onSubmit={handleSubmitJournal} className="glass-panel p-6 rounded-2xl border border-border/40 space-y-6">
+            <form onSubmit={handleSubmitJournal} className="glass-panel p-4 sm:p-6 rounded-2xl border border-border/40 space-y-6">
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -653,9 +739,120 @@ export default function AccountingDashboard() {
                 </div>
               </div>
 
-              <div className="border border-border/40 rounded-xl overflow-hidden">
+              {/* Mobile Card-Based Line Items (sm:hidden) */}
+              <div className="sm:hidden space-y-4">
+                <div className="flex items-center justify-between text-xs font-bold uppercase text-on-surface-variant px-1">
+                  <span>Daftar Akun & Nominal</span>
+                  <span>{journalForm.details.length} Baris</span>
+                </div>
+
+                {journalForm.details.map((detail, idx) => (
+                  <div key={idx} className="p-4 rounded-xl bg-surface/50 border border-border/40 space-y-3 shadow-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                        Baris #{idx + 1}
+                      </span>
+                      {journalForm.details.length > 2 && (
+                        <button 
+                          type="button"
+                          onClick={() => handleRemoveJournalDetail(idx)}
+                          className="flex items-center gap-1 text-xs text-error hover:bg-error/10 px-2 py-1 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Hapus</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-on-surface-variant mb-1">Pilih Akun</label>
+                      <select 
+                        value={detail.account_id}
+                        onChange={(e) => handleDetailChange(idx, 'account_id', e.target.value)}
+                        className="input-field py-2.5 text-xs font-medium w-full"
+                        required
+                      >
+                        <option value="">-- Pilih Akun --</option>
+                        {accounts.filter(a => a.is_active).map(a => (
+                          <option key={a.id} value={a.id}>{a.code} - {a.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mb-1">
+                          Debit (Rp)
+                        </label>
+                        <input 
+                          type="number" 
+                          min="0" step="1"
+                          placeholder="0"
+                          value={detail.debit || ''}
+                          onChange={(e) => handleDetailChange(idx, 'debit', e.target.value)}
+                          className="input-field py-2 text-right text-emerald-500 font-bold text-sm bg-surface/80"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-error mb-1">
+                          Kredit (Rp)
+                        </label>
+                        <input 
+                          type="number" 
+                          min="0" step="1"
+                          placeholder="0"
+                          value={detail.credit || ''}
+                          onChange={(e) => handleDetailChange(idx, 'credit', e.target.value)}
+                          className="input-field py-2 text-right text-error font-bold text-sm bg-surface/80"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Mobile Totals & Balance Summary */}
+                <div className="p-4 rounded-xl bg-surface/80 border border-border/50 space-y-2">
+                  <div className="flex justify-between items-center text-xs font-bold">
+                    <span className="text-on-surface-variant">Total Debit:</span>
+                    <span className="text-emerald-500 text-sm">
+                      Rp {journalForm.details.reduce((s,d) => s + Number(d.debit || 0), 0).toLocaleString('id-ID')}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs font-bold">
+                    <span className="text-on-surface-variant">Total Kredit:</span>
+                    <span className="text-error text-sm">
+                      Rp {journalForm.details.reduce((s,d) => s + Number(d.credit || 0), 0).toLocaleString('id-ID')}
+                    </span>
+                  </div>
+                  
+                  {/* Balance indicator */}
+                  {(() => {
+                    const totalDebit = journalForm.details.reduce((s,d) => s + Number(d.debit || 0), 0);
+                    const totalCredit = journalForm.details.reduce((s,d) => s + Number(d.credit || 0), 0);
+                    const isBalanced = Math.abs(totalDebit - totalCredit) < 0.01 && totalDebit > 0;
+                    const diff = Math.abs(totalDebit - totalCredit);
+                    
+                    if (totalDebit === 0 && totalCredit === 0) return null;
+
+                    return (
+                      <div className={`mt-2 pt-2 border-t border-border/30 flex items-center justify-between text-xs font-bold ${isBalanced ? 'text-emerald-500' : 'text-error'}`}>
+                        <span className="flex items-center gap-1">
+                          {isBalanced ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
+                          {isBalanced ? 'Status: Seimbang (Balanced)' : 'Status: Tidak Seimbang'}
+                        </span>
+                        {!isBalanced && (
+                          <span>Selisih: Rp {diff.toLocaleString('id-ID')}</span>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+
+              {/* Desktop Table View (hidden sm:block) */}
+              <div className="hidden sm:block border border-border/40 rounded-xl overflow-hidden">
                 <table className="w-full text-sm text-left">
-                  <thead className="text-xs uppercase text-on-surface-variant border-b border-border/40">
+                  <thead className="text-xs uppercase text-on-surface-variant border-b border-border/40 bg-surface/30">
                       <tr>
                         <th className="px-4 py-3 font-bold">Akun</th>
                         <th className="px-4 py-3 font-bold">Debit (Rp)</th>
@@ -715,10 +912,10 @@ export default function AccountingDashboard() {
                     <tr>
                       <td className="px-4 py-3 font-bold text-right text-foreground">Total</td>
                       <td className="px-4 py-3 font-bold text-right text-emerald-500">
-                        {journalForm.details.reduce((s,d) => s + Number(d.debit), 0).toLocaleString('id-ID')}
+                        {journalForm.details.reduce((s,d) => s + Number(d.debit || 0), 0).toLocaleString('id-ID')}
                       </td>
                       <td className="px-4 py-3 font-bold text-right text-error">
-                        {journalForm.details.reduce((s,d) => s + Number(d.credit), 0).toLocaleString('id-ID')}
+                        {journalForm.details.reduce((s,d) => s + Number(d.credit || 0), 0).toLocaleString('id-ID')}
                       </td>
                       <td></td>
                     </tr>
@@ -726,19 +923,19 @@ export default function AccountingDashboard() {
                 </table>
               </div>
 
-              <div className="flex justify-between items-center">
-                <button type="button" onClick={handleAddJournalDetail} className="btn-secondary py-2 text-sm">
+              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+                <button type="button" onClick={handleAddJournalDetail} className="btn-secondary py-2.5 sm:py-2 text-sm justify-center">
                   <Plus className="w-4 h-4 mr-2" />
                   Tambah Baris
                 </button>
                 
                 <div className="flex gap-2">
                   {editingJournalId && (
-                    <button type="button" onClick={resetJournalForm} className="btn-secondary py-2 px-4">
+                    <button type="button" onClick={resetJournalForm} className="btn-secondary py-2.5 sm:py-2 px-4 flex-1 sm:flex-initial justify-center">
                       Batal
                     </button>
                   )}
-                  <button type="submit" disabled={loading} className="btn-primary py-2 px-6">
+                  <button type="submit" disabled={loading} className="btn-primary py-2.5 sm:py-2 px-6 flex-1 sm:flex-initial justify-center shadow-lg shadow-primary/25">
                     {loading ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                     {editingJournalId ? "Perbarui Jurnal" : "Simpan Jurnal"}
                   </button>
@@ -1075,32 +1272,32 @@ export default function AccountingDashboard() {
             {ledgerData.map((ledger: any) => (
               <div key={ledger.account.id} className="glass-panel rounded-2xl border border-border/40 overflow-hidden">
                 {/* Account header */}
-                <div className="bg-surface/50 px-6 py-4 border-b border-border/40 flex flex-wrap justify-between items-center gap-3">
+                <div className="bg-surface/50 p-4 sm:px-6 sm:py-4 border-b border-border/40 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div>
-                    <div className="font-bold text-foreground flex items-center gap-2">
+                    <div className="font-bold text-foreground flex items-center gap-2 flex-wrap">
                       <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-md text-xs font-extrabold">{ledger.account.code}</span>
-                      {ledger.account.name}
+                      <span className="text-sm sm:text-base">{ledger.account.name}</span>
                       <span className="text-xs font-normal text-on-surface-variant bg-surface/50 px-2 py-0.5 rounded-full border border-border/30">
                         {ledger.account.type}
                       </span>
                     </div>
                   </div>
-                  <div className="flex gap-6 text-right">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 lg:flex lg:gap-6 gap-3 text-left lg:text-right border-t lg:border-t-0 pt-3 lg:pt-0 border-border/20">
                     <div>
-                      <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Saldo Awal</div>
-                      <div className="font-bold">{fmtRp(ledger.opening_balance)}</div>
+                      <div className="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Saldo Awal</div>
+                      <div className="font-bold text-xs sm:text-sm">{fmtRp(ledger.opening_balance)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Debit</div>
-                      <div className="font-bold text-emerald-500">{fmtRp(ledger.total_debit)}</div>
+                      <div className="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Total Debit</div>
+                      <div className="font-bold text-xs sm:text-sm text-emerald-500">{fmtRp(ledger.total_debit)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Kredit</div>
-                      <div className="font-bold text-error">{fmtRp(ledger.total_credit)}</div>
+                      <div className="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Total Kredit</div>
+                      <div className="font-bold text-xs sm:text-sm text-error">{fmtRp(ledger.total_credit)}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Saldo Akhir</div>
-                      <div className="font-bold text-lg text-primary">{fmtRp(ledger.closing_balance)}</div>
+                      <div className="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Saldo Akhir</div>
+                      <div className="font-bold text-sm sm:text-base text-primary">{fmtRp(ledger.closing_balance)}</div>
                     </div>
                   </div>
                 </div>
