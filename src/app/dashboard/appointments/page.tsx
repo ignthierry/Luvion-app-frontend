@@ -312,17 +312,10 @@ export default function AppointmentsPage() {
           </button>
           <button
             onClick={loadAppointments}
-            className=\"flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary text-secondary-foreground font-semibold shadow-lg hover:bg-secondary/90 transition-all text-sm\"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary text-secondary-foreground font-semibold shadow-lg hover:bg-secondary/90 transition-all text-sm"
           >
-            <RefreshCw className=\"w-4 h-4\" />
+            <RefreshCw className="w-4 h-4" />
             Sinkronisasi Manual
-          </button>
-          <button
-            onClick={loadAppointments}
-            disabled={isLoading}
-            className="flex items-center gap-2 px-3 py-2.5 rounded-xl glass-panel text-foreground font-semibold hover:bg-surface/60 transition-all border border-border/40 text-sm disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin text-primary" : ""}`} />
           </button>
         </div>
       </div>
