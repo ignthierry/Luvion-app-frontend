@@ -109,11 +109,51 @@ export default function AccountingDashboard() {
     setTimeout(() => setError(null), 5000);
   };
 
+  // Helper to identify Cash & Bank accounts from COA (Asset type with cash/bank keywords or code)
+  const isCashOrBankAccount = (a: any) => {
+    if (!a || !a.is_active) return false;
+    const name = (a.name || "").toLowerCase();
+    const type = (a.type || "").toLowerCase();
+
+    // Check if account type is Asset or Kas or Bank
+    const isAsset = type === "asset" || type === "aktiva" || type === "kas" || type === "bank";
+    
+    // Check cash/bank naming keywords
+    const isCashBankName = 
+      name.includes("kas") || 
+      name.includes("bank") || 
+      name.includes("rekening") || 
+      name.includes("merchant") || 
+      name.includes("tunai") || 
+      name.includes("cash") || 
+      name.includes("wallet") || 
+      name.includes("petty");
+
+    // Exclude fixed assets, receivables
+    const isExcluded = name.includes("piutang") || name.includes("tetap") || name.includes("akumulasi");
+
+    return isAsset && isCashBankName && !isExcluded;
+  };
+
   // --- API Calls ---
   const fetchAccounts = async () => {
     try {
       const data = await fetchApi("/accounting/accounts");
-      setAccounts(data || []);
+      const accList = data || [];
+      setAccounts(accList);
+
+      // Pre-select first Kas/Bank account if expenseForm account_id is empty
+      setExpenseForm(prev => {
+        if (!prev.account_id && accList.length > 0) {
+          const defaultCashAcc = accList.find((a: any) => isCashOrBankAccount(a))
+            || accList.find((a: any) => a.code === "1001")
+            || accList.find((a: any) => a.type === "Asset");
+          if (defaultCashAcc) {
+            return { ...prev, account_id: defaultCashAcc.id.toString() };
+          }
+        }
+        return prev;
+      });
     } catch (e: any) {
       showError(e.message || "Gagal memuat daftar akun");
     }
@@ -339,17 +379,23 @@ export default function AccountingDashboard() {
           description: expenseForm.description,
           amount: Number(expenseForm.amount),
           payment_method: undefined,
-          account_id: expenseForm.account_id,
+          account_id: expenseForm.account_id ? Number(expenseForm.account_id) : null,
         }),
       });
-      showSuccess("Pembiayaan tercatat! Jurnal otomatis: Debit Biaya, Kredit Kas.");
+      showSuccess("Pembiayaan tercatat! Jurnal otomatis: Debit Biaya, Kredit Kas/Bank.");
+      
+      // Reset form but retain default cash/bank account
+      const defaultCashAcc = accounts.find(a => isCashOrBankAccount(a))
+        || accounts.find(a => a.code === "1001")
+        || accounts.find(a => a.type === "Asset");
+
       setExpenseForm({
         date: new Date().toISOString().split('T')[0],
         category: "server",
         description: "",
         amount: "",
         payment_method: "cash",
-        account_id: "",
+        account_id: defaultCashAcc ? defaultCashAcc.id.toString() : "",
       });
       fetchExpenses();
     } catch (e: any) {
@@ -1406,20 +1452,27 @@ export default function AccountingDashboard() {
                     <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Tanggal</label>
                     <input type="date" required value={expenseForm.date} onChange={e => setExpenseForm({ ...expenseForm, date: e.target.value })} className="input-field" />
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-sm font-semibold text-on-surface-variant">Akun Pembayaran</label>
+                  <div>
+                    <label className="block text-sm font-semibold text-on-surface-variant mb-1.5">Akun Pembayaran (Kas & Bank) *</label>
                     <select 
                       value={expenseForm.account_id} 
                       onChange={e => setExpenseForm({ ...expenseForm, account_id: e.target.value })} 
                       className="input-field w-full"
+                      required
                     >
-                      <option value="">Pilih Kas/Bank</option>
-                      {accounts
-                        .filter(a => a.type.toLowerCase().includes('kas') || a.type.toLowerCase().includes('bank'))
-                        .map(a => (
-                          <option key={a.id} value={a.id}>{a.code} - {a.name}</option>
-                        ))
-                      }
+                      <option value="">-- Pilih Akun Kas / Bank --</option>
+                      {(() => {
+                        const cashBankAccounts = accounts.filter(isCashOrBankAccount);
+                        const listToRender = cashBankAccounts.length > 0 
+                          ? cashBankAccounts 
+                          : accounts.filter(a => a.type === "Asset" && !a.name.toLowerCase().includes("piutang") && !a.name.toLowerCase().includes("tetap"));
+                        
+                        return listToRender.map(a => (
+                          <option key={a.id} value={a.id}>
+                            {a.code} - {a.name} ({a.type})
+                          </option>
+                        ));
+                      })()}
                     </select>
                   </div>
                 </div>
